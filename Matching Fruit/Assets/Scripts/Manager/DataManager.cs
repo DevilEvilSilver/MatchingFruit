@@ -6,7 +6,7 @@ public class DataManager : MonoBehaviour
 {
     public static DataManager instance;
 
-    [SerializeField] private List<GameObject> m_CommeonObjects = new List<GameObject>();
+    [SerializeField] private List<IngameObject> m_CommmonObjects = new List<IngameObject>();
 
     void Awake()
     {
@@ -14,8 +14,8 @@ public class DataManager : MonoBehaviour
             instance = this;
     }
 
-    public GameObject GetRandomCommonObject()
+    public IngameObject GetRandomCommonObject()
     {
-        return m_CommeonObjects[Random.Range(0, m_CommeonObjects.Count)];
+        return m_CommmonObjects[Random.Range(0, m_CommmonObjects.Count)];
     }
 }

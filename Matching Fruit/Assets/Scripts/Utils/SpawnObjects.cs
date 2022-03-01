@@ -23,14 +23,14 @@ public class SpawnObjects : MonoBehaviour
     public void AddSpawn(GameObject gameObject, Vector2Int pos)
     {
         spawnQueue.Enqueue(gameObject);
-        matrixPos.Enqueue(pos);
+        matrixPos.Enqueue(pos);  
     }
 
     private void SpawnObject()
     {
         if (spawnQueue.Count > 0)
         {
-            GameManager.instance.SetObjectToMatrix(Instantiate(spawnQueue.Dequeue(), transform.position, Quaternion.identity), matrixPos.Dequeue());
+            Matrix.instance.SetObjectToMatrix(Instantiate(spawnQueue.Dequeue(), transform.position, Quaternion.identity), matrixPos.Dequeue());
         }
     }
 }

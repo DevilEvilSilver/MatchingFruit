@@ -5,6 +5,7 @@ using UnityEngine;
 public class Object : MonoBehaviour
 {
     private ParticleSystem selectedEffect;
+    internal IngameObject.ObjectType type;
 
     void Start()
     {
@@ -13,7 +14,7 @@ public class Object : MonoBehaviour
 
     void OnMouseDown()
     {
-        Mechanic.ObjectClicked(this);
+        Matrix.instance.ObjectClicked(this);
     }
 
     public void SetSelected(bool isSelected)
@@ -22,5 +23,11 @@ public class Object : MonoBehaviour
             selectedEffect.Play();
         else
             selectedEffect.Stop();
+    }
+
+    public void SetObjectProperties(IngameObject properties)
+    {
+        type = properties.type;
+        GetComponent<SpriteRenderer>().sprite = properties.sprite;
     }
 }
