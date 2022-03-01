@@ -4,20 +4,18 @@ using UnityEngine;
 
 public class SpawnObjects : MonoBehaviour
 {
-    [SerializeField] private GameObject prefabToSpawn;
+    [SerializeField] private float repeatInterval;
 
     private Queue<GameObject> spawnQueue;
-    private float coolDown = 0.0f;
 
     // Start is called before the first frame update
     void Start()
     {
         spawnQueue = new Queue<GameObject>();
-    }
-
-    void Update()
-    {
-        coolDown -= Time.deltaTime;
+        if (repeatInterval > 0)
+        {
+            InvokeRepeating("SpawnObject", 0.0f, repeatInterval);
+        }
     }
 
     public void AddSpawn(GameObject gameObject)
@@ -25,12 +23,11 @@ public class SpawnObjects : MonoBehaviour
         spawnQueue.Enqueue(gameObject);
     }
 
-    public GameObject SpawnObject()
+    private GameObject SpawnObject()
     {
-        if (spawnQueue.Count != 0 && coolDown < Mathf.Epsilon)
+        if (spawnQueue.Count > 0)
         {
             return Instantiate(spawnQueue.Dequeue(), transform.position, Quaternion.identity);
-            coolDown = 0.5f;
         }
         return null;
     }
