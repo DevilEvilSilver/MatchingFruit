@@ -151,14 +151,13 @@ public class Matrix : MonoBehaviour
                     return;
                 }
 
-                count = 0;
+                count = 1;
                 // Check Horizontal
-                while (j + count < column - 1)
-                {
-                    count++;
+                while (j + count < column)
+                {                  
                     if (m_Matrix[i, j].properties.type == m_Matrix[i, j + count].properties.type)
                     {
-                        continue;
+                        count++;
                     }
                     else
                         break;
