@@ -4,22 +4,23 @@ using UnityEngine;
 
 public class Object : MonoBehaviour
 {
-    public bool isSelected = false;
+    private ParticleSystem selectedEffect;
 
-    // Start is called before the first frame update
     void Start()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        selectedEffect = GetComponentInChildren<ParticleSystem>();
     }
 
     void OnMouseDown()
     {
         Mechanic.ObjectClicked(this);
+    }
+
+    public void SetSelected(bool isSelected)
+    {
+        if (isSelected)
+            selectedEffect.Play();
+        else
+            selectedEffect.Stop();
     }
 }

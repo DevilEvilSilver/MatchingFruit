@@ -10,7 +10,7 @@ public class Mechanic : MonoBehaviour
     {
         if (firstSelected == objectClicked)
         {
-            firstSelected.isSelected = false;
+            firstSelected.SetSelected(false);
             firstSelected = null;
             return;
         }
@@ -19,12 +19,12 @@ public class Mechanic : MonoBehaviour
             if (firstSelected == null)
             {
                 firstSelected = objectClicked;
-                firstSelected.isSelected = true;
+                firstSelected.SetSelected(true);
                 return;
             }
             else
             {
-                objectClicked.isSelected = true;
+                objectClicked.SetSelected(true);
                 Swap(objectClicked);
             }
         }
@@ -34,13 +34,13 @@ public class Mechanic : MonoBehaviour
     {
         if (GameManager.instance.Swap(firstSelected.gameObject, secondSelected.gameObject))
         {
-            firstSelected.isSelected = false;
-            secondSelected.isSelected = false;
+            firstSelected.SetSelected(false);
+            secondSelected.SetSelected(false);
             firstSelected = null;
         }
         else
         {
-            firstSelected.isSelected = false;
+            firstSelected.SetSelected(false);
             firstSelected = secondSelected;
         }
     }
