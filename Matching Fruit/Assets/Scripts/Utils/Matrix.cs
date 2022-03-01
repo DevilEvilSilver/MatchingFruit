@@ -11,7 +11,7 @@ public class Matrix : MonoBehaviour
     [SerializeField] private int column;
     [SerializeField] private GameObject prefab;
 
-    private GameObject[,] m_Matrix;
+    private Object[,] m_Matrix;
     private List<SpawnObjects> m_SpawnList;
     private static Object firstSelected = null;
 
@@ -29,7 +29,7 @@ public class Matrix : MonoBehaviour
 
     void Update()
     {
-        //CheckMatching();
+        CheckMatching();
     }
 
     private void InitSpawnList()
@@ -44,7 +44,7 @@ public class Matrix : MonoBehaviour
 
     private void InitMap()
     {
-        m_Matrix = new GameObject[row, column];
+        m_Matrix = new Object[row, column];
         for (int i = 0; i < row; i++)
         {
             for (int j = 0; j < column; j++)
@@ -52,14 +52,14 @@ public class Matrix : MonoBehaviour
                 Vector3 pos = transform.position;
                 pos.x += j * 51;
                 pos.y += i * 51;
-                m_Matrix[i, j] = Instantiate(prefab, pos, Quaternion.identity);
-                m_Matrix[i, j].GetComponent<Object>().SetObjectProperties(DataManager.instance.GetRandomCommonObject());
+                m_Matrix[i, j] = Instantiate(prefab, pos, Quaternion.identity).GetComponent<Object>();
+                m_Matrix[i, j].SetObjectProperties(DataManager.instance.GetRandomCommonObject());
             }
         }
     }
 
     public void ObjectClicked(Object objectClicked)
-    {
+    { 
         if (firstSelected == objectClicked)
         {
             firstSelected.SetSelected(false);
@@ -77,7 +77,7 @@ public class Matrix : MonoBehaviour
             else
             {
                 objectClicked.SetSelected(true);
-                if (Swap(firstSelected.gameObject, objectClicked.gameObject))
+                if (Swap(firstSelected, objectClicked))
                 {
                     firstSelected.SetSelected(false);
                     objectClicked.SetSelected(false);
@@ -92,7 +92,7 @@ public class Matrix : MonoBehaviour
         }
     }
 
-    private bool Swap(GameObject first, GameObject second)
+    private bool Swap(Object first, Object second)
     {
         // Check if is swapable
         Vector2Int firstPos = Vector2Int.zero, secondPos = Vector2Int.zero;
@@ -106,9 +106,6 @@ public class Matrix : MonoBehaviour
                     secondPos = new Vector2Int(i, j);
             }
         }
-
-        Debug.Log(firstPos);
-        Debug.Log(secondPos);
 
         if (firstPos.x == secondPos.x && Mathf.Abs(firstPos.y - secondPos.y) == 1 ||
             firstPos.y == secondPos.y && Mathf.Abs(firstPos.x - secondPos.x) == 1)
@@ -137,14 +134,13 @@ public class Matrix : MonoBehaviour
         {
             for (int j = 0; j < column; j++)
             {
-                int count = 0;
+                int count = 1;
                 // Check Vertical
-                while (i + count < row - 1)
+                while (i + count < row)
                 {
-                    count++;
-                    if (m_Matrix[i, j].tag == m_Matrix[i + count, j].tag)
+                    if (m_Matrix[i, j].properties.type == m_Matrix[i + count, j].properties.type)
                     {
-                        continue;
+                        count++;
                     }
                     else
                         break;
@@ -160,7 +156,7 @@ public class Matrix : MonoBehaviour
                 while (j + count < column - 1)
                 {
                     count++;
-                    if (m_Matrix[i, j].tag == m_Matrix[i, j + count].tag)
+                    if (m_Matrix[i, j].properties.type == m_Matrix[i, j + count].properties.type)
                     {
                         continue;
                     }
@@ -180,37 +176,25 @@ public class Matrix : MonoBehaviour
     {
         if (isVertival)
         {
-            Debug.Log("doc");
-            // Destroy
-            for (int i = 0; i < count; i++)
-            {
-                Destroy(m_Matrix[pos.x + i, pos.y]);
-            }
             // Update
             for (int i = pos.x; i < row; i++)
             {
                 if (i + count < row)
-                    m_Matrix[i, pos.y] = m_Matrix[i + count, pos.y];
-                else { }
-                    //m_SpawnList[pos.y].AddSpawn(DataManager.instance.GetRandomCommonObject(), new Vector2Int(i, pos.y));
+                    m_Matrix[i, pos.y].SetObjectProperties(m_Matrix[i + count, pos.y].properties);
+                else
+                    m_Matrix[i, pos.y].SetObjectProperties(DataManager.instance.GetRandomCommonObject());
             }
         }
         else
         {
-            Debug.Log("ngang");
-            // Destroy
-            for (int j = 0; j < count; j++)
-            {
-                Destroy(m_Matrix[pos.x, pos.y + j]);
-            }
             // Update
             for (int j = pos.y; j < pos.y + count; j++)
             {
                 for (int i = pos.x; i < row - 1; i++)
                 {
-                    m_Matrix[i, j] = m_Matrix[i + 1, j];
+                    m_Matrix[i, j].SetObjectProperties(m_Matrix[i + 1, j].properties);
                 }
-                //m_SpawnList[j].AddSpawn(DataManager.instance.GetRandomCommonObject(), new Vector2Int(row - 1, j));
+                m_Matrix[row - 1, j].SetObjectProperties(DataManager.instance.GetRandomCommonObject());
             }
         }
     }

@@ -5,7 +5,7 @@ using UnityEngine;
 public class Object : MonoBehaviour
 {
     private ParticleSystem selectedEffect;
-    internal IngameObject.ObjectType type;
+    internal IngameObject properties;
 
     void Start()
     {
@@ -27,7 +27,7 @@ public class Object : MonoBehaviour
 
     public void SetObjectProperties(IngameObject properties)
     {
-        type = properties.type;
+        this.properties = properties;
         GetComponent<SpriteRenderer>().sprite = properties.sprite;
     }
 }
