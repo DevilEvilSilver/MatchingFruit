@@ -74,6 +74,46 @@ public class Matrix : MonoBehaviour
         }
     }
 
+    private bool CheckCanContinue()
+    {
+        for (int i = 0; i < row; i++)
+        {
+            for (int j = 0; j < column - 1; j++)
+            {
+                Swap(m_Matrix[i, j], m_Matrix[i, j + 1]);
+                if (CheckMatching())
+                {
+                    Swap(m_Matrix[i, j], m_Matrix[i, j + 1]);
+
+                    // Reset Existing Check Matrix
+                    InitExistingObjectsMatrix();
+                    return true;
+                }
+                Swap(m_Matrix[i, j], m_Matrix[i, j + 1]);
+            }
+        }
+        for (int j = 0; j < column; j++)
+        {
+            for (int i = 0; i < row - 1; i++)
+            {
+                Swap(m_Matrix[i + 1, j], m_Matrix[i, j]);
+                if (CheckMatching())
+                {
+                    Swap(m_Matrix[i + 1, j], m_Matrix[i, j]);
+
+                    // Reset Existing Check Matrix
+                    InitExistingObjectsMatrix();
+                    return true;
+                }
+                Swap(m_Matrix[i + 1, j], m_Matrix[i, j]);
+            }
+        }
+
+        // Reset Existing Check Matrix
+        InitExistingObjectsMatrix();
+        return false;
+    }
+
     public void ObjectClicked(Object objectClicked)
     {
         if (m_IsInCombo)
@@ -167,6 +207,11 @@ public class Matrix : MonoBehaviour
                 Debug.Log("Combo: " + m_Combo);
             }
             yield return new WaitForSeconds(0.5f);
+        }
+
+        if (!CheckCanContinue())
+        {
+            GameManager.instance.OutOfMove();
         }
 
         m_Combo = 0;

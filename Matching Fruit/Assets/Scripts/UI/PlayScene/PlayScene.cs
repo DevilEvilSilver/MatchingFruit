@@ -13,6 +13,8 @@ public class PlayScene : MonoBehaviour
     public TextUI m_MissionCounter;
     public ImageUI m_Mission;
 
+    public RefreshHint m_refreshHint;
+
     void Awake()
     {
         if (instance == null)

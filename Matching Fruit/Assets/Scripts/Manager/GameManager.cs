@@ -53,8 +53,8 @@ public class GameManager : MonoBehaviour
     {
         m_Score += matchedObjectCount * combo * 50;
         PlayScene.instance.m_Score.SetText(m_Score.ToString());
-        
-        //if (combo > 1)
+
+        if (combo > 1)
             PlayScene.instance.m_Combo.SetText("x" + combo.ToString());
     }
 
@@ -79,27 +79,37 @@ public class GameManager : MonoBehaviour
             {
                 m_CurrMission.counter--;
                 PlayScene.instance.m_MissionCounter.SetText(m_CurrMission.counter.ToString());
-            }
-                
+            }      
         }
+    }
+
+    public void OutOfMove()
+    {
+        if (m_Balance >= 25)
+        {
+            PlayScene.instance.m_refreshHint.SetSelected(true);
+            return;
+        }
+        Debug.Log("GAME OVER !!!!!!");
     }
 
     // Currently using static items (hard code)
     public void BuyRefresh()
     {
-        //if (m_Balance < 25)
-        //    return;
+        if (m_Balance < 25)
+            return;
 
         m_Balance -= 25;
         PlayScene.instance.m_Balance.SetText(m_Balance.ToString());
 
+        PlayScene.instance.m_refreshHint.SetSelected(false);
         Matrix.instance.ResetMatrix();
     }
 
     public void BuyAddTurn()
     {
-        //if (m_Balance < 5)
-        //    return;
+        if (m_Balance < 5)
+            return;
 
         m_Balance -= 5;
         PlayScene.instance.m_Balance.SetText(m_Balance.ToString());
@@ -109,8 +119,8 @@ public class GameManager : MonoBehaviour
 
     public void BuyHint()
     {
-        //if (m_Balance < 2)
-        //    return;
+        if (m_Balance < 2)
+            return;
 
         m_Balance -= 2;
         PlayScene.instance.m_Balance.SetText(m_Balance.ToString());
