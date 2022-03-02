@@ -16,7 +16,7 @@ public class Matrix : MonoBehaviour
     private int[,] m_ExistingObjects;
     private Vector3 m_ObjectSize;
 
-    public bool m_CanMatching = true;
+    private bool[,] m_FallingObjects;
     private bool m_IsInCombo = false;
     private int m_Combo = 0;
 
@@ -33,8 +33,9 @@ public class Matrix : MonoBehaviour
         m_ObjectSize = prefab.GetComponent<SpriteRenderer>().bounds.size;
         m_Matrix = new Object[row, column];
         m_ExistingObjects = new int[row, column];
+        m_FallingObjects = new bool[row, column];
         InitMap();
-        InitExistingObjectsMatrix();
+        InitObjectsObserverMatrix();
 
         StartCoroutine(StartMatchCombo());
     }
@@ -59,19 +60,40 @@ public class Matrix : MonoBehaviour
                 pos.y += i * m_ObjectSize.y;
                 m_Matrix[i, j] = Instantiate(prefab, pos, Quaternion.identity).GetComponent<Object>();
                 m_Matrix[i, j].SetObjectProperties(DataManager.instance.GetRandomCommonObject());
+                m_Matrix[i, j].SetMatrixPosition(pos);
+                m_Matrix[i, j].m_MatrixIndex = new Vector2Int(i, j);
             }
         } 
     }
 
-    private void InitExistingObjectsMatrix()
+    private void InitObjectsObserverMatrix()
     {
         for (int i = 0; i < row; i++)
         {
             for (int j = 0; j < column; j++)
             {
                 m_ExistingObjects[i, j] = 1;
+                m_FallingObjects[i, j] = true;
             }
         }
+    }
+
+    public void UpdateFallingObject(Vector2Int pos, bool isFalling)
+    {
+        m_FallingObjects[pos.x, pos.y] = isFalling;
+    }
+
+    private bool CheckFallingObject()
+    {
+        for (int i = 0; i < row; i++)
+        {
+            for (int j = 0; j < column; j++)
+            {
+                if (m_FallingObjects[i, j] == true)
+                    return true;
+            }
+        }
+        return false;
     }
 
     private bool CheckCanContinue()
@@ -85,8 +107,7 @@ public class Matrix : MonoBehaviour
                 {
                     Swap(m_Matrix[i, j], m_Matrix[i, j + 1]);
 
-                    // Reset Existing Check Matrix
-                    InitExistingObjectsMatrix();
+                    InitObjectsObserverMatrix();
                     return true;
                 }
                 Swap(m_Matrix[i, j], m_Matrix[i, j + 1]);
@@ -101,16 +122,14 @@ public class Matrix : MonoBehaviour
                 {
                     Swap(m_Matrix[i + 1, j], m_Matrix[i, j]);
 
-                    // Reset Existing Check Matrix
-                    InitExistingObjectsMatrix();
+                    InitObjectsObserverMatrix();
                     return true;
                 }
                 Swap(m_Matrix[i + 1, j], m_Matrix[i, j]);
             }
         }
 
-        // Reset Existing Check Matrix
-        InitExistingObjectsMatrix();
+        InitObjectsObserverMatrix();
         return false;
     }
 
@@ -136,7 +155,7 @@ public class Matrix : MonoBehaviour
             else
             {
                 objectClicked.SetSelected(true);
-                if (CheckSwap(firstSelected, objectClicked))
+                if (CheckSwap(firstSelected.m_MatrixIndex, objectClicked.m_MatrixIndex))
                 {
                     firstSelected.SetSelected(false);
                     objectClicked.SetSelected(false);
@@ -151,28 +170,13 @@ public class Matrix : MonoBehaviour
         }
     }
 
-    private bool CheckSwap(Object first, Object second)
+    private bool CheckSwap(Vector2Int first, Vector2Int second)
     {
-        // Get pos
-        Vector2Int firstPos = Vector2Int.zero, secondPos = Vector2Int.zero;
-        for (int i = 0; i < row; i++)
-        {
-            for (int j = 0; j < column; j++)
-            {
-                if (m_Matrix[i, j] == first)
-                    firstPos = new Vector2Int(i, j);
-                if (m_Matrix[i, j] == second)
-                    secondPos = new Vector2Int(i, j);
-            }
-        }
-
-        //Debug.Log(firstPos + "--" + secondPos);
-
         // Check if is swapable
-        if (firstPos.x == secondPos.x && Mathf.Abs(firstPos.y - secondPos.y) == 1 ||
-            firstPos.y == secondPos.y && Mathf.Abs(firstPos.x - secondPos.x) == 1)
+        if (first.x == second.x && Mathf.Abs(first.y - second.y) == 1 ||
+            first.y == second.y && Mathf.Abs(first.x - second.x) == 1)
         {
-            Swap(m_Matrix[firstPos.x, firstPos.y], m_Matrix[secondPos.x, secondPos.y]);
+            Swap(m_Matrix[first.x, first.y], m_Matrix[second.x, second.y]);
 
             if (CheckMatching())
             {
@@ -183,7 +187,7 @@ public class Matrix : MonoBehaviour
             }
             else
             {
-                Swap(m_Matrix[secondPos.x, secondPos.y], m_Matrix[firstPos.x, firstPos.y]);
+                Swap(m_Matrix[second.x, second.y], m_Matrix[first.x, first.y]);
                 Debug.Log("Swap lam j bn ?");
             }
 
@@ -199,12 +203,10 @@ public class Matrix : MonoBehaviour
 
         while (CheckMatching())
         {
-            if (m_CanMatching)
+            if (!CheckFallingObject())
             {
                 m_Combo++;
                 GameManager.instance.UpdateScores(UpdateMatrix(), m_Combo);
-                
-                Debug.Log("Combo: " + m_Combo);
             }
             yield return new WaitForSeconds(0.5f);
         }
@@ -306,7 +308,6 @@ public class Matrix : MonoBehaviour
         int matchedObjectcount = 0;
 
         int[] columnQueue = new int[column];
-        Vector3[,] newPoses = new Vector3[row, column];
         for (int i = 0; i < column; i++)
             columnQueue[i] = 0;
 
@@ -337,7 +338,7 @@ public class Matrix : MonoBehaviour
                         if (m_ExistingObjects[r, j] != 0)
                         {
                             m_Matrix[i, j].SetObjectProperties(m_Matrix[r, j].properties);
-                            newPoses[i, j] = m_Matrix[r, j].transform.position;
+                            m_Matrix[i, j].transform.position = m_Matrix[r, j].transform.position;
                             m_ExistingObjects[i, j] = 1;
                             m_ExistingObjects[r, j] = 0;
                             break;
@@ -350,26 +351,15 @@ public class Matrix : MonoBehaviour
                         Vector3 pos = transform.position;
                         pos.x += j * (m_ObjectSize.x + 1);
                         pos.y += (row + columnQueue[j] + 1) * m_ObjectSize.y;
-                        newPoses[i, j] = pos;
+                        m_Matrix[i, j].transform.position = pos;
                         columnQueue[j]++;
                     }
                 }
-                else
-                    newPoses[i, j] = m_Matrix[i, j].transform.position;
-            }
-        }
-
-        // Update Position
-        for (int i = row - 1; i > -1; i--)
-        {
-            for (int j = 0; j < column; j++)
-            {
-                m_Matrix[i, j].transform.position = newPoses[i, j];
             }
         }
 
         // Reset Existing Check Matrix
-        InitExistingObjectsMatrix();
+        InitObjectsObserverMatrix();
 
         return matchedObjectcount;
     }

@@ -13,8 +13,8 @@ public class ImageUI : MonoBehaviour
         m_Sprite = GetComponent<Image>();
     }
 
-    public void SetText(Sprite sprite)
+    public void SetSprite(Sprite sprite)
     {
-        m_Sprite.sprite = sprite;
+        m_Sprite.overrideSprite = sprite;
     }
 }

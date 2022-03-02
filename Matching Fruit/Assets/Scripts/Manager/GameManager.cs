@@ -27,7 +27,7 @@ public class GameManager : MonoBehaviour
         PlayScene.instance.m_Turns.SetText(m_Turns.ToString());
         PlayScene.instance.m_Balance.SetText(m_Balance.ToString());
         PlayScene.instance.m_MissionCounter.SetText(m_CurrMission.counter.ToString());
-        PlayScene.instance.m_Mission.SetText((m_CurrMission as ClearMission).ingameObject.sprite);
+        PlayScene.instance.m_Mission.SetSprite((m_CurrMission as ClearMission).ingameObject.sprite);
     }
 
     // Update is called once per frame
@@ -45,7 +45,7 @@ public class GameManager : MonoBehaviour
 
             m_CurrMission = DataManager.instance.GetRandomClearMission();
             PlayScene.instance.m_MissionCounter.SetText(m_CurrMission.counter.ToString());
-            PlayScene.instance.m_Mission.SetText((m_CurrMission as ClearMission).ingameObject.sprite);
+            PlayScene.instance.m_Mission.SetSprite((m_CurrMission as ClearMission).ingameObject.sprite);
         }
     }
 

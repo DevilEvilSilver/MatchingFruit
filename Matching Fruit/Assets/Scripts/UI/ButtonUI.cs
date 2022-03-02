@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class Button : MonoBehaviour
+public class ButtonUI : MonoBehaviour
 {
     [SerializeField] protected Sprite originSprite = null;
     [SerializeField] protected Sprite downSprite = null;

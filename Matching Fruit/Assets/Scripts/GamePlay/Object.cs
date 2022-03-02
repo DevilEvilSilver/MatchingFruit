@@ -4,9 +4,14 @@ using UnityEngine;
 
 public class Object : MonoBehaviour
 {
+    [SerializeField] private float m_Gravity = -250f;
+    private Vector2 m_Velocity = Vector2.zero;
+    private Vector3 m_MatrixPosition;
+    internal Vector2Int m_MatrixIndex;
+
     private ParticleSystem selectedEffect;
-    private Rigidbody2D rb2D;
     internal IngameObject properties;
+    private Rigidbody2D rb2D;
 
     void Start()
     {
@@ -14,15 +19,30 @@ public class Object : MonoBehaviour
         rb2D = GetComponentInChildren<Rigidbody2D>();
     }
 
-    void Update()
+    void FixedUpdate()
     {
-        if (rb2D.velocity.y < -300f)
-            rb2D.velocity = new Vector2(0, -300f);
+        if (transform.position.y > m_MatrixPosition.y)
+        {
+            m_Velocity.y = m_Velocity.y + m_Gravity * Time.deltaTime;
+            Matrix.instance.UpdateFallingObject(m_MatrixIndex, true);
+        }
+        else
+        {
+            m_Velocity.y = 0f;
+            transform.position = m_MatrixPosition;
+            Matrix.instance.UpdateFallingObject(m_MatrixIndex, false);
+        }
+        rb2D.velocity = m_Velocity;
     }
 
     void OnMouseDown()
     {
         Matrix.instance.ObjectClicked(this);
+    }
+
+    public void SetMatrixPosition(Vector3 pos)
+    {
+        m_MatrixPosition = pos;
     }
 
     public void SetSelected(bool isSelected)
