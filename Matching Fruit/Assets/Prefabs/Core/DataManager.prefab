@@ -51,3 +51,11 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ee1c5d14647ec0d44b622153c6760936, type: 2}
   - {fileID: 11400000, guid: 55673196562d47e4c849a8fa7e53fd2c, type: 2}
   - {fileID: 11400000, guid: 890716b9ce09055409881795ad67d16a, type: 2}
+  m_ClearMissions:
+  - {fileID: 11400000, guid: cff4d91e0e85eba4781181f6c945ddc3, type: 2}
+  - {fileID: 11400000, guid: d6c5964583e171f4896792718cc6abef, type: 2}
+  - {fileID: 11400000, guid: abbe2991d521d2e4394b477fd4fc4f2b, type: 2}
+  - {fileID: 11400000, guid: 59858d5fb2aa7a743ac7711c3db0e961, type: 2}
+  - {fileID: 11400000, guid: fabbd4dc2243cac4c84ee37d7814afbd, type: 2}
+  - {fileID: 11400000, guid: 2b425559044139444989e9e457a7dc2d, type: 2}
+  - {fileID: 11400000, guid: 2c773b3f9b1c80a47998e4830b3fd2dd, type: 2}
