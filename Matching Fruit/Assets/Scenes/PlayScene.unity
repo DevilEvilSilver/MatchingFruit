@@ -958,6 +958,21 @@ PrefabInstance:
       propertyPath: m_Name
       value: BottomLane
       objectReference: {fileID: 0}
+    - target: {fileID: 4027234459246493221, guid: 3c0f54133d85e95428486546248732b9,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4027234459246493223, guid: 3c0f54133d85e95428486546248732b9,
+        type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4027234459246493223, guid: 3c0f54133d85e95428486546248732b9,
+        type: 3}
+      propertyPath: m_UsedByEffector
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3c0f54133d85e95428486546248732b9, type: 3}
 --- !u!1001 &5997421750072993245
@@ -1170,12 +1185,6 @@ PrefabInstance:
       propertyPath: row
       value: 6
       objectReference: {fileID: 0}
-    - target: {fileID: 8329968104464609555, guid: 395ac7335ac28e441910f2dc6f59098b,
-        type: 3}
-      propertyPath: prefab
-      value: 
-      objectReference: {fileID: 4913775858448064275, guid: 0a45572a03e098142b596d75e64aaa5e,
-        type: 3}
     - target: {fileID: 8329968104464609556, guid: 395ac7335ac28e441910f2dc6f59098b,
         type: 3}
       propertyPath: m_Name

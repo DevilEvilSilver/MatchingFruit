@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Matrix : MonoBehaviour
 {
@@ -12,7 +13,8 @@ public class Matrix : MonoBehaviour
     [SerializeField] private GameObject prefab;
 
     private Object[,] m_Matrix;
-    private List<SpawnObjects> m_SpawnList;
+    private int[,] m_ExistingObjects;
+    private Vector3 m_ObjectSize;
     private static Object firstSelected = null;
 
     void Awake()
@@ -23,37 +25,40 @@ public class Matrix : MonoBehaviour
 
     void Start()
     {
-        InitSpawnList();
+        m_ObjectSize = prefab.GetComponent<SpriteRenderer>().bounds.size;
+        m_Matrix = new Object[row, column];
+        m_ExistingObjects = new int[row, column];
         InitMap();
+        InitExistingObjectsMatrix();
     }
 
     void Update()
     {
-        CheckMatching();
-    }
-
-    private void InitSpawnList()
-    {
-        m_SpawnList = new List<SpawnObjects>();
-        m_SpawnList.AddRange(gameObject.GetComponentsInChildren<SpawnObjects>());
-        m_SpawnList.Sort(delegate (SpawnObjects o1, SpawnObjects o2)
-        {
-            return o1.transform.position.x.CompareTo(o2.transform.position.x);
-        });
+        
     }
 
     private void InitMap()
     {
-        m_Matrix = new Object[row, column];
         for (int i = 0; i < row; i++)
         {
             for (int j = 0; j < column; j++)
             {
                 Vector3 pos = transform.position;
-                pos.x += j * 51;
-                pos.y += i * 51;
+                pos.x += j * (m_ObjectSize.x + 1);
+                pos.y += i * m_ObjectSize.y;
                 m_Matrix[i, j] = Instantiate(prefab, pos, Quaternion.identity).GetComponent<Object>();
                 m_Matrix[i, j].SetObjectProperties(DataManager.instance.GetRandomCommonObject());
+            }
+        } 
+    }
+
+    private void InitExistingObjectsMatrix()
+    {
+        for (int i = 0; i < row; i++)
+        {
+            for (int j = 0; j < column; j++)
+            {
+                m_ExistingObjects[i, j] = 1;
             }
         }
     }
@@ -77,7 +82,7 @@ public class Matrix : MonoBehaviour
             else
             {
                 objectClicked.SetSelected(true);
-                if (Swap(firstSelected, objectClicked))
+                if (CheckSwap(firstSelected, objectClicked))
                 {
                     firstSelected.SetSelected(false);
                     objectClicked.SetSelected(false);
@@ -92,9 +97,9 @@ public class Matrix : MonoBehaviour
         }
     }
 
-    private bool Swap(Object first, Object second)
+    private bool CheckSwap(Object first, Object second)
     {
-        // Check if is swapable
+        // Get pos
         Vector2Int firstPos = Vector2Int.zero, secondPos = Vector2Int.zero;
         for (int i = 0; i < row; i++)
         {
@@ -107,15 +112,21 @@ public class Matrix : MonoBehaviour
             }
         }
 
+        //Debug.Log(firstPos + "--" + secondPos);
+
+        // Check if is swapable
         if (firstPos.x == secondPos.x && Mathf.Abs(firstPos.y - secondPos.y) == 1 ||
             firstPos.y == secondPos.y && Mathf.Abs(firstPos.x - secondPos.x) == 1)
         {
-            // Swap in matrix
-            (m_Matrix[firstPos.x, firstPos.y], m_Matrix[secondPos.x, secondPos.y]) =
-                (m_Matrix[secondPos.x, secondPos.y], m_Matrix[firstPos.x, firstPos.y]);
-            // Swap visually
-            (first.transform.position, second.transform.position) =
-                (second.transform.position, first.transform.position);
+            Swap(m_Matrix[firstPos.x, firstPos.y], m_Matrix[secondPos.x, secondPos.y]);
+
+            if (CheckMatching())
+                UpdateMatrix();
+            else
+            {
+                Swap(m_Matrix[secondPos.x, secondPos.y], m_Matrix[firstPos.x, firstPos.y]);
+                Debug.Log("Swap lam j bn ?");
+            }
 
             return true;
         }
@@ -123,78 +134,126 @@ public class Matrix : MonoBehaviour
         return false;
     }
 
-    public void SetObjectToMatrix(GameObject ingameObject, Vector2Int pos)
+    private void Swap(Object first, Object second)
     {
-        //m_Matrix[pos.x, pos.y] = ingameObject;
+        //// Swap in matrix
+        //(m_Matrix[firstPos.x, firstPos.y], m_Matrix[secondPos.x, secondPos.y]) =
+        //    (m_Matrix[secondPos.x, secondPos.y], m_Matrix[firstPos.x, firstPos.y]);
+        //// Swap visually
+        //(first.transform.position, second.transform.position) =
+        //    (second.transform.position, first.transform.position);
+
+        IngameObject tmp = first.properties;
+        first.SetObjectProperties(second.properties);
+        second.SetObjectProperties(tmp);
     }
 
-    private void CheckMatching()
+    private bool CheckMatching()
     {
+        bool isMatch = false;
+
+        // Horizontal
+        for (int i = 0; i < row; i++)
+        {
+            int[] checkList = new int[column];
+            checkList[0] = 1;
+            
+            for (int j = 1; j < column; j++)
+            {
+                if (m_Matrix[i, j - 1].properties.type == m_Matrix[i, j].properties.type)
+                    checkList[j] = checkList[j - 1] + 1;
+                else
+                    checkList[j] = 1; 
+            }
+            int count = 0;
+
+            for (int j = column - 1; j > -1; j--)
+            {
+                if (count > 0)
+                {
+                    m_ExistingObjects[i, j] = 0;
+                    count--;
+                }
+                else if (checkList[j] >= 3)
+                {
+                    isMatch = true;
+                    m_ExistingObjects[i, j] = 0;
+                    count = checkList[j] - 1;
+                }               
+            }
+        }
+
+        // Vertical
+        for (int j = 0; j < column; j++)
+        {
+            int[] checkList = new int[column];
+            checkList[0] = 1;
+
+            for (int i = 1; i < row; i++)
+            {
+                if (m_Matrix[i - 1, j].properties.type == m_Matrix[i, j].properties.type)
+                    checkList[i] = checkList[i - 1] + 1;
+                else
+                    checkList[i] = 1; 
+            }
+
+            int count = 0;
+            for (int i = row - 1; i > -1; i--)
+            {
+                if (count > 0)
+                {
+                    m_ExistingObjects[i, j] = 0;
+                    count--;
+                }
+                else if (checkList[i] >= 3)
+                {
+                    isMatch = true;
+                    m_ExistingObjects[i, j] = 0;
+                    count = checkList[i] - 1;
+                }
+            }
+        }
+
+        return isMatch;
+    }
+
+    private void UpdateMatrix()
+    {
+        int[] columnQueue = new int[column];
+        for (int i = 0; i < column; i++)
+            columnQueue[i] = 0;
+
         for (int i = 0; i < row; i++)
         {
             for (int j = 0; j < column; j++)
             {
-                int count = 1;
-                // Check Vertical
-                while (i + count < row)
+                if (m_ExistingObjects[i, j] == 0)
                 {
-                    if (m_Matrix[i, j].properties.type == m_Matrix[i + count, j].properties.type)
+                    int r = i + 1;
+                    while (r < row)
                     {
-                        count++;
+                        if (m_ExistingObjects[r, j] != 0)
+                        {
+                            m_Matrix[i, j].SetObjectProperties(m_Matrix[r, j].properties);
+                            m_Matrix[i, j].transform.position = m_Matrix[r, j].transform.position;
+                            m_ExistingObjects[i, j] = 1;
+                            m_ExistingObjects[r, j] = 0;
+                            break;
+                        }
+                        r++;
                     }
-                    else
-                        break;
-                }
-                if (count >= 3)
-                {
-                    SetMatching(new Vector2Int(i, j), count, true);
-                    return;
-                }
-
-                count = 1;
-                // Check Horizontal
-                while (j + count < column)
-                {                  
-                    if (m_Matrix[i, j].properties.type == m_Matrix[i, j + count].properties.type)
+                    if (m_ExistingObjects[i, j] == 0)
                     {
-                        count++;
+                        m_Matrix[i, j].SetObjectProperties(DataManager.instance.GetRandomCommonObject());
+                        Vector3 pos = transform.position;
+                        pos.x += j * (m_ObjectSize.x + 1);
+                        pos.y += (row + columnQueue[j] + 1) * m_ObjectSize.y;
+                        m_Matrix[i, j].transform.position = pos;
+                        columnQueue[j]++;
                     }
-                    else
-                        break;
-                }
-                if (count >= 3)
-                {
-                    SetMatching(new Vector2Int(i, j), count, false);
-                    return;
                 }
             }
         }
-    }
-
-    private void SetMatching(Vector2Int pos, int count, bool isVertival)
-    {
-        if (isVertival)
-        {
-            // Update
-            for (int i = pos.x; i < row; i++)
-            {
-                if (i + count < row)
-                    m_Matrix[i, pos.y].SetObjectProperties(m_Matrix[i + count, pos.y].properties);
-                else
-                    m_Matrix[i, pos.y].SetObjectProperties(DataManager.instance.GetRandomCommonObject());
-            }
-        }
-        else
-        {
-            // Update
-            for (int j = pos.y; j < pos.y + count; j++)
-            {
-                for (int i = pos.x; i < row - 1; i++)
-                {
-                    m_Matrix[i, j].SetObjectProperties(m_Matrix[i + 1, j].properties);
-                }
-                m_Matrix[row - 1, j].SetObjectProperties(DataManager.instance.GetRandomCommonObject());
-            }
-        }
+        InitExistingObjectsMatrix();
     }
 }
