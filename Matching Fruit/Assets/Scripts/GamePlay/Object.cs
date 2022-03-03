@@ -5,17 +5,36 @@ using UnityEngine;
 public class Object : MonoBehaviour
 {
     [SerializeField] private float m_Gravity = -250f;
-    private Vector2 m_Velocity = Vector2.zero;
-    private Vector3 m_MatrixPosition;
+    [SerializeField] private AnimationCurve m_SwapCurve;
+    internal Vector2 m_Velocity = Vector2.zero;
+    internal Vector3 m_MatrixPosition;
     internal Vector2Int m_MatrixIndex;
 
-    private ParticleSystem selectedEffect;
-    internal IngameObject properties;
+    private SpriteRenderer spriteRenderer;
+    private ParticleSystem particleEffect;
+    private ParticleSystem.MainModule particleMainModule;
+
+    private IngameObject properties;
+    internal IngameObject Properties
+    {
+        get
+        {
+            return this.properties;
+        }
+        set
+        {
+            this.properties = value;
+            Matrix.instance.SetHint(false);
+        }
+    }
+
     private Rigidbody2D rb2D;
 
     void Start()
     {
-        selectedEffect = GetComponentInChildren<ParticleSystem>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        particleEffect = GetComponentInChildren<ParticleSystem>();
+        particleMainModule = particleEffect.main;
         rb2D = GetComponentInChildren<Rigidbody2D>();
     }
 
@@ -40,22 +59,63 @@ public class Object : MonoBehaviour
         Matrix.instance.ObjectClicked(this);
     }
 
-    public void SetMatrixPosition(Vector3 pos)
-    {
-        m_MatrixPosition = pos;
-    }
-
     public void SetSelected(bool isSelected)
     {
         if (isSelected)
-            selectedEffect.Play();
+        {
+            particleMainModule.startColor = new ParticleSystem.MinMaxGradient(Color.white);
+            particleEffect.Play();
+        }
         else
-            selectedEffect.Stop();
+        {
+            particleEffect.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        }
+    }
+
+    public void SetHint(bool isHint)
+    {
+        if (isHint)
+        {
+            particleMainModule.startColor = new ParticleSystem.MinMaxGradient(Color.green);
+            particleEffect.Play();
+        }
+        else
+        {
+            particleEffect.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        }
+    }
+
+    public IEnumerator SetWarn()
+    {
+        int count = 2;
+        while (count-- > 0)
+        {
+            spriteRenderer.color = Color.red;
+
+            yield return new WaitForSeconds(0.3f);
+
+            spriteRenderer.color = Color.white;
+
+            yield return new WaitForSeconds(0.2f);
+        }
     }
 
     public void SetObjectProperties(IngameObject properties)
     {
-        this.properties = properties;
+        this.Properties = properties;
         GetComponent<SpriteRenderer>().sprite = properties.sprite;
+    }
+
+    public IEnumerator MoveTo(Vector3 destiny, float time)
+    {
+        float currTime = time;
+        Vector3 originalPos = transform.position;
+        while (currTime > 0)
+        {
+            transform.position = Vector3.Lerp(destiny, originalPos, m_SwapCurve.Evaluate(currTime / time));
+            currTime -= Time.deltaTime;
+            yield return null;
+        }
+        transform.position = Vector3.Lerp(destiny, originalPos, 0);
     }
 }

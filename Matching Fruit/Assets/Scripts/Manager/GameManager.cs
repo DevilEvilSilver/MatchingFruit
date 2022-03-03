@@ -6,12 +6,18 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
-    [SerializeField] private int m_Turns;
-    public int m_Score = 0;
+    [SerializeField] private int time = 180;
+    [SerializeField] private int turns = 30;
+    [SerializeField] private int balance = 0;
 
     // TODO: Create seperate class for mission management & shopping
-    private int m_Balance = 0;
+    private float m_Time;
+    private int m_Turns;
+    private int m_Balance;
+    private int m_Score = 0;
     private Mission m_CurrMission;
+
+    internal bool m_IsEndGame = false;
 
     void Awake()
     {
@@ -23,7 +29,11 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         m_CurrMission = DataManager.instance.GetRandomClearMission();
+        m_Time = time;
+        m_Turns = turns;
+        m_Balance = balance;
 
+        PlayScene.instance.m_Time.SetText(Mathf.Floor(m_Time).ToString());
         PlayScene.instance.m_Turns.SetText(m_Turns.ToString());
         PlayScene.instance.m_Balance.SetText(m_Balance.ToString());
         PlayScene.instance.m_MissionCounter.SetText(m_CurrMission.counter.ToString());
@@ -33,9 +43,14 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (m_Turns <= 0)
+        if (m_IsEndGame)
+            return;
+
+        StartCoroutine(UpdateTime());
+
+        if (!CheckTurns())
         {
-            Debug.Log("GAME OVER !!!!!!");
+            StartCoroutine(OutOfTurn());
         }
 
         if (m_CurrMission.counter <= 0)
@@ -47,6 +62,45 @@ public class GameManager : MonoBehaviour
             PlayScene.instance.m_MissionCounter.SetText(m_CurrMission.counter.ToString());
             PlayScene.instance.m_Mission.SetSprite((m_CurrMission as ClearMission).ingameObject.sprite);
         }
+    }
+
+    public void ResetGame()
+    {
+        m_Score = 0;
+        m_Time = time;
+        m_Turns = turns;
+        m_Balance = balance;
+        m_CurrMission = DataManager.instance.GetRandomClearMission();
+
+        PlayScene.instance.m_Score.SetText(m_Score.ToString());
+        PlayScene.instance.m_Time.SetText(Mathf.Floor(m_Time).ToString());
+        PlayScene.instance.m_Turns.SetText(m_Turns.ToString());
+        PlayScene.instance.m_Balance.SetText(m_Balance.ToString());
+        PlayScene.instance.m_MissionCounter.SetText(m_CurrMission.counter.ToString());
+        PlayScene.instance.m_Mission.SetSprite((m_CurrMission as ClearMission).ingameObject.sprite);
+
+        Matrix.instance.ResetMatrix();
+        m_IsEndGame = false;
+    }
+
+    private IEnumerator UpdateTime()
+    {
+        m_Time -= Time.deltaTime;
+        if (m_Time < 0f)
+        {
+            m_Time = 0f;
+            m_IsEndGame = true;
+            while (true)
+            {
+                if (Matrix.instance.CheckMatching())
+                    yield return null;
+                else
+                    break;
+            }
+            PlayScene.instance.Result(m_Score.ToString(), "OUT OF TIME !!!");
+        }
+
+        PlayScene.instance.m_Time.SetText(Mathf.Floor(m_Time).ToString());
     }
 
     public void UpdateScores(int matchedObjectCount, int combo)
@@ -70,6 +124,11 @@ public class GameManager : MonoBehaviour
         PlayScene.instance.m_Turns.SetText(m_Turns.ToString());
     }
     
+    public bool CheckTurns()
+    {
+        return m_Turns > 0;
+    }
+
     public void UpdateClearMission(IngameObject ingameObject)
     {
         if (m_CurrMission is ClearMission)
@@ -83,14 +142,30 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void OutOfMove()
+    public IEnumerator OutOfMove()
     {
         if (m_Balance >= 25)
         {
-            PlayScene.instance.m_refreshHint.SetSelected(true);
-            return;
+            PlayScene.instance.m_RefreshHint.SetSelected(true);
+            yield break;
         }
-        Debug.Log("GAME OVER !!!!!!");
+        yield return new WaitForSeconds(1.0f);
+        m_IsEndGame = true;
+
+        PlayScene.instance.Result(m_Score.ToString(), "OUT OF MOVES !!!");
+    }
+
+    public IEnumerator OutOfTurn()
+    {
+        if (m_Balance >= 5)
+        {
+            PlayScene.instance.m_AddTurnHint.SetSelected(true);
+            yield break;
+        }
+        yield return new WaitForSeconds(1.0f);
+        m_IsEndGame = true;
+
+        PlayScene.instance.Result(m_Score.ToString(), "OUT OF TURNS !!!");
     }
 
     // Currently using static items (hard code)
@@ -102,7 +177,7 @@ public class GameManager : MonoBehaviour
         m_Balance -= 25;
         PlayScene.instance.m_Balance.SetText(m_Balance.ToString());
 
-        PlayScene.instance.m_refreshHint.SetSelected(false);
+        PlayScene.instance.m_RefreshHint.SetSelected(false);
         Matrix.instance.ResetMatrix();
     }
 
@@ -114,7 +189,8 @@ public class GameManager : MonoBehaviour
         m_Balance -= 5;
         PlayScene.instance.m_Balance.SetText(m_Balance.ToString());
 
-        AddTurns(1);
+        PlayScene.instance.m_AddTurnHint.SetSelected(false);
+        AddTurns(5);
     }
 
     public void BuyHint()
@@ -125,7 +201,8 @@ public class GameManager : MonoBehaviour
         m_Balance -= 2;
         PlayScene.instance.m_Balance.SetText(m_Balance.ToString());
 
-        Debug.Log("Ai biet <(\") ?");
+        Matrix.instance.SetHintPair(Matrix.instance.CheckCanContinue());
+        Matrix.instance.SetHint(true);
     }
 
 }

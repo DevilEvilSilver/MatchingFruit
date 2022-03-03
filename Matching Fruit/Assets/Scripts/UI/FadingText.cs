@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class FadingText : TextUI
 {
+    [SerializeField] private float duration = 2f;
     private Color m_TextColor;
 
     // Start is called before the first frame update
@@ -17,7 +18,7 @@ public class FadingText : TextUI
     // Update is called once per frame
     void Update()
     {
-        m_TextColor.a -= Time.deltaTime / 3f;
+        m_TextColor.a -= Time.deltaTime / duration;
         m_Text.color = m_TextColor;
     }
 
