@@ -39,6 +39,11 @@ public class PlayScene : MonoBehaviour
         Time.timeScale = 1;
     }
 
+    public void Quit()
+    {
+        Application.Quit();
+    }
+
     public void Retry()
     {
         //Resume();

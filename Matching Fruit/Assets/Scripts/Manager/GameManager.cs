@@ -95,12 +95,20 @@ public class GameManager : MonoBehaviour
                 if (Matrix.instance.CheckMatching())
                     yield return null;
                 else
+                {
+                    yield return new WaitForSeconds(1.0f);
                     break;
+                }    
             }
             PlayScene.instance.Result(m_Score.ToString(), "OUT OF TIME !!!");
         }
 
         PlayScene.instance.m_Time.SetText(Mathf.Floor(m_Time).ToString());
+    }
+
+    public void AddTime(float value)
+    {
+        m_Time += value;
     }
 
     public void UpdateScores(int matchedObjectCount, int combo)

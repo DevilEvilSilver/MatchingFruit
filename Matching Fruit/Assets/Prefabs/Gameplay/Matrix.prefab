@@ -43,7 +43,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c959e102c20968743b639d39b188670e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  row: 7
-  column: 9
+  row: 9
+  column: 12
   prefab: {fileID: 4913775858448064275, guid: 0a45572a03e098142b596d75e64aaa5e, type: 3}
-  m_CanMatching: 1
+  rareObjectPercentage: 0.03

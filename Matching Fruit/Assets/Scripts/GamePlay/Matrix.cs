@@ -11,6 +11,7 @@ public class Matrix : MonoBehaviour
     [SerializeField] private int row;
     [SerializeField] private int column;
     [SerializeField] private GameObject prefab;
+    [SerializeField] private float rareObjectPercentage;
 
     private Object[,] m_Matrix;
     private int[,] m_ExistingObjects;
@@ -46,7 +47,7 @@ public class Matrix : MonoBehaviour
         for (int i = 0; i < row; i++)
             for (int j = 0; j < column; j++)
             {
-                m_Matrix[i, j].SetObjectProperties(DataManager.instance.GetRandomCommonObject());
+                m_Matrix[i, j].SetObjectProperties(GachaObject());
                 m_FallingObjects[i, j] = true;
                 m_Matrix[i, j].m_Velocity = Vector2.zero;
                 Vector3 pos = m_Matrix[i, j].m_MatrixPosition;
@@ -67,7 +68,7 @@ public class Matrix : MonoBehaviour
                 pos.x += j * (m_ObjectSize.x + 1);
                 pos.y += i * m_ObjectSize.y;
                 m_Matrix[i, j] = Instantiate(prefab, pos, Quaternion.identity).GetComponent<Object>();
-                m_Matrix[i, j].SetObjectProperties(DataManager.instance.GetRandomCommonObject());
+                m_Matrix[i, j].SetObjectProperties(GachaObject());
                 m_Matrix[i, j].m_MatrixPosition = pos;
                 m_Matrix[i, j].m_MatrixIndex = new Vector2Int(i, j);
                 // init falling
@@ -75,6 +76,15 @@ public class Matrix : MonoBehaviour
                 m_Matrix[i, j].transform.position = pos;
             }
         }
+    }
+
+    private IngameObject GachaObject()
+    {
+        bool isRare = ((float)Random.Range(0, 100) / 100f) < rareObjectPercentage ? true : false;
+        if (isRare)
+            return DataManager.instance.GetRandomRareObject();
+        else
+            return DataManager.instance.GetRandomCommonObject();
     }
 
     private void InitObjectsObserverMatrix()
@@ -329,8 +339,14 @@ public class Matrix : MonoBehaviour
         {
             yield return Swap(m_Matrix[first.x, first.y], m_Matrix[second.x, second.y]);
 
-            if (CheckMatching())
+            if (CheckMatching() || m_Matrix[first.x, first.y].Properties.isRare || m_Matrix[second.x, second.y].Properties.isRare)
             {
+                // start rare effect
+                if (m_Matrix[first.x, first.y].Properties.isRare)
+                    UseRareObject(m_Matrix[first.x, first.y], m_Matrix[second.x, second.y]);
+                if (m_Matrix[second.x, second.y].Properties.isRare)
+                    UseRareObject(m_Matrix[second.x, second.y], m_Matrix[first.x, first.y]);
+
                 // start match chain
                 yield return StartMatchCombo();
 
@@ -407,9 +423,8 @@ public class Matrix : MonoBehaviour
                     m_ExistingObjects[i, j] = 0;
                     count--;
                 }
-                else if (checkList[j] >= 3)
+                else if (checkList[j] >= 3 && !m_Matrix[i, j].Properties.isRare)
                 {
-                    isMatch = true;
                     m_ExistingObjects[i, j] = 0;
                     count = checkList[j] - 1;
                 }               
@@ -438,14 +453,21 @@ public class Matrix : MonoBehaviour
                     m_ExistingObjects[i, j] = 0;
                     count--;
                 }
-                else if (checkList[i] >= 3)
+                else if (checkList[i] >= 3 && !m_Matrix[i, j].Properties.isRare)
                 {
-                    isMatch = true;
                     m_ExistingObjects[i, j] = 0;
                     count = checkList[i] - 1;
                 }
             }
         }
+
+        for (int i = 0; i < row; i++)
+            for (int j = 0; j < column; j++)
+                if (m_ExistingObjects[i, j] == 0)
+                {
+                    isMatch = true;
+                    break;
+                }
 
         return isMatch;
     }
@@ -494,7 +516,7 @@ public class Matrix : MonoBehaviour
                     }
                     if (m_ExistingObjects[i, j] == 0)
                     {
-                        m_Matrix[i, j].SetObjectProperties(DataManager.instance.GetRandomCommonObject());
+                        m_Matrix[i, j].SetObjectProperties(GachaObject());
                         Vector3 pos = transform.position;
                         pos.x += j * (m_ObjectSize.x + 1);
                         pos.y += (row + columnQueue[j] + 1) * m_ObjectSize.y;
@@ -509,6 +531,68 @@ public class Matrix : MonoBehaviour
         InitObjectsObserverMatrix();
 
         return matchedObjectcount;
+    }
+
+    private void UseRareObject(Object rareObj, Object affectedObj)
+    {
+        switch (rareObj.Properties.type)
+        {
+            case IngameObject.ObjectType.Rainbow:
+                {
+                    m_ExistingObjects[rareObj.m_MatrixIndex.x, rareObj.m_MatrixIndex.y] = 0;
+                    UseRainbowEffect(affectedObj);
+                    break;
+                }
+            case IngameObject.ObjectType.Bomb:
+                {
+                    m_ExistingObjects[rareObj.m_MatrixIndex.x, rareObj.m_MatrixIndex.y] = 0;
+                    UseBombEffect(rareObj.m_MatrixIndex.x, rareObj.m_MatrixIndex.y);
+                    break;
+                }
+            case IngameObject.ObjectType.Clock:
+                {
+                    m_ExistingObjects[rareObj.m_MatrixIndex.x, rareObj.m_MatrixIndex.y] = 0;
+                    UseClockEffect();
+                    break;
+                }
+        }
+    }
+
+    private void UseRainbowEffect(Object obj)
+    {
+        if (obj.Properties.isRare == false)
+        {
+            for (int i = 0; i < row; i++)
+                for (int j = 0; j < column; j++)
+                {
+                    if (m_Matrix[i, j].Properties.type == obj.Properties.type)
+                        m_ExistingObjects[i, j] = 0;
+                }
+        }
+        else if (obj.Properties.type == IngameObject.ObjectType.Rainbow)
+        {
+            for (int i = 0; i < row; i++)
+                for (int j = 0; j < column; j++)
+                    m_ExistingObjects[i, j] = 0;
+        }
+    }
+
+    private void UseBombEffect(int i, int j)
+    {
+        SafeDeleteObject(i + 1, j - 1); SafeDeleteObject(i + 1, j); SafeDeleteObject(i + 1, j + 1);
+        SafeDeleteObject(i, j - 1); SafeDeleteObject(i, j); SafeDeleteObject(i, j + 1);
+        SafeDeleteObject(i - 1, j - 1); SafeDeleteObject(i - 1, j); SafeDeleteObject(i - 1, j + 1);
+    }
+    
+    private void SafeDeleteObject(int i, int j)
+    {
+        if ((i > -1 && i < row) && (j > -1 && j < column))
+            m_ExistingObjects[i, j] = 0;
+    }
+
+    private void UseClockEffect()
+    {
+        GameManager.instance.AddTime(5f);
     }
 
     public void SetHintPair(KeyValuePair<Vector2Int, Vector2Int>? pair)

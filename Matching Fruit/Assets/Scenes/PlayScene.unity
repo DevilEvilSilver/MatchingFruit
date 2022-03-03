@@ -2585,7 +2585,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1253601230}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1990960411}
+        m_MethodName: Quit
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1253601230
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4618,31 +4629,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5997421749717968918, guid: b9f4a085dccb1fe4893e6e1f6be127fe,
-        type: 3}
-      propertyPath: m_Balance
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5997421749717968918, guid: b9f4a085dccb1fe4893e6e1f6be127fe,
-        type: 3}
-      propertyPath: m_Turns
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 5997421749717968918, guid: b9f4a085dccb1fe4893e6e1f6be127fe,
-        type: 3}
-      propertyPath: turns
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5997421749717968918, guid: b9f4a085dccb1fe4893e6e1f6be127fe,
-        type: 3}
-      propertyPath: time
-      value: 180
-      objectReference: {fileID: 0}
-    - target: {fileID: 5997421749717968918, guid: b9f4a085dccb1fe4893e6e1f6be127fe,
-        type: 3}
-      propertyPath: balance
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 5997421749717968919, guid: b9f4a085dccb1fe4893e6e1f6be127fe,
         type: 3}
       propertyPath: m_Name
@@ -4729,7 +4715,7 @@ PrefabInstance:
     - target: {fileID: 8329968104464609554, guid: 395ac7335ac28e441910f2dc6f59098b,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 675
+      value: 650
       objectReference: {fileID: 0}
     - target: {fileID: 8329968104464609554, guid: 395ac7335ac28e441910f2dc6f59098b,
         type: 3}
@@ -4783,13 +4769,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8329968104464609555, guid: 395ac7335ac28e441910f2dc6f59098b,
         type: 3}
-      propertyPath: column
-      value: 9
-      objectReference: {fileID: 0}
-    - target: {fileID: 8329968104464609555, guid: 395ac7335ac28e441910f2dc6f59098b,
-        type: 3}
-      propertyPath: row
-      value: 7
+      propertyPath: rareObjectPercentage
+      value: 0.04
       objectReference: {fileID: 0}
     - target: {fileID: 8329968104464609556, guid: 395ac7335ac28e441910f2dc6f59098b,
         type: 3}
