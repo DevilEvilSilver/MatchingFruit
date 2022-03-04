@@ -11,10 +11,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int balance = 0;
 
     // TODO: Create seperate class for mission management & shopping
+    private int m_Score = 0;
     private float m_Time;
     private int m_Turns;
     private int m_Balance;
-    private int m_Score = 0;
     private Mission m_CurrMission;
 
     internal bool m_IsEndGame = false;
@@ -28,16 +28,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        m_CurrMission = DataManager.instance.GetRandomClearMission();
-        m_Time = time;
-        m_Turns = turns;
-        m_Balance = balance;
-
-        PlayScene.instance.m_Time.SetText(Mathf.Floor(m_Time).ToString());
-        PlayScene.instance.m_Turns.SetText(m_Turns.ToString());
-        PlayScene.instance.m_Balance.SetText(m_Balance.ToString());
-        PlayScene.instance.m_MissionCounter.SetText(m_CurrMission.counter.ToString());
-        PlayScene.instance.m_Mission.SetSprite((m_CurrMission as ClearMission).ingameObject.sprite);
+        ResetGame();
     }
 
     // Update is called once per frame
@@ -66,39 +57,14 @@ public class GameManager : MonoBehaviour
 
     public void ResetGame()
     {
-        m_Score = 0;
-        m_Time = time;
-        m_Turns = turns;
-        m_Balance = balance;
-        m_CurrMission = DataManager.instance.GetRandomClearMission();
+        DataManager.instance.SetLevelData(ref m_Score, ref m_Time, ref m_Turns, ref m_Balance);
 
-        PlayScene.instance.m_Score.SetText(m_Score.ToString());
-        PlayScene.instance.m_Time.SetText(Mathf.Floor(m_Time).ToString());
-        PlayScene.instance.m_Turns.SetText(m_Turns.ToString());
-        PlayScene.instance.m_Balance.SetText(m_Balance.ToString());
+        m_CurrMission = DataManager.instance.GetRandomClearMission();
         PlayScene.instance.m_MissionCounter.SetText(m_CurrMission.counter.ToString());
         PlayScene.instance.m_Mission.SetSprite((m_CurrMission as ClearMission).ingameObject.sprite);
 
         Matrix.instance.ResetMatrix();
         m_IsEndGame = false;
-    }
-
-    private IEnumerator UpdateTime()
-    {
-        m_Time -= Time.deltaTime;
-        if (m_Time < 0f)
-        {
-            m_Time = 0f;
-            m_IsEndGame = true;
-            while (Matrix.instance.IsBusy() || Matrix.instance.CheckFallingObjects())
-            {
-                yield return null;
-            }
-            yield return new WaitForSeconds(0.5f);
-            PlayScene.instance.Result(m_Score.ToString(), "OUT OF TIME !!!");
-        }
-
-        PlayScene.instance.m_Time.SetText(Mathf.Floor(m_Time).ToString());
     }
 
     public void AddTime(float value)
@@ -110,6 +76,7 @@ public class GameManager : MonoBehaviour
     {
         m_Score += matchedObjectCount * combo * 50;
         PlayScene.instance.m_Score.SetText(m_Score.ToString());
+        DataManager.instance.CheckGoal(m_Score);
 
         if (combo > 1)
             PlayScene.instance.m_Combo.SetText("x" + combo.ToString());
@@ -145,6 +112,34 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public IEnumerator ForceEndGame()
+    {
+        while (Matrix.instance.IsBusy() || Matrix.instance.CheckFallingObjects())
+        {
+            yield return null;
+        }
+        m_IsEndGame = true;
+        PlayScene.instance.Result(m_Score, "EHHH ?!!!!");
+    }
+
+    private IEnumerator UpdateTime()
+    {
+        m_Time -= Time.deltaTime;
+        if (m_Time < 0f)
+        {
+            m_Time = 0f;
+            m_IsEndGame = true;
+            while (Matrix.instance.IsBusy() || Matrix.instance.CheckFallingObjects())
+            {
+                yield return null;
+            }
+            yield return new WaitForSeconds(0.5f);
+            PlayScene.instance.Result(m_Score, "OUT OF TIME !!!");
+        }
+
+        PlayScene.instance.m_Time.SetText(Mathf.Floor(m_Time).ToString());
+    }
+
     public IEnumerator OutOfMove()
     {
         if (m_Balance >= 25)
@@ -159,7 +154,7 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         m_IsEndGame = true;
 
-        PlayScene.instance.Result(m_Score.ToString(), "OUT OF MOVES !!!");
+        PlayScene.instance.Result(m_Score, "OUT OF MOVES !!!");
     }
 
     public IEnumerator OutOfTurn()
@@ -176,7 +171,7 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         m_IsEndGame = true;
 
-        PlayScene.instance.Result(m_Score.ToString(), "OUT OF TURNS !!!");
+        PlayScene.instance.Result(m_Score, "OUT OF TURNS !!!");
     }
 
     // Currently using static items (hard code)

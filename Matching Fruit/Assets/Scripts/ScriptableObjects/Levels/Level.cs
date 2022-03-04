@@ -22,6 +22,8 @@ public class Level : ScriptableObject
 
     public int turns;
 
+    public int startBalance;
+
     public float rareObjectsPercentage;
 
     public List<IngameObbjectRate> commmonObjects = new List<IngameObbjectRate>();

@@ -8,7 +8,8 @@ public class DataManager : MonoBehaviour
 
     [SerializeField] private List<Level> m_Levels = new List<Level>();
 
-    private Level m_CurrLevel;
+    private int m_CurrLevelIndex;
+    private int m_CurrGoal = 0;
     private int m_MissionCount = 0;
 
     void Awake()
@@ -24,12 +25,56 @@ public class DataManager : MonoBehaviour
 
     private void SetCurrentLevel(int level)
     {
-        m_CurrLevel = m_Levels[level];
+        m_CurrLevelIndex = level;
+    }
+
+    public int GetNextLevel()
+    {
+        if (m_CurrLevelIndex + 1 >= m_Levels.Count)
+            return -1;
+        return m_CurrLevelIndex + 1;
+    }
+
+    public void SetLevelData(ref int score, ref float time, ref int turns, ref int balance)
+    {
+        score = 0;
+        time = m_Levels[m_CurrLevelIndex].limitedTime;
+        turns = m_Levels[m_CurrLevelIndex].turns;
+        balance = m_Levels[m_CurrLevelIndex].startBalance;
+
+        PlayScene.instance.m_Score.SetText(score.ToString());
+        PlayScene.instance.m_Time.SetText(Mathf.Floor(time).ToString());
+        PlayScene.instance.m_Turns.SetText(turns.ToString());
+        PlayScene.instance.m_Balance.SetText(balance.ToString());
+    }
+
+    public int CheckGoal(int score)
+    {
+        if (score >= m_Levels[m_CurrLevelIndex].goal_1 && m_CurrGoal < 1)
+        {
+            m_CurrGoal++;
+            PlayScene.instance.m_FirstStar.SetUnlock(true);
+            PlayScene.instance.m_ResultFirstStar.SetUnlock(true);
+        }
+        if (score >= m_Levels[m_CurrLevelIndex].goal_2 && m_CurrGoal < 2)
+        {
+            m_CurrGoal++;
+            PlayScene.instance.m_SecondStar.SetUnlock(true);
+            PlayScene.instance.m_ResultSecondStar.SetUnlock(true);
+        }
+        if (score >= m_Levels[m_CurrLevelIndex].goal_3 && m_CurrGoal < 3)
+        {
+            m_CurrGoal++;
+            PlayScene.instance.m_ThirdStar.SetUnlock(true);
+            PlayScene.instance.m_ResultThirdStar.SetUnlock(true);
+        }
+
+        return m_CurrGoal;
     }
 
     public IngameObject GetRandomObject()
     {
-        bool isRare = ((float)Random.Range(0, 100) / 100f) < m_CurrLevel.rareObjectsPercentage ? true : false;
+        bool isRare = ((float)Random.Range(0, 100) / 100f) < m_Levels[m_CurrLevelIndex].rareObjectsPercentage ? true : false;
         if (isRare)
             return GetRandomRareObject();
         else
@@ -40,32 +85,32 @@ public class DataManager : MonoBehaviour
     {
         float rand = ((float)Random.Range(0, 100) / 100f);
         float rate = 0f;
-        foreach (IngameObbjectRate ingameObbjectRate in m_CurrLevel.commmonObjects)
+        foreach (IngameObbjectRate ingameObbjectRate in m_Levels[m_CurrLevelIndex].commmonObjects)
         {
             rate += ingameObbjectRate.percentage;
             if (rand < rate)
                 return ingameObbjectRate.ingameObject;
         }
-        return m_CurrLevel.commmonObjects[0].ingameObject;
+        return m_Levels[m_CurrLevelIndex].commmonObjects[0].ingameObject;
     }
 
     private IngameObject GetRandomRareObject()
     {
         float rand = ((float)Random.Range(0, 100) / 100f);
         float rate = 0f;
-        foreach (IngameObbjectRate ingameObbjectRate in m_CurrLevel.rareObjects)
+        foreach (IngameObbjectRate ingameObbjectRate in m_Levels[m_CurrLevelIndex].rareObjects)
         {
             rate += ingameObbjectRate.percentage;
             if (rand < rate)
                 return ingameObbjectRate.ingameObject;
         }
-        return m_CurrLevel.rareObjects[0].ingameObject;
+        return m_Levels[m_CurrLevelIndex].rareObjects[0].ingameObject;
     }
 
     public ClearMission GetRandomClearMission()
     {
         m_MissionCount++;
-        ClearMission rand = Instantiate(m_CurrLevel.clearMissions[Random.Range(0, m_CurrLevel.clearMissions.Count)]);
+        ClearMission rand = Instantiate(m_Levels[m_CurrLevelIndex].clearMissions[Random.Range(0, m_Levels[m_CurrLevelIndex].clearMissions.Count)]);
         rand.counter *= (int)Mathf.Ceil(m_MissionCount / 3);
         rand.price *= (int)Mathf.Ceil(m_MissionCount / 3);
         return rand;

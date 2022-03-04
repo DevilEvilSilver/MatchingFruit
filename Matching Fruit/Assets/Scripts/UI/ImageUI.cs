@@ -17,4 +17,12 @@ public class ImageUI : MonoBehaviour
     {
         m_Sprite.overrideSprite = sprite;
     }
+
+    public void SetUnlock(bool isUnlock)
+    {
+        if (isUnlock)
+            m_Sprite.color = Color.white;
+        else 
+            m_Sprite.color = Color.black;
+    }
 }

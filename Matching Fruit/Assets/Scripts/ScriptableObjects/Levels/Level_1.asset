@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: Level_1
   m_EditorClassIdentifier: 
   goal_1: 10000
-  goal_2: 20000
-  goal_3: 30000
-  limitedTime: 120
-  turns: 20
-  rareObjectsPercentage: 0.05
+  goal_2: 15000
+  goal_3: 25000
+  limitedTime: 1
+  turns: 15
+  startBalance: 0
+  rareObjectsPercentage: 0.03
   commmonObjects:
   - ingameObject: {fileID: 11400000, guid: a224e43dbb9b3e14c92897568c782d2a, type: 2}
     percentage: 0.2
