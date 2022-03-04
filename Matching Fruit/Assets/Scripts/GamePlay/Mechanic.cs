@@ -344,7 +344,6 @@ public class Mechanic : MonoBehaviour
         bool isLock  = false;
         if (!Matrix.instance.IsBusy())
         {
-            Debug.Log(isLock);
             isLock = true;
             currMatrix = Matrix.instance.LockMatrix();
         }
@@ -391,6 +390,9 @@ public class Mechanic : MonoBehaviour
             }
         }
 
+        // Use effect if rare
+        ChainRareObject(matrix);
+
         // Update Properties
         for (int i = 0; i < Matrix.instance.Row; i++)
         {
@@ -398,10 +400,6 @@ public class Mechanic : MonoBehaviour
             {
                 if (Matrix.instance.CheckDestroyObject(i, j))
                 {
-                    // Use effect if rare
-                    if (matrix[i, j].Properties.isRare)
-                        ChainRareObject(matrix[i, j]);
-
                     int r = i + 1;
                     while (r < Matrix.instance.Row)
                     {
@@ -417,7 +415,7 @@ public class Mechanic : MonoBehaviour
                     }
                     if (Matrix.instance.CheckDestroyObject(i, j))
                     {
-                        matrix[i, j].SetObjectProperties(Matrix.instance.GachaObject());
+                        matrix[i, j].SetObjectProperties(DataManager.instance.GetRandomObject());
                         Vector3 pos = Matrix.instance.transform.position;
                         pos.x += j * (Matrix.instance.ObjectSize.x + 1);
                         pos.y += (Matrix.instance.Row + columnQueue[j] + 1) * Matrix.instance.ObjectSize.y;
@@ -458,20 +456,33 @@ public class Mechanic : MonoBehaviour
         }
     }
 
-    public void ChainRareObject(Object rareObj)
+    public void ChainRareObject(Object[,] matrix)
     {
-        switch (rareObj.Properties.type)
+        while (Matrix.instance.CheckInEffectObject())
         {
-            case IngameObject.ObjectType.Bomb:
+            for (int i = 0; i < Matrix.instance.Row; i++)
+            {
+                for (int j = 0; j < Matrix.instance.Column; j++)
                 {
-                    UseBombEffect(rareObj.m_MatrixIndex.x, rareObj.m_MatrixIndex.y);
-                    break;
+                    if (Matrix.instance.CheckDestroyObject(i, j))
+                    {
+                        Matrix.instance.SafeDestroyObject(matrix[i, j].m_MatrixIndex.x, matrix[i, j].m_MatrixIndex.y);
+                        switch (matrix[i, j].Properties.type)
+                        {
+                            case IngameObject.ObjectType.Bomb:
+                                {
+                                    UseBombEffect(matrix[i, j].m_MatrixIndex.x, matrix[i, j].m_MatrixIndex.y);
+                                    break;
+                                }
+                            case IngameObject.ObjectType.Clock:
+                                {
+                                    UseClockEffect();
+                                    break;
+                                }
+                        }
+                    }
                 }
-            case IngameObject.ObjectType.Clock:
-                {
-                    UseClockEffect();
-                    break;
-                }
+            }
         }
     }
 

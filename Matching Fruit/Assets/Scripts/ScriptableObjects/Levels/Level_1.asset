@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5e1bcb1f0fa1764f944a6bc8f66dc93, type: 3}
+  m_Name: Level_1
+  m_EditorClassIdentifier: 
+  goal_1: 10000
+  goal_2: 20000
+  goal_3: 30000
+  limitedTime: 120
+  turns: 20
+  rareObjectsPercentage: 0.05
+  commmonObjects:
+  - ingameObject: {fileID: 11400000, guid: a224e43dbb9b3e14c92897568c782d2a, type: 2}
+    percentage: 0.2
+  - ingameObject: {fileID: 11400000, guid: 532e2d3f6c3472243bc19698dd381d2f, type: 2}
+    percentage: 0.2
+  - ingameObject: {fileID: 11400000, guid: 2b5fef4795e4ab446a209c6ffd959bc0, type: 2}
+    percentage: 0.2
+  - ingameObject: {fileID: 11400000, guid: 33a0d69a0e02f8d4195ce3576217a887, type: 2}
+    percentage: 0.2
+  - ingameObject: {fileID: 11400000, guid: ee1c5d14647ec0d44b622153c6760936, type: 2}
+    percentage: 0.2
+  rareObjects:
+  - ingameObject: {fileID: 11400000, guid: 140e8378782b22e45aa2db69caf41da8, type: 2}
+    percentage: 1
+  clearMissions:
+  - {fileID: 11400000, guid: cff4d91e0e85eba4781181f6c945ddc3, type: 2}
+  - {fileID: 11400000, guid: d6c5964583e171f4896792718cc6abef, type: 2}
+  - {fileID: 11400000, guid: abbe2991d521d2e4394b477fd4fc4f2b, type: 2}
+  - {fileID: 11400000, guid: 59858d5fb2aa7a743ac7711c3db0e961, type: 2}
+  - {fileID: 11400000, guid: fabbd4dc2243cac4c84ee37d7814afbd, type: 2}

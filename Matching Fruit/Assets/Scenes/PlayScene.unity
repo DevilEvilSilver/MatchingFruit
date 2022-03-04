@@ -1265,26 +1265,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b3cd6f9456cfb74e96bf56cb7abd00d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_CommmonObjects:
-  - {fileID: 11400000, guid: a224e43dbb9b3e14c92897568c782d2a, type: 2}
-  - {fileID: 11400000, guid: 532e2d3f6c3472243bc19698dd381d2f, type: 2}
-  - {fileID: 11400000, guid: 2b5fef4795e4ab446a209c6ffd959bc0, type: 2}
-  - {fileID: 11400000, guid: 33a0d69a0e02f8d4195ce3576217a887, type: 2}
-  - {fileID: 11400000, guid: ee1c5d14647ec0d44b622153c6760936, type: 2}
-  - {fileID: 11400000, guid: 55673196562d47e4c849a8fa7e53fd2c, type: 2}
-  - {fileID: 11400000, guid: 890716b9ce09055409881795ad67d16a, type: 2}
-  m_RareObjects:
-  - {fileID: 11400000, guid: 140e8378782b22e45aa2db69caf41da8, type: 2}
-  - {fileID: 11400000, guid: 81a945c1ebee6954ebaecb88ca795798, type: 2}
-  - {fileID: 11400000, guid: 51320765e4ab2c74db4c57cbe0a2ab8b, type: 2}
-  m_ClearMissions:
-  - {fileID: 11400000, guid: cff4d91e0e85eba4781181f6c945ddc3, type: 2}
-  - {fileID: 11400000, guid: d6c5964583e171f4896792718cc6abef, type: 2}
-  - {fileID: 11400000, guid: abbe2991d521d2e4394b477fd4fc4f2b, type: 2}
-  - {fileID: 11400000, guid: 59858d5fb2aa7a743ac7711c3db0e961, type: 2}
-  - {fileID: 11400000, guid: fabbd4dc2243cac4c84ee37d7814afbd, type: 2}
-  - {fileID: 11400000, guid: 2b425559044139444989e9e457a7dc2d, type: 2}
-  - {fileID: 11400000, guid: 2c773b3f9b1c80a47998e4830b3fd2dd, type: 2}
+  m_Levels:
+  - {fileID: 11400000, guid: f39b498526a17e0489d862ad6fabf3bd, type: 2}
 --- !u!4 &333491045
 Transform:
   m_ObjectHideFlags: 0
@@ -3153,8 +3135,8 @@ MonoBehaviour:
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
-    m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
+    m_HorizontalOverflow: 1
+    m_VerticalOverflow: 1
     m_LineSpacing: 1
   m_Text: x1
 --- !u!222 &1497080368
@@ -3182,7 +3164,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 300, y: 0}
-  m_SizeDelta: {x: 700, y: 700}
+  m_SizeDelta: {x: 500, y: 500}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1550935659
 GameObject:

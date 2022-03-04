@@ -9,7 +9,7 @@ public class Matrix : MonoBehaviour
 
     public enum ObjectState
     { 
-        Normal, Falling, Destroyed, UseEffect
+        Normal, Falling, Destroyed, UseEffect, DoneEffect
     }
 
     [SerializeField] private int row;
@@ -53,7 +53,7 @@ public class Matrix : MonoBehaviour
                 pos.x += j * (m_ObjectSize.x + 1);
                 pos.y += i * m_ObjectSize.y;
                 m_Matrix[i, j] = Instantiate(prefab, pos, Quaternion.identity).GetComponent<Object>();
-                m_Matrix[i, j].SetObjectProperties(GachaObject());
+                m_Matrix[i, j].SetObjectProperties(DataManager.instance.GetRandomObject());
                 m_Matrix[i, j].m_MatrixPosition = pos;
                 m_Matrix[i, j].m_MatrixIndex = new Vector2Int(i, j);
                 // init falling
@@ -73,16 +73,6 @@ public class Matrix : MonoBehaviour
         for (int i = 0; i < row; i++)
             for (int j = 0; j < column; j++)
                 m_ObjectsState[i, j] = ObjectState.Falling;
-    }
-
-    // Data manager ----------------------------------------------------------
-    public IngameObject GachaObject()
-    {
-        bool isRare = ((float)Random.Range(0, 100) / 100f) < rareObjectPercentage ? true : false;
-        if (isRare)
-            return DataManager.instance.GetRandomRareObject();
-        else
-            return DataManager.instance.GetRandomCommonObject();
     }
 
     public Object[,] GetMatrix()
@@ -106,6 +96,7 @@ public class Matrix : MonoBehaviour
     {
         m_IsBusy = false;
     }
+    // ---------------------------------------------------------------------------------------------------------
 
     public bool IsBusy()
     {
@@ -118,7 +109,7 @@ public class Matrix : MonoBehaviour
         for (int i = 0; i < row; i++)
             for (int j = 0; j < column; j++)
             {
-                m_Matrix[i, j].SetObjectProperties(GachaObject());
+                m_Matrix[i, j].SetObjectProperties(DataManager.instance.GetRandomObject());
                 m_Matrix[i, j].m_Velocity = Vector2.zero;
                 
                 // init falling
@@ -145,7 +136,7 @@ public class Matrix : MonoBehaviour
     // Check if an object is destroyed or use effect
     public bool CheckDestroyObject(int i, int j)
     {
-        if (m_ObjectsState[i, j] == ObjectState.Destroyed || m_ObjectsState[i, j] ==  ObjectState.UseEffect)
+        if (m_ObjectsState[i, j] == ObjectState.Destroyed || m_ObjectsState[i, j] ==  ObjectState.UseEffect || m_ObjectsState[i, j] == ObjectState.DoneEffect)
             return true;
         return false;
     }
@@ -158,8 +149,26 @@ public class Matrix : MonoBehaviour
             if (m_Matrix[i, j].Properties.isRare == false)
                 m_ObjectsState[i, j] = ObjectState.Destroyed;
             else
-                m_ObjectsState[i, j] = ObjectState.UseEffect;
+            {
+                if (m_ObjectsState[i, j] == ObjectState.UseEffect)
+                    m_ObjectsState[i, j] = ObjectState.DoneEffect;
+                else if (m_ObjectsState[i, j] != ObjectState.DoneEffect)
+                    m_ObjectsState[i, j] = ObjectState.UseEffect;
+            }
         }
+    }
+
+    public bool CheckInEffectObject()
+    {
+        for (int i = 0; i < row; i++)
+        {
+            for (int j = 0; j < column; j++)
+            {
+                if (m_ObjectsState[i, j] == ObjectState.UseEffect)
+                    return true;
+            }
+        }
+        return false;
     }
 
     // Set an object to normal state
