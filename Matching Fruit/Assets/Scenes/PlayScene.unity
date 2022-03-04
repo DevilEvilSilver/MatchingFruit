@@ -4711,7 +4711,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1990960411}
-        m_MethodName: BuyRefresh
+        m_MethodName: BuyAddTurn
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5247,11 +5247,11 @@ MonoBehaviour:
   m_Info: {fileID: 435969454}
   m_ResultCanvasGroup: {fileID: 690725849}
   m_Result: {fileID: 884408704}
-  m_ResultFirstStar: {fileID: 0}
-  m_ResultSecondStar: {fileID: 0}
-  m_ResultThirdStar: {fileID: 0}
+  m_ResultFirstStar: {fileID: 2142782155}
+  m_ResultSecondStar: {fileID: 1654804406}
+  m_ResultThirdStar: {fileID: 296305647}
   m_Reason: {fileID: 1297406513}
-  m_ContinueButton: {fileID: 0}
+  m_ContinueButton: {fileID: 9474394}
 --- !u!1 &2004826557
 GameObject:
   m_ObjectHideFlags: 0

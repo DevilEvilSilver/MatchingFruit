@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5e1bcb1f0fa1764f944a6bc8f66dc93, type: 3}
-  m_Name: Level_1
+  m_Name: Level_2
   m_EditorClassIdentifier: 
-  goal_1: 5000
-  goal_2: 7000
-  goal_3: 12000
-  limitedTime: 120
+  goal_1: 7500
+  goal_2: 10000
+  goal_3: 15000
+  limitedTime: 90
   turns: 20
   startBalance: 0
   rareObjectsPercentage: 0.03

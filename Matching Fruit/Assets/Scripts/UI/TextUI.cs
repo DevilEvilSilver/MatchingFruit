@@ -17,4 +17,9 @@ public class TextUI : MonoBehaviour
     {
         m_Text.text = text;
     }
+
+    public virtual void SetColor(Color color)
+    {
+        m_Text.color = color;
+    }
 }
