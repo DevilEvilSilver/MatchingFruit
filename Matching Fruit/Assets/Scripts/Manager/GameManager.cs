@@ -90,16 +90,11 @@ public class GameManager : MonoBehaviour
         {
             m_Time = 0f;
             m_IsEndGame = true;
-            while (true)
+            while (Matrix.instance.IsBusy() || Matrix.instance.CheckFallingObjects())
             {
-                if (Matrix.instance.CheckMatching())
-                    yield return null;
-                else
-                {
-                    yield return new WaitForSeconds(1.0f);
-                    break;
-                }    
+                yield return null;
             }
+            yield return new WaitForSeconds(0.5f);
             PlayScene.instance.Result(m_Score.ToString(), "OUT OF TIME !!!");
         }
 
@@ -157,7 +152,11 @@ public class GameManager : MonoBehaviour
             PlayScene.instance.m_RefreshHint.SetSelected(true);
             yield break;
         }
-        yield return new WaitForSeconds(1.0f);
+        while (Matrix.instance.IsBusy() || Matrix.instance.CheckFallingObjects())
+        {
+            yield return null;
+        }
+        yield return new WaitForSeconds(0.5f);
         m_IsEndGame = true;
 
         PlayScene.instance.Result(m_Score.ToString(), "OUT OF MOVES !!!");
@@ -170,7 +169,11 @@ public class GameManager : MonoBehaviour
             PlayScene.instance.m_AddTurnHint.SetSelected(true);
             yield break;
         }
-        yield return new WaitForSeconds(1.0f);
+        while (Matrix.instance.IsBusy() || Matrix.instance.CheckFallingObjects())
+        {
+            yield return null;
+        }
+        yield return new WaitForSeconds(0.5f);
         m_IsEndGame = true;
 
         PlayScene.instance.Result(m_Score.ToString(), "OUT OF TURNS !!!");
@@ -179,7 +182,7 @@ public class GameManager : MonoBehaviour
     // Currently using static items (hard code)
     public void BuyRefresh()
     {
-        if (m_Balance < 25)
+        if (m_Balance < 25 || Matrix.instance.IsBusy())
             return;
 
         m_Balance -= 25;
@@ -191,7 +194,7 @@ public class GameManager : MonoBehaviour
 
     public void BuyAddTurn()
     {
-        if (m_Balance < 5)
+        if (m_Balance < 5 || Matrix.instance.IsBusy())
             return;
 
         m_Balance -= 5;
@@ -203,14 +206,15 @@ public class GameManager : MonoBehaviour
 
     public void BuyHint()
     {
-        if (m_Balance < 2)
+        if (m_Balance < 2 || Matrix.instance.IsBusy())
             return;
 
         m_Balance -= 2;
         PlayScene.instance.m_Balance.SetText(m_Balance.ToString());
 
-        Matrix.instance.SetHintPair(Matrix.instance.CheckCanContinue());
-        Matrix.instance.SetHint(true);
+        Mechanic.instance.SetHintPair(Mechanic.instance.CheckCanContinue(Matrix.instance.LockMatrix())); // Lock Matrix
+        Mechanic.instance.SetHint(true);
+        Matrix.instance.FreeMatrix(); // Free Matrix
     }
 
 }

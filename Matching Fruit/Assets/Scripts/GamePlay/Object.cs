@@ -24,7 +24,7 @@ public class Object : MonoBehaviour
         set
         {
             this.properties = value;
-            Matrix.instance.SetHint(false);
+            Mechanic.instance.SetHint(false);
         }
     }
 
@@ -56,7 +56,7 @@ public class Object : MonoBehaviour
 
     void OnMouseDown()
     {
-        Matrix.instance.ObjectClicked(this);
+        Mechanic.instance.ObjectClicked(this);
     }
 
     public void SetSelected(bool isSelected)
