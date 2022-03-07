@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1cf62dcd1c5a3834580b0e92d42bc1d5, type: 3}
-  m_Name: RainBow
+  m_Name: Lightning
   m_EditorClassIdentifier: 
-  sprite: {fileID: 21300000, guid: 923cc4b1c6f249c4a92778938989aa81, type: 3}
-  type: 9
+  sprite: {fileID: 21300000, guid: 8cb605a1b353994488e7ec58f334191e, type: 3}
+  type: 8
   isRare: 1

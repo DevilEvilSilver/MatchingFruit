@@ -8,6 +8,7 @@ public class PlayScene : MonoBehaviour
 {
     public static PlayScene instance;
 
+    public FadingGroup m_Message;
     public FadingText m_Combo;
     public TextUI m_Score;
     public TextUI m_Turns;
@@ -20,7 +21,7 @@ public class PlayScene : MonoBehaviour
     public ImageUI m_SecondStar;
     public ImageUI m_ThirdStar;
 
-    public HintEffect m_RefreshHint;
+    public HintEffect m_HammerHint;
     public HintEffect m_AddTurnHint;
 
     public GameObject m_Info;
@@ -76,6 +77,8 @@ public class PlayScene : MonoBehaviour
         } 
         else
             m_Reason.SetText(reason);
+
+        DataManager.instance.SaveGame();
     }
 
     public void ToggleInfo()
@@ -100,9 +103,9 @@ public class PlayScene : MonoBehaviour
         }
     }
 
-    public void BuyRefresh()
+    public void BuyHammer()
     {
-        GameManager.instance.BuyRefresh();
+        GameManager.instance.BuyHammer();
     }
 
     public void BuyAddTurn()

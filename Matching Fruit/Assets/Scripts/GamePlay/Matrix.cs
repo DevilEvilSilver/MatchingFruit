@@ -7,22 +7,27 @@ public class Matrix : MonoBehaviour
 {
     public static Matrix instance;
 
-    public enum ObjectState
-    { 
-        Normal, Falling, Destroyed, UseEffect, DoneEffect
+    public enum MatrixState
+    {
+        None, Block, Chained, Freeze
     }
 
-    [SerializeField] private int row;
-    [SerializeField] private int column;
-    [SerializeField] private GameObject prefab;
-    [SerializeField] private float rareObjectPercentage;
+    public enum ObjectState
+    {
+        Normal, Falling, Destroyed, UseEffect, DoneEffect, Empty
+    }
+
+    private int row;
+    private int column;
+    private GameObject prefab;
 
     public int Row => row;
     public int Column => column;
 
     private Object[,] m_Matrix;
-    private ObjectState[,] m_ObjectsState;
-    
+    private MatrixState[,] m_MatrixState;
+    public ObjectState[,] m_ObjectsState;
+
     private Vector3 m_ObjectSize;
     public Vector3 ObjectSize => m_ObjectSize;
     private bool m_IsBusy = false;
@@ -36,10 +41,12 @@ public class Matrix : MonoBehaviour
 
     void Start()
     {
+        DataManager.instance.SetMatrixData(ref row, ref column, ref prefab);
         m_ObjectSize = prefab.GetComponent<SpriteRenderer>().bounds.size;
         m_Matrix = new Object[row, column];
+        m_MatrixState = new MatrixState[row, column];
         m_ObjectsState = new ObjectState[row, column];
-        InitMap();  
+        InitMap();
     }
 
     private void InitMap()
@@ -63,16 +70,21 @@ public class Matrix : MonoBehaviour
         }
 
         //init state
-        InitObjectsState();
+        DataManager.instance.SetMatrixState(ref m_MatrixState, ref m_Matrix);
+        InitObjectsState(true);
 
         StartCoroutine(Mechanic.instance.StartMatchCombo(m_Matrix));
     }
 
-    public void InitObjectsState()
+    public void InitObjectsState(bool isResetAll)
     {
         for (int i = 0; i < row; i++)
             for (int j = 0; j < column; j++)
+            {
+                if (!isResetAll && m_ObjectsState[i, j] == ObjectState.Empty)
+                    continue;
                 m_ObjectsState[i, j] = ObjectState.Falling;
+            }
     }
 
     public Object[,] GetMatrix()
@@ -87,7 +99,7 @@ public class Matrix : MonoBehaviour
         {
             m_IsBusy = true;
             return m_Matrix;
-        }  
+        }
         else
             return null;
     }
@@ -109,9 +121,11 @@ public class Matrix : MonoBehaviour
         for (int i = 0; i < row; i++)
             for (int j = 0; j < column; j++)
             {
-                m_Matrix[i, j].SetObjectProperties(DataManager.instance.GetRandomObject());
+                if (m_MatrixState[i, j] == MatrixState.None)
+                    m_Matrix[i, j].SetObjectProperties(DataManager.instance.GetRandomObject());
+
                 m_Matrix[i, j].m_Velocity = Vector2.zero;
-                
+
                 // init falling
                 Vector3 pos = m_Matrix[i, j].m_MatrixPosition;
                 pos.y += row * m_ObjectSize.y;
@@ -119,26 +133,51 @@ public class Matrix : MonoBehaviour
             }
 
         //init state
-        InitObjectsState();
+        InitObjectsState(true);
 
         StartCoroutine(Mechanic.instance.StartMatchCombo(m_Matrix));
     }
 
-    // for Object 
+    // for Object (from falling to normal)
     public void UpdateFallingObject(Vector2Int pos, bool isFalling)
     {
         if (isFalling)
             m_ObjectsState[pos.x, pos.y] = ObjectState.Falling;
-        else
+        else if (m_ObjectsState[pos.x, pos.y] != ObjectState.Empty)
             m_ObjectsState[pos.x, pos.y] = ObjectState.Normal;
     }
 
     // Check if an object is destroyed or use effect
     public bool CheckDestroyObject(int i, int j)
     {
-        if (m_ObjectsState[i, j] == ObjectState.Destroyed || m_ObjectsState[i, j] ==  ObjectState.UseEffect || m_ObjectsState[i, j] == ObjectState.DoneEffect)
+        if (m_ObjectsState[i, j] == ObjectState.Destroyed
+            || m_ObjectsState[i, j] == ObjectState.UseEffect
+            || m_ObjectsState[i, j] == ObjectState.DoneEffect)
             return true;
         return false;
+    }
+
+    // Check if an object is selectable
+    public bool CheckSelectableObject(int i, int j)
+    {
+        if (m_MatrixState[i, j] != MatrixState.None || m_ObjectsState[i, j] == ObjectState.Empty)
+            return false;
+        return true;
+    }
+
+    // Check if an object restricted movement
+    public bool CheckIfObjectCanFall(int i, int j)
+    {
+        if (m_MatrixState[i, j] != MatrixState.None)
+            return false;
+        return true;
+    }
+
+    // Set an object empty
+    public void SetEmptyObject(int i, int j)
+    {
+        m_Matrix[i, j].SetObjectProperties(DataManager.instance.GetEmptyObject());
+        m_ObjectsState[i, j] = ObjectState.Empty;
     }
 
     // Set an object to be destroyed or use effect
@@ -146,6 +185,11 @@ public class Matrix : MonoBehaviour
     {
         if ((i > -1 && i < row) && (j > -1 && j < column))
         {
+            if (m_ObjectsState[i, j] == ObjectState.Empty || m_MatrixState[i, j] == MatrixState.Block)
+                return;
+
+            m_MatrixState[i, j] = MatrixState.None;
+            
             if (m_Matrix[i, j].Properties.isRare == false)
                 m_ObjectsState[i, j] = ObjectState.Destroyed;
             else
@@ -193,10 +237,28 @@ public class Matrix : MonoBehaviour
     }
 
     // for Mechanic
-    public bool CheckMatchSafely(int i, int j, IngameObject.ObjectType type)
+    public bool CheckMatchWithStateNone(int i, int j, IngameObject.ObjectType type)
     {
+        if (type == IngameObject.ObjectType.Empty)
+            return false;
         if ((i > -1 && i < row) && (j > -1 && j < column))
-            return m_Matrix[i, j].Properties.type == type;
+        {
+            if (m_MatrixState[i, j] == MatrixState.None)
+                return m_Matrix[i, j].Properties.type == type;
+        }
+        return false;
+    }
+
+    // for Mechanic
+    public bool CheckMatch(int i, int j, IngameObject.ObjectType type)
+    {
+        if (type == IngameObject.ObjectType.Empty)
+            return false;
+        if ((i > -1 && i < row) && (j > -1 && j < column))
+        {
+            if (m_MatrixState[i, j] == MatrixState.None || m_MatrixState[i, j] == MatrixState.Chained)
+                return m_Matrix[i, j].Properties.type == type;
+        }
         return false;
     }
 

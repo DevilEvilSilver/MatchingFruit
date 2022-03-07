@@ -88,6 +88,7 @@ GameObject:
   - component: {fileID: 4625781942954781490}
   - component: {fileID: 8696127671209016701}
   - component: {fileID: 3141398599518185179}
+  - component: {fileID: 2908535759078916536}
   m_Layer: 0
   m_Name: Star_2
   m_TagString: Untagged
@@ -135,7 +136,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -149,6 +150,18 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
+--- !u!114 &2908535759078916536
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6232991296835911420}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40b31628e80776347b34abcb1a65e328, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6538750625106107483
 GameObject:
   m_ObjectHideFlags: 0
@@ -163,6 +176,7 @@ GameObject:
   - component: {fileID: 2466267505521625809}
   - component: {fileID: 8848452297453961670}
   - component: {fileID: 1702095828}
+  - component: {fileID: 5572448456916036388}
   m_Layer: 0
   m_Name: LevelButton
   m_TagString: Untagged
@@ -268,9 +282,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 5572448456916036388}
         m_MethodName: SelectLevel
-        m_Mode: 3
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -313,6 +327,23 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &5572448456916036388
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6538750625106107483}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e5d3a0365000fd44b7b2f8f30d957ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  index: 0
+  m_Score: 0
+  m_FirstStar: {fileID: 8423928906145169385}
+  m_SecondStar: {fileID: 2908535759078916536}
+  m_ThirdStar: {fileID: 3040890060448025086}
 --- !u!1 &7512020249388414653
 GameObject:
   m_ObjectHideFlags: 0
@@ -324,6 +355,7 @@ GameObject:
   - component: {fileID: 2796006818791970143}
   - component: {fileID: 3420079098383886108}
   - component: {fileID: 2243648393278043205}
+  - component: {fileID: 3040890060448025086}
   m_Layer: 0
   m_Name: Star_3
   m_TagString: Untagged
@@ -371,7 +403,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -385,6 +417,18 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
+--- !u!114 &3040890060448025086
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7512020249388414653}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40b31628e80776347b34abcb1a65e328, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &9220744155539734696
 GameObject:
   m_ObjectHideFlags: 0
@@ -396,6 +440,7 @@ GameObject:
   - component: {fileID: 4846083755973475163}
   - component: {fileID: 5829145508853261184}
   - component: {fileID: 88163616923604744}
+  - component: {fileID: 8423928906145169385}
   m_Layer: 0
   m_Name: Star_1
   m_TagString: Untagged
@@ -443,7 +488,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -457,3 +502,15 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
+--- !u!114 &8423928906145169385
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9220744155539734696}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40b31628e80776347b34abcb1a65e328, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

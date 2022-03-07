@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System.IO;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,9 +7,12 @@ public class DataManager : MonoBehaviour
 {
     public static DataManager instance;
 
+    [SerializeField] private IngameObject m_EmptyObject;
     [SerializeField] private List<Level> m_Levels = new List<Level>();
 
     private int m_CurrLevelIndex;
+    private int m_Score = 0;
+    private int m_Star = 0;
     private int m_CurrGoal = 0;
     private int m_MissionCount = 0;
 
@@ -20,7 +24,7 @@ public class DataManager : MonoBehaviour
 
     void Start()
     {
-        SetCurrentLevel(PlayerPrefs.GetInt(Define.CURRENT_LEVEL_KEY, Define.LEVEL_1));
+        SetCurrentLevel(PlayerPrefs.GetInt(Define.CURRENT_LEVEL_KEY, Define.LEVEL_DEFAULT));
     }
 
     private void SetCurrentLevel(int level)
@@ -33,6 +37,44 @@ public class DataManager : MonoBehaviour
         if (m_CurrLevelIndex + 1 >= m_Levels.Count)
             return -1;
         return m_CurrLevelIndex + 1;
+    }
+
+    public void SetMatrixData(ref int row, ref int col, ref GameObject prefab)
+    {
+        row = m_Levels[m_CurrLevelIndex].row;
+        col = m_Levels[m_CurrLevelIndex].col;
+        prefab = m_Levels[m_CurrLevelIndex].prefab;
+    }
+
+    public void SetMatrixState(ref Matrix.MatrixState[,] matrixStates, ref Object[,] matrix)
+    {
+        Sprite sprite = m_Levels[m_CurrLevelIndex].map;
+        for (int i = 0; i < m_Levels[m_CurrLevelIndex].row; i++)
+        {
+            for (int j = 0; j < m_Levels[m_CurrLevelIndex].col; j++)
+            {
+                Color currCell = sprite.texture.GetPixel(i, j);
+                if (currCell == Color.white)
+                {
+                    matrixStates[i, j] = Matrix.MatrixState.None;
+                }
+                if (currCell == Color.red)
+                {
+                    matrixStates[i, j] = Matrix.MatrixState.Block;
+                    matrix[i, j].SetStateBlock();
+                }
+                if (currCell == Color.blue)
+                {
+                    matrixStates[i, j] = Matrix.MatrixState.Chained;
+                    matrix[i, j].SetStateChained();
+                }
+                if (currCell == Color.green)
+                {
+                    matrixStates[i, j] = Matrix.MatrixState.Freeze;
+                    matrix[i, j].SetStateFreeze();
+                }
+            }
+        }
     }
 
     public void SetLevelData(ref int score, ref float time, ref int turns, ref int balance)
@@ -50,26 +92,35 @@ public class DataManager : MonoBehaviour
 
     public int CheckGoal(int score)
     {
+        m_Score = score;
         if (score >= m_Levels[m_CurrLevelIndex].goal_1 && m_CurrGoal < 1)
         {
+            m_Star = 1;
             m_CurrGoal++;
             PlayScene.instance.m_FirstStar.SetUnlock(true);
             PlayScene.instance.m_ResultFirstStar.SetUnlock(true);
         }
         if (score >= m_Levels[m_CurrLevelIndex].goal_2 && m_CurrGoal < 2)
         {
+            m_Star = 2;
             m_CurrGoal++;
             PlayScene.instance.m_SecondStar.SetUnlock(true);
             PlayScene.instance.m_ResultSecondStar.SetUnlock(true);
         }
         if (score >= m_Levels[m_CurrLevelIndex].goal_3 && m_CurrGoal < 3)
         {
+            m_Star = 3;
             m_CurrGoal++;
             PlayScene.instance.m_ThirdStar.SetUnlock(true);
             PlayScene.instance.m_ResultThirdStar.SetUnlock(true);
         }
 
         return m_CurrGoal;
+    }
+
+    public IngameObject GetEmptyObject()
+    {
+        return m_EmptyObject;
     }
 
     public IngameObject GetRandomObject()
@@ -83,22 +134,14 @@ public class DataManager : MonoBehaviour
 
     private IngameObject GetRandomCommonObject()
     {
-        float rand = ((float)Random.Range(0, 100) / 100f);
-        float rate = 0f;
-        foreach (IngameObbjectRate ingameObbjectRate in m_Levels[m_CurrLevelIndex].commmonObjects)
-        {
-            rate += ingameObbjectRate.percentage;
-            if (rand < rate)
-                return ingameObbjectRate.ingameObject;
-        }
-        return m_Levels[m_CurrLevelIndex].commmonObjects[0].ingameObject;
+        return m_Levels[m_CurrLevelIndex].commmonObjects[Random.Range(0, m_Levels[m_CurrLevelIndex].commmonObjects.Count)];
     }
 
     private IngameObject GetRandomRareObject()
     {
         float rand = ((float)Random.Range(0, 100) / 100f);
         float rate = 0f;
-        foreach (IngameObbjectRate ingameObbjectRate in m_Levels[m_CurrLevelIndex].rareObjects)
+        foreach (IngameObjectRate ingameObbjectRate in m_Levels[m_CurrLevelIndex].rareObjects)
         {
             rate += ingameObbjectRate.percentage;
             if (rand < rate)
@@ -114,5 +157,28 @@ public class DataManager : MonoBehaviour
         rand.counter *= (int)Mathf.Ceil(m_MissionCount / 3);
         rand.price *= (int)Mathf.Ceil(m_MissionCount / 3);
         return rand;
+    }
+
+    public void SaveGame()
+    {
+        string jsonString;
+        if (File.Exists(Define.SAVE_FILE))
+        {
+            jsonString = File.ReadAllText(Define.SAVE_FILE);
+        }
+        else
+        {
+            Debug.Log("file does not exist !");
+            jsonString = "";
+        }
+        LevelProgress[] progresses = JsonHelper.FromJson<LevelProgress>(jsonString);
+
+        progresses[m_CurrLevelIndex].score = progresses[m_CurrLevelIndex].score < m_Score ? m_Score : progresses[m_CurrLevelIndex].score;
+        progresses[m_CurrLevelIndex].star = progresses[m_CurrLevelIndex].star < m_Star ? m_Star : progresses[m_CurrLevelIndex].star;
+        if (m_CurrLevelIndex + 1 < progresses.Length)
+            progresses[m_CurrLevelIndex + 1].isUnlock = true;
+
+        jsonString = JsonHelper.ToJson(progresses, true);
+        File.WriteAllText(Define.SAVE_FILE, jsonString);
     }
 }

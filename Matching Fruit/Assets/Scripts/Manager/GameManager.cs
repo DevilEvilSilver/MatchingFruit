@@ -1,14 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
-
-    [SerializeField] private int time = 180;
-    [SerializeField] private int turns = 30;
-    [SerializeField] private int balance = 0;
 
     // TODO: Create seperate class for mission management & shopping
     private int m_Score = 0;
@@ -28,7 +25,14 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        ResetGame();
+        DataManager.instance.SetLevelData(ref m_Score, ref m_Time, ref m_Turns, ref m_Balance);
+
+        m_CurrMission = DataManager.instance.GetRandomClearMission();
+        PlayScene.instance.m_MissionCounter.SetText(m_CurrMission.counter.ToString());
+        PlayScene.instance.m_Mission.SetSprite((m_CurrMission as ClearMission).ingameObject.sprite);
+
+        Matrix.instance.ResetMatrix();
+        m_IsEndGame = false;
     }
 
     // Update is called once per frame
@@ -57,14 +61,7 @@ public class GameManager : MonoBehaviour
 
     public void ResetGame()
     {
-        DataManager.instance.SetLevelData(ref m_Score, ref m_Time, ref m_Turns, ref m_Balance);
-
-        m_CurrMission = DataManager.instance.GetRandomClearMission();
-        PlayScene.instance.m_MissionCounter.SetText(m_CurrMission.counter.ToString());
-        PlayScene.instance.m_Mission.SetSprite((m_CurrMission as ClearMission).ingameObject.sprite);
-
-        Matrix.instance.ResetMatrix();
-        m_IsEndGame = false;
+        SceneManager.LoadScene(Define.SCENE_PLAY);
     }
 
     public void AddTime(float value)
@@ -142,19 +139,19 @@ public class GameManager : MonoBehaviour
 
     public IEnumerator OutOfMove()
     {
-        if (m_Balance >= 25)
-        {
-            PlayScene.instance.m_RefreshHint.SetSelected(true);
-            yield break;
-        }
         while (Matrix.instance.IsBusy() || Matrix.instance.CheckFallingObjects())
         {
             yield return null;
         }
-        yield return new WaitForSeconds(0.5f);
-        m_IsEndGame = true;
+        Matrix.instance.LockMatrix();
 
-        PlayScene.instance.Result(m_Score, "OUT OF MOVES !!!");
+        yield return PlayScene.instance.m_Message.SetActive(true);
+        yield return new WaitForSeconds(2.0f);
+        yield return PlayScene.instance.m_Message.SetActive(false);
+
+        Matrix.instance.ResetMatrix();
+
+        Matrix.instance.FreeMatrix();
     }
 
     public IEnumerator OutOfTurn()
@@ -175,16 +172,16 @@ public class GameManager : MonoBehaviour
     }
 
     // Currently using static items (hard code)
-    public void BuyRefresh()
+    public void BuyHammer()
     {
-        if (m_Balance < 25 || Matrix.instance.IsBusy())
+        if (m_Balance < 15 || Matrix.instance.IsBusy())
             return;
 
-        m_Balance -= 25;
+        m_Balance -= 15;
         PlayScene.instance.m_Balance.SetText(m_Balance.ToString());
 
-        PlayScene.instance.m_RefreshHint.SetSelected(false);
-        Matrix.instance.ResetMatrix();
+        Mechanic.instance.Unselect();
+        Mechanic.instance.BuyHammer();
     }
 
     public void BuyAddTurn()

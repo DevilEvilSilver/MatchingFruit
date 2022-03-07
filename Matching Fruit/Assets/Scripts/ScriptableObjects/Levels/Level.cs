@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class IngameObbjectRate
+public class IngameObjectRate
 {
     public IngameObject ingameObject;
     public float percentage;
@@ -12,6 +12,12 @@ public class IngameObbjectRate
 [CreateAssetMenu(menuName = "Level")]
 public class Level : ScriptableObject
 {
+    public Sprite map;
+
+    public int row, col;
+
+    public GameObject prefab;
+
     public int goal_1;
 
     public int goal_2;
@@ -26,7 +32,7 @@ public class Level : ScriptableObject
 
     public float rareObjectsPercentage;
 
-    public List<IngameObbjectRate> commmonObjects = new List<IngameObbjectRate>();
-    public List<IngameObbjectRate> rareObjects = new List<IngameObbjectRate>();
+    public List<IngameObject> commmonObjects = new List<IngameObject>();
+    public List<IngameObjectRate> rareObjects = new List<IngameObjectRate>();
     public List<ClearMission> clearMissions = new List<ClearMission>();
 }

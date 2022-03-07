@@ -6,6 +6,12 @@ public class Object : MonoBehaviour
 {
     [SerializeField] private float m_Gravity = -250f;
     [SerializeField] private AnimationCurve m_SwapCurve;
+
+    [SerializeField] private SpriteRenderer stateRenderer;
+    [SerializeField] private Sprite m_Block;
+    [SerializeField] private Sprite m_Chain;
+    [SerializeField] private Sprite m_Freeze;
+
     internal Vector2 m_Velocity = Vector2.zero;
     internal Vector3 m_MatrixPosition;
     internal Vector2Int m_MatrixIndex;
@@ -104,6 +110,29 @@ public class Object : MonoBehaviour
     {
         this.Properties = properties;
         GetComponent<SpriteRenderer>().sprite = properties.sprite;
+    }
+
+    public void SetStateNormal()
+    {
+        stateRenderer.color = new Color(1, 1, 1, 0);
+    }
+
+    public void SetStateBlock()
+    {
+        stateRenderer.sprite = m_Block;
+        stateRenderer.color = Color.white;
+    }
+
+    public void SetStateChained()
+    {
+        stateRenderer.sprite = m_Chain;
+        stateRenderer.color = Color.white;
+    }
+
+    public void SetStateFreeze()
+    {
+        //stateRenderer.sprite = m_Freeze;
+        stateRenderer.color = new Color(0, 0.05f, 0.9f, 0.5f);
     }
 
     public IEnumerator MoveTo(Vector3 destiny, float time)

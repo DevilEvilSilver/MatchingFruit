@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5e1bcb1f0fa1764f944a6bc8f66dc93, type: 3}
-  m_Name: Level_2
+  m_Name: Level_3
   m_EditorClassIdentifier: 
   map: {fileID: 21300000, guid: ec155e88b6a9f2b4394446ca31409d01, type: 3}
   row: 8
   col: 8
   prefab: {fileID: 6584374346850787074, guid: afcd3cc97f7608e42bc0634f66ed1511, type: 3}
-  goal_1: 7500
-  goal_2: 10000
-  goal_3: 15000
+  goal_1: 10000
+  goal_2: 15000
+  goal_3: 20000
   limitedTime: 120
   turns: 20
   startBalance: 0
@@ -32,11 +32,13 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 55673196562d47e4c849a8fa7e53fd2c, type: 2}
   rareObjects:
   - ingameObject: {fileID: 11400000, guid: 140e8378782b22e45aa2db69caf41da8, type: 2}
-    percentage: 1
+    percentage: 0.5
+  - ingameObject: {fileID: 11400000, guid: e3014fab9eebc3840a544e3c861bce55, type: 2}
+    percentage: 0.5
   clearMissions:
-  - {fileID: 11400000, guid: cff4d91e0e85eba4781181f6c945ddc3, type: 2}
-  - {fileID: 11400000, guid: d6c5964583e171f4896792718cc6abef, type: 2}
-  - {fileID: 11400000, guid: abbe2991d521d2e4394b477fd4fc4f2b, type: 2}
-  - {fileID: 11400000, guid: 59858d5fb2aa7a743ac7711c3db0e961, type: 2}
-  - {fileID: 11400000, guid: fabbd4dc2243cac4c84ee37d7814afbd, type: 2}
   - {fileID: 11400000, guid: 2b425559044139444989e9e457a7dc2d, type: 2}
+  - {fileID: 11400000, guid: fabbd4dc2243cac4c84ee37d7814afbd, type: 2}
+  - {fileID: 11400000, guid: 59858d5fb2aa7a743ac7711c3db0e961, type: 2}
+  - {fileID: 11400000, guid: abbe2991d521d2e4394b477fd4fc4f2b, type: 2}
+  - {fileID: 11400000, guid: d6c5964583e171f4896792718cc6abef, type: 2}
+  - {fileID: 11400000, guid: cff4d91e0e85eba4781181f6c945ddc3, type: 2}
