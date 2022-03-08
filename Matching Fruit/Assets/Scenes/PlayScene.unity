@@ -2641,7 +2641,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 5$
+  m_Text: 10$
 --- !u!222 &974527534
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -5423,7 +5423,7 @@ MonoBehaviour:
   m_FirstStar: {fileID: 670111854}
   m_SecondStar: {fileID: 190663581}
   m_ThirdStar: {fileID: 499550145}
-  m_HammerHint: {fileID: 0}
+  m_HammerHint: {fileID: 107710949}
   m_AddTurnHint: {fileID: 272183908}
   m_Info: {fileID: 435969454}
   m_ResultCanvasGroup: {fileID: 690725849}
@@ -5646,7 +5646,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 15$
+  m_Text: 40$
 --- !u!222 &2083630467
 CanvasRenderer:
   m_ObjectHideFlags: 0

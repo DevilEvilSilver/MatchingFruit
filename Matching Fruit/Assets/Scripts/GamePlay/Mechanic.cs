@@ -12,7 +12,8 @@ public class Mechanic : MonoBehaviour
 
     public void Unselect()
     {
-        firstSelected.SetSelected(false);
+        if (firstSelected != null)
+            firstSelected.SetSelected(false);
         firstSelected = null;
     }
 
@@ -38,11 +39,11 @@ public class Mechanic : MonoBehaviour
         {
             for (int j = 0; j < Matrix.instance.Column; j++)
             {
-                if (matrix[i, j].Properties.isRare)
+                if (matrix[i, j].Properties.isRare && Matrix.instance.CheckSelectableObject(i, j))
                 {
-                    if (j + 1 < Matrix.instance.Column)
+                    if (j + 1 < Matrix.instance.Column && Matrix.instance.CheckSelectableObject(i, j + 1))
                         return new KeyValuePair<Vector2Int, Vector2Int>(new Vector2Int(i, j), new Vector2Int(i, j + 1));
-                    else
+                    else if (Matrix.instance.CheckSelectableObject(i, j - 1))
                         return new KeyValuePair<Vector2Int, Vector2Int>(new Vector2Int(i, j), new Vector2Int(i, j - 1));
                 }
             }
@@ -57,43 +58,43 @@ public class Mechanic : MonoBehaviour
         {
             for (int j = 1; j < Matrix.instance.Column; j++)
             {
-                if (Matrix.instance.CheckMatch(i, j - 1, matrix[i, j].Properties.type))
+                if (Matrix.instance.CheckMatch(i, j - 1, matrix[i, j].Properties.type) && Matrix.instance.CheckSelectableObject(i, j - 1) && Matrix.instance.CheckSelectableObject(i, j))
                 {
                     // x x o
                     // o o x
                     // x x x
-                    if (Matrix.instance.CheckMatchWithStateNone(i + 1, j + 1, matrix[i, j].Properties.type))
+                    if (Matrix.instance.CheckMatchWithStateNone(i + 1, j + 1, matrix[i, j].Properties.type) && Matrix.instance.CheckSelectableObject(i, j + 1))
                     {
                         return new KeyValuePair<Vector2Int, Vector2Int>(new Vector2Int(i, j + 1), new Vector2Int(i + 1, j + 1));
                     }
                     // x x x
                     // o o x
                     // x x o
-                    if (Matrix.instance.CheckMatchWithStateNone(i - 1, j + 1, matrix[i, j].Properties.type))
+                    if (Matrix.instance.CheckMatchWithStateNone(i - 1, j + 1, matrix[i, j].Properties.type) && Matrix.instance.CheckSelectableObject(i, j + 1))
                     {
                         return new KeyValuePair<Vector2Int, Vector2Int>(new Vector2Int(i, j + 1), new Vector2Int(i - 1, j + 1));
                     }
                     // o o x o
-                    if (Matrix.instance.CheckMatchWithStateNone(i, j + 2, matrix[i, j].Properties.type))
+                    if (Matrix.instance.CheckMatchWithStateNone(i, j + 2, matrix[i, j].Properties.type) && Matrix.instance.CheckSelectableObject(i, j + 1))
                     {
                         return new KeyValuePair<Vector2Int, Vector2Int>(new Vector2Int(i, j + 1), new Vector2Int(i, j + 2));
                     }
                     // o x x 
                     // x o o 
                     // x x x 
-                    if (Matrix.instance.CheckMatchWithStateNone(i + 1, j - 2, matrix[i, j].Properties.type))
+                    if (Matrix.instance.CheckMatchWithStateNone(i + 1, j - 2, matrix[i, j].Properties.type) && Matrix.instance.CheckSelectableObject(i, j - 2))
                     {
                         return new KeyValuePair<Vector2Int, Vector2Int>(new Vector2Int(i, j - 2), new Vector2Int(i + 1, j - 2));
                     }
                     // x x x
                     // x o o
                     // o x x
-                    if (Matrix.instance.CheckMatchWithStateNone(i - 1, j - 2, matrix[i, j].Properties.type))
+                    if (Matrix.instance.CheckMatchWithStateNone(i - 1, j - 2, matrix[i, j].Properties.type) && Matrix.instance.CheckSelectableObject(i, j - 2))
                     {
                         return new KeyValuePair<Vector2Int, Vector2Int>(new Vector2Int(i, j - 2), new Vector2Int(i - 1, j - 2));
                     }
                     // o x o o
-                    if (Matrix.instance.CheckMatchWithStateNone(i, j - 3, matrix[i, j].Properties.type))
+                    if (Matrix.instance.CheckMatchWithStateNone(i, j - 3, matrix[i, j].Properties.type) && Matrix.instance.CheckSelectableObject(i, j - 2))
                     {
                         return new KeyValuePair<Vector2Int, Vector2Int>(new Vector2Int(i, j - 2), new Vector2Int(i, j - 3));
                     }
@@ -105,19 +106,19 @@ public class Mechanic : MonoBehaviour
         {
             for (int i = 1; i < Matrix.instance.Row; i++)
             {
-                if (Matrix.instance.CheckMatch(i - 1, j, matrix[i, j].Properties.type))
+                if (Matrix.instance.CheckMatch(i - 1, j, matrix[i, j].Properties.type) && Matrix.instance.CheckSelectableObject(i - 1, j) && Matrix.instance.CheckSelectableObject(i, j))
                 {
                     // x x o
                     // x o x
                     // x o x
-                    if (Matrix.instance.CheckMatchWithStateNone(i + 1, j + 1, matrix[i, j].Properties.type))
+                    if (Matrix.instance.CheckMatchWithStateNone(i + 1, j + 1, matrix[i, j].Properties.type) && Matrix.instance.CheckSelectableObject(i + 1, j))
                     {
                         return new KeyValuePair<Vector2Int, Vector2Int>(new Vector2Int(i + 1, j), new Vector2Int(i + 1, j + 1));
                     }
                     // o x x
                     // x o x
                     // x o x
-                    if (Matrix.instance.CheckMatchWithStateNone(i + 1, j - 1, matrix[i, j].Properties.type))
+                    if (Matrix.instance.CheckMatchWithStateNone(i + 1, j - 1, matrix[i, j].Properties.type) && Matrix.instance.CheckSelectableObject(i + 1, j))
                     {
                         return new KeyValuePair<Vector2Int, Vector2Int>(new Vector2Int(i + 1, j), new Vector2Int(i + 1, j - 1));
                     }
@@ -125,21 +126,21 @@ public class Mechanic : MonoBehaviour
                     // x
                     // o
                     // o
-                    if (Matrix.instance.CheckMatchWithStateNone(i + 2, j, matrix[i, j].Properties.type))
+                    if (Matrix.instance.CheckMatchWithStateNone(i + 2, j, matrix[i, j].Properties.type) && Matrix.instance.CheckSelectableObject(i + 1, j))
                     {
                         return new KeyValuePair<Vector2Int, Vector2Int>(new Vector2Int(i + 1, j), new Vector2Int(i + 2, j));
                     }
                     // x o x
                     // x o x
                     // x x o
-                    if (Matrix.instance.CheckMatchWithStateNone(i - 2, j + 1, matrix[i, j].Properties.type))
+                    if (Matrix.instance.CheckMatchWithStateNone(i - 2, j + 1, matrix[i, j].Properties.type) && Matrix.instance.CheckSelectableObject(i - 2, j))
                     {
                         return new KeyValuePair<Vector2Int, Vector2Int>(new Vector2Int(i - 2, j), new Vector2Int(i - 2, j + 1));
                     }
                     // x o x
                     // x o x
                     // o x x
-                    if (Matrix.instance.CheckMatchWithStateNone(i - 2, j - 1, matrix[i, j].Properties.type))
+                    if (Matrix.instance.CheckMatchWithStateNone(i - 2, j - 1, matrix[i, j].Properties.type) && Matrix.instance.CheckSelectableObject(i - 2, j))
                     {
                         return new KeyValuePair<Vector2Int, Vector2Int>(new Vector2Int(i - 2, j), new Vector2Int(i - 2, j - 1));
                     }
@@ -147,7 +148,7 @@ public class Mechanic : MonoBehaviour
                     // o
                     // x
                     // o
-                    if (Matrix.instance.CheckMatchWithStateNone(i - 3, j, matrix[i, j].Properties.type))
+                    if (Matrix.instance.CheckMatchWithStateNone(i - 3, j, matrix[i, j].Properties.type) && Matrix.instance.CheckSelectableObject(i - 2, j))
                     {
                         return new KeyValuePair<Vector2Int, Vector2Int>(new Vector2Int(i - 2, j), new Vector2Int(i - 3, j));
                     }
@@ -164,19 +165,19 @@ public class Mechanic : MonoBehaviour
         {
             for (int j = 2; j < Matrix.instance.Column; j++)
             {
-                if (Matrix.instance.CheckMatch(i, j - 2, matrix[i, j].Properties.type))
+                if (Matrix.instance.CheckMatch(i, j - 2, matrix[i, j].Properties.type) && Matrix.instance.CheckSelectableObject(i, j - 2) && Matrix.instance.CheckSelectableObject(i, j))
                 {
                     // x o x
                     // o x o
                     // x x x
-                    if (Matrix.instance.CheckMatchWithStateNone(i + 1, j - 1, matrix[i, j].Properties.type))
+                    if (Matrix.instance.CheckMatchWithStateNone(i + 1, j - 1, matrix[i, j].Properties.type) && Matrix.instance.CheckSelectableObject(i, j - 1))
                     {
                         return new KeyValuePair<Vector2Int, Vector2Int>(new Vector2Int(i, j - 1), new Vector2Int(i + 1, j - 1));
                     }
                     // x x x
                     // o x o
                     // x o x
-                    if (Matrix.instance.CheckMatchWithStateNone(i - 1, j - 1, matrix[i, j].Properties.type))
+                    if (Matrix.instance.CheckMatchWithStateNone(i - 1, j - 1, matrix[i, j].Properties.type) && Matrix.instance.CheckSelectableObject(i, j - 1))
                     {
                         return new KeyValuePair<Vector2Int, Vector2Int>(new Vector2Int(i, j - 1), new Vector2Int(i - 1, j - 1));
                     }
@@ -188,19 +189,19 @@ public class Mechanic : MonoBehaviour
         {
             for (int i = 2; i < Matrix.instance.Row; i++)
             {
-                if (Matrix.instance.CheckMatch(i - 2, j, matrix[i, j].Properties.type))
+                if (Matrix.instance.CheckMatch(i - 2, j, matrix[i, j].Properties.type) && Matrix.instance.CheckSelectableObject(i - 2, j) && Matrix.instance.CheckSelectableObject(i, j))
                 {
                     // x o x
                     // o x x
                     // x o x
-                    if (Matrix.instance.CheckMatchWithStateNone(i - 1, j - 1, matrix[i, j].Properties.type))
+                    if (Matrix.instance.CheckMatchWithStateNone(i - 1, j - 1, matrix[i, j].Properties.type) && Matrix.instance.CheckSelectableObject(i - 1, j))
                     {
                         return new KeyValuePair<Vector2Int, Vector2Int>(new Vector2Int(i - 1, j), new Vector2Int(i - 1, j - 1));
                     }
                     // x o x
                     // x x o
                     // x o x
-                    if (Matrix.instance.CheckMatchWithStateNone(i - 1, j + 1, matrix[i, j].Properties.type))
+                    if (Matrix.instance.CheckMatchWithStateNone(i - 1, j + 1, matrix[i, j].Properties.type) && Matrix.instance.CheckSelectableObject(i - 1, j))
                     {
                         return new KeyValuePair<Vector2Int, Vector2Int>(new Vector2Int(i - 1, j), new Vector2Int(i - 1, j + 1));
                     }
@@ -213,6 +214,20 @@ public class Mechanic : MonoBehaviour
 
     public void ObjectClicked(Object objectClicked)
     {
+        //Debug.Log(Matrix.instance.m_ObjectsState[objectClicked.m_MatrixIndex.x, objectClicked.m_MatrixIndex.y]);
+
+        // Hammer
+        if (isHammering)
+        {
+            isHammering = false;
+            PlayScene.instance.m_HammerHint.SetSelected(false);
+            int i = objectClicked.m_MatrixIndex.x, j = objectClicked.m_MatrixIndex.y;
+            UseHammerEffect(i, j);
+            StartCoroutine(StartMatchCombo(Matrix.instance.LockMatrix()));
+            Matrix.instance.FreeMatrix();
+            return;
+        }
+
         // Cant select when matrix is updating or end game or isFalling or out of turns
         if (!Matrix.instance.CheckSelectableObject(objectClicked.m_MatrixIndex.x, objectClicked.m_MatrixIndex.y)
             || Matrix.instance.IsBusy()
@@ -220,16 +235,6 @@ public class Mechanic : MonoBehaviour
             || GameManager.instance.m_IsEndGame
             || !GameManager.instance.CheckTurns())
             return;
-
-        // Hammer
-        if (isHammering)
-        {
-            int i = firstSelected.m_MatrixIndex.x, j = firstSelected.m_MatrixIndex.y;
-            UseBombEffect(i, j);
-            StartCoroutine(StartMatchCombo(Matrix.instance.LockMatrix()));
-            Matrix.instance.FreeMatrix();
-            return;
-        }
 
         // Unselect
         if (firstSelected == objectClicked)
@@ -390,7 +395,12 @@ public class Mechanic : MonoBehaviour
             if (!Matrix.instance.CheckFallingObjects())
             {
                 combo++;
-                GameManager.instance.UpdateScores(UpdateMatrix(currMatrix), combo);
+                int[] columnQueue = new int[Matrix.instance.Column];
+                for (int i = 0; i < Matrix.instance.Column; i++)
+                    columnQueue[i] = 0;
+
+                GameManager.instance.UpdateScores(UpdateMatrix(currMatrix, ref columnQueue), combo);
+                yield return UpdateSliding(currMatrix);
             }
             yield return null;
         }
@@ -404,13 +414,9 @@ public class Mechanic : MonoBehaviour
             Matrix.instance.FreeMatrix();
     }
 
-    private int UpdateMatrix(Object[,] matrix)
+    private int UpdateMatrix(Object[,] matrix, ref int[] columnQueue)
     {
         int matchedObjectcount = 0;
-
-        int[] columnQueue = new int[Matrix.instance.Column];
-        for (int i = 0; i < Matrix.instance.Column; i++)
-            columnQueue[i] = 0;
 
         // update mission
         // TODO: consider using Observer pattern
@@ -434,7 +440,7 @@ public class Mechanic : MonoBehaviour
         {
             for (int j = 0; j < Matrix.instance.Column; j++)
             {
-                if (Matrix.instance.CheckDestroyObject(i, j))
+                if (Matrix.instance.CheckDestroyObject(i, j) || Matrix.instance.CheckEmptyObject(i, j))
                 {
                     bool isBlocked = false;
                     int r = i + 1;
@@ -446,7 +452,7 @@ public class Mechanic : MonoBehaviour
                             break;
                         }
 
-                        if (!Matrix.instance.CheckDestroyObject(r, j))
+                        if (!Matrix.instance.CheckDestroyObject(r, j) && !Matrix.instance.CheckEmptyObject(r, j))
                         {
                             matrix[i, j].SetObjectProperties(matrix[r, j].Properties);
                             matrix[i, j].transform.position = matrix[r, j].transform.position;
@@ -456,7 +462,7 @@ public class Mechanic : MonoBehaviour
                         }
                         r++;
                     }
-                    if (Matrix.instance.CheckDestroyObject(i, j))
+                    if (Matrix.instance.CheckDestroyObject(i, j) || Matrix.instance.CheckEmptyObject(i, j))
                     {
                         if (!isBlocked)
                         {
@@ -481,6 +487,53 @@ public class Mechanic : MonoBehaviour
         Matrix.instance.InitObjectsState(false);
 
         return matchedObjectcount;
+    }
+
+    private IEnumerator UpdateSliding(Object[,] matrix)
+    {
+        int[] columnQueue = new int[Matrix.instance.Column];
+
+        bool canContinueSliding = true;
+        while (canContinueSliding)
+        {
+            while (Matrix.instance.CheckFallingObjects())
+                yield return null;
+
+            canContinueSliding = false;
+            for (int i = 0; i < Matrix.instance.Column; i++)
+                columnQueue[i] = 0;
+
+            for (int i = 1; i < Matrix.instance.Row; i++)
+            {
+                for (int j = 0; j < Matrix.instance.Column; j++)
+                {
+                    if (Matrix.instance.CheckIfObjectCanFall(i, j) && !Matrix.instance.CheckDestroyObject(i, j) && !Matrix.instance.CheckEmptyObject(i, j)
+                        && !Matrix.instance.CheckDestroyObject(i - 1, j) && !Matrix.instance.CheckEmptyObject(i - 1, j))
+                    {
+                        if (Matrix.instance.CheckEmptyObject(i - 1, j - 1))
+                        {
+                            canContinueSliding = true;
+                            matrix[i - 1, j - 1].SetObjectProperties(matrix[i, j].Properties);
+                            matrix[i - 1, j - 1].transform.position = matrix[i, j].transform.position;
+                            matrix[i - 1, j - 1].m_SlideStartPos = matrix[i, j].m_MatrixPosition.y;
+                            Matrix.instance.ResetObjectState(i - 1, j - 1);
+                            Matrix.instance.SetEmptyObject(i, j);
+                        }
+                        else if (Matrix.instance.CheckEmptyObject(i - 1, j + 1))
+                        {
+                            canContinueSliding = true;
+                            matrix[i - 1, j + 1].SetObjectProperties(matrix[i, j].Properties);
+                            matrix[i - 1, j + 1].transform.position = matrix[i, j].transform.position;
+                            matrix[i - 1, j + 1].m_SlideStartPos = matrix[i, j].m_MatrixPosition.y;
+                            Matrix.instance.ResetObjectState(i - 1, j + 1);
+                            Matrix.instance.SetEmptyObject(i, j);
+                        }
+
+                        UpdateMatrix(matrix, ref columnQueue);
+                    }
+                }
+            }
+        }
     }
 
     public void UseRareObject(Object rareObj, Object affectedObj)
@@ -588,7 +641,14 @@ public class Mechanic : MonoBehaviour
 
     public void UseClockEffect()
     {
-        GameManager.instance.AddTime(5f);
+        GameManager.instance.AddTime(15f);
+    }
+
+    public void UseHammerEffect(int i, int j)
+    {
+        Matrix.instance.SafeCompleteDestroyObject(i + 1, j - 1); Matrix.instance.SafeCompleteDestroyObject(i + 1, j); Matrix.instance.SafeCompleteDestroyObject(i + 1, j + 1);
+        Matrix.instance.SafeCompleteDestroyObject(i, j - 1); Matrix.instance.SafeCompleteDestroyObject(i, j); Matrix.instance.SafeCompleteDestroyObject(i, j + 1);
+        Matrix.instance.SafeCompleteDestroyObject(i - 1, j - 1); Matrix.instance.SafeCompleteDestroyObject(i - 1, j); Matrix.instance.SafeCompleteDestroyObject(i - 1, j + 1);
     }
 
     public void SetHintPair(KeyValuePair<Vector2Int, Vector2Int>? pair)

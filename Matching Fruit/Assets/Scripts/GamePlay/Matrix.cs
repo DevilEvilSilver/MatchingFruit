@@ -143,14 +143,15 @@ public class Matrix : MonoBehaviour
     {
         if (isFalling)
             m_ObjectsState[pos.x, pos.y] = ObjectState.Falling;
-        else if (m_ObjectsState[pos.x, pos.y] != ObjectState.Empty)
+        else if (m_ObjectsState[pos.x, pos.y] == ObjectState.Falling)
             m_ObjectsState[pos.x, pos.y] = ObjectState.Normal;
     }
 
     // Check if an object is destroyed or use effect
     public bool CheckDestroyObject(int i, int j)
     {
-        if (m_ObjectsState[i, j] == ObjectState.Destroyed
+        if ((i > -1 && i < row) && (j > -1 && j < column))
+            if (m_ObjectsState[i, j] == ObjectState.Destroyed
             || m_ObjectsState[i, j] == ObjectState.UseEffect
             || m_ObjectsState[i, j] == ObjectState.DoneEffect)
             return true;
@@ -173,6 +174,14 @@ public class Matrix : MonoBehaviour
         return true;
     }
 
+    // Check if an object is empty
+    public bool CheckEmptyObject(int i, int j)
+    {
+        if ((i > -1 && i < row) && (j > -1 && j < column))
+            return m_ObjectsState[i, j] == ObjectState.Empty;
+        return false;
+    }
+
     // Set an object empty
     public void SetEmptyObject(int i, int j)
     {
@@ -188,8 +197,32 @@ public class Matrix : MonoBehaviour
             if (m_ObjectsState[i, j] == ObjectState.Empty || m_MatrixState[i, j] == MatrixState.Block)
                 return;
 
+            m_Matrix[i, j].SetStateNormal();
             m_MatrixState[i, j] = MatrixState.None;
             
+            if (m_Matrix[i, j].Properties.isRare == false)
+                m_ObjectsState[i, j] = ObjectState.Destroyed;
+            else
+            {
+                if (m_ObjectsState[i, j] == ObjectState.UseEffect)
+                    m_ObjectsState[i, j] = ObjectState.DoneEffect;
+                else if (m_ObjectsState[i, j] != ObjectState.DoneEffect)
+                    m_ObjectsState[i, j] = ObjectState.UseEffect;
+            }
+        }
+    }
+
+    // Set an object to be destroyed or use effect
+    public void SafeCompleteDestroyObject(int i, int j)
+    {
+        if ((i > -1 && i < row) && (j > -1 && j < column))
+        {
+            if (m_ObjectsState[i, j] == ObjectState.Empty)
+                return;
+
+            m_Matrix[i, j].SetStateNormal();
+            m_MatrixState[i, j] = MatrixState.None;
+
             if (m_Matrix[i, j].Properties.isRare == false)
                 m_ObjectsState[i, j] = ObjectState.Destroyed;
             else
@@ -243,7 +276,7 @@ public class Matrix : MonoBehaviour
             return false;
         if ((i > -1 && i < row) && (j > -1 && j < column))
         {
-            if (m_MatrixState[i, j] == MatrixState.None)
+            if (CheckSelectableObject(i, j))
                 return m_Matrix[i, j].Properties.type == type;
         }
         return false;

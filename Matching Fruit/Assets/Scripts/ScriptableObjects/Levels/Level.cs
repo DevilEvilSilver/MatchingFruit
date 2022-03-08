@@ -12,7 +12,7 @@ public class IngameObjectRate
 [CreateAssetMenu(menuName = "Level")]
 public class Level : ScriptableObject
 {
-    public Sprite map;
+    public Texture2D map;
 
     public int row, col;
 

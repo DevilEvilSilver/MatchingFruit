@@ -48,12 +48,11 @@ public class DataManager : MonoBehaviour
 
     public void SetMatrixState(ref Matrix.MatrixState[,] matrixStates, ref Object[,] matrix)
     {
-        Sprite sprite = m_Levels[m_CurrLevelIndex].map;
         for (int i = 0; i < m_Levels[m_CurrLevelIndex].row; i++)
         {
             for (int j = 0; j < m_Levels[m_CurrLevelIndex].col; j++)
             {
-                Color currCell = sprite.texture.GetPixel(i, j);
+                Color currCell = m_Levels[m_CurrLevelIndex].map.GetPixel(j, i);
                 if (currCell == Color.white)
                 {
                     matrixStates[i, j] = Matrix.MatrixState.None;

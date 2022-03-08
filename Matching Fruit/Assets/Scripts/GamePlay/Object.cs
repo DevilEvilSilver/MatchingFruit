@@ -15,6 +15,7 @@ public class Object : MonoBehaviour
     internal Vector2 m_Velocity = Vector2.zero;
     internal Vector3 m_MatrixPosition;
     internal Vector2Int m_MatrixIndex;
+    internal float m_SlideStartPos = 1080f;
 
     private SpriteRenderer spriteRenderer;
     private ParticleSystem particleEffect;
@@ -49,12 +50,17 @@ public class Object : MonoBehaviour
         if (transform.position.y > m_MatrixPosition.y)
         {
             m_Velocity.y = m_Velocity.y + m_Gravity * Time.deltaTime;
+            if (transform.position.x > m_MatrixPosition.x && transform.position.y < m_SlideStartPos)
+                m_Velocity.x = m_Velocity.y;
+            else if (transform.position.x < m_MatrixPosition.x && transform.position.y < m_SlideStartPos)
+                m_Velocity.x = -m_Velocity.y;
             Matrix.instance.UpdateFallingObject(m_MatrixIndex, true);
         }
         else
         {
-            m_Velocity.y = 0f;
+            m_Velocity = Vector2.zero;
             transform.position = m_MatrixPosition;
+            m_SlideStartPos = 1080f;
             Matrix.instance.UpdateFallingObject(m_MatrixIndex, false);
         }
         rb2D.velocity = m_Velocity;

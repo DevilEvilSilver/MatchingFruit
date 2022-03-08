@@ -115,7 +115,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -168,10 +168,10 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  stateRenderer: {fileID: 8560028613696954608}
   m_Block: {fileID: 21300000, guid: 9b7a7b85e488f224a9d1693598334e26, type: 3}
   m_Chain: {fileID: 21300000, guid: 8b67ec7a96ae81c4cbef7ae7be3fce83, type: 3}
   m_Freeze: {fileID: 21300000, guid: 8b67ec7a96ae81c4cbef7ae7be3fce83, type: 3}
-  stateRenderer: {fileID: 8560028613696954608}
 --- !u!1 &913784894011054993
 GameObject:
   m_ObjectHideFlags: 0
