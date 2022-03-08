@@ -7,6 +7,7 @@ public class DataManager : MonoBehaviour
 {
     public static DataManager instance;
 
+    [SerializeField] private GameObject m_Boss;
     [SerializeField] private IngameObject m_EmptyObject;
     [SerializeField] private List<Level> m_Levels = new List<Level>();
 
@@ -25,6 +26,8 @@ public class DataManager : MonoBehaviour
     void Start()
     {
         SetCurrentLevel(PlayerPrefs.GetInt(Define.CURRENT_LEVEL_KEY, Define.LEVEL_DEFAULT));
+        if (m_Levels[m_CurrLevelIndex].isBossLevel == true)
+            m_Boss.SetActive(true);
     }
 
     private void SetCurrentLevel(int level)
@@ -131,12 +134,12 @@ public class DataManager : MonoBehaviour
             return GetRandomCommonObject();
     }
 
-    private IngameObject GetRandomCommonObject()
+    public IngameObject GetRandomCommonObject()
     {
         return m_Levels[m_CurrLevelIndex].commmonObjects[Random.Range(0, m_Levels[m_CurrLevelIndex].commmonObjects.Count)];
     }
 
-    private IngameObject GetRandomRareObject()
+    public IngameObject GetRandomRareObject()
     {
         float rand = ((float)Random.Range(0, 100) / 100f);
         float rate = 0f;

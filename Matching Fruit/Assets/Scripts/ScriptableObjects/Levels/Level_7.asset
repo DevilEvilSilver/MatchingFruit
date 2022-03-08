@@ -12,16 +12,40 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5e1bcb1f0fa1764f944a6bc8f66dc93, type: 3}
   m_Name: Level_7
   m_EditorClassIdentifier: 
-  row: 0
-  col: 0
-  prefab: {fileID: 0}
-  goal_1: 0
-  goal_2: 0
-  goal_3: 0
-  limitedTime: 0
-  turns: 0
+  isBossLevel: 0
+  map: {fileID: 2800000, guid: 2da81fe121fe9ea45bd4b694839c8a40, type: 3}
+  row: 9
+  col: 9
+  prefab: {fileID: 607296778941009426, guid: 0a45572a03e098142b596d75e64aaa5e, type: 3}
+  goal_1: 20000
+  goal_2: 30000
+  goal_3: 40000
+  limitedTime: 180
+  turns: 40
   startBalance: 0
-  rareObjectsPercentage: 0
-  commmonObjects: []
-  rareObjects: []
-  clearMissions: []
+  rareObjectsPercentage: 0.04
+  commmonObjects:
+  - {fileID: 11400000, guid: a224e43dbb9b3e14c92897568c782d2a, type: 2}
+  - {fileID: 11400000, guid: 532e2d3f6c3472243bc19698dd381d2f, type: 2}
+  - {fileID: 11400000, guid: 2b5fef4795e4ab446a209c6ffd959bc0, type: 2}
+  - {fileID: 11400000, guid: 33a0d69a0e02f8d4195ce3576217a887, type: 2}
+  - {fileID: 11400000, guid: ee1c5d14647ec0d44b622153c6760936, type: 2}
+  - {fileID: 11400000, guid: 55673196562d47e4c849a8fa7e53fd2c, type: 2}
+  - {fileID: 11400000, guid: 890716b9ce09055409881795ad67d16a, type: 2}
+  rareObjects:
+  - ingameObject: {fileID: 11400000, guid: 140e8378782b22e45aa2db69caf41da8, type: 2}
+    percentage: 0.3
+  - ingameObject: {fileID: 11400000, guid: e3014fab9eebc3840a544e3c861bce55, type: 2}
+    percentage: 0.3
+  - ingameObject: {fileID: 11400000, guid: 51320765e4ab2c74db4c57cbe0a2ab8b, type: 2}
+    percentage: 0.2
+  - ingameObject: {fileID: 11400000, guid: 81a945c1ebee6954ebaecb88ca795798, type: 2}
+    percentage: 0.2
+  clearMissions:
+  - {fileID: 11400000, guid: cff4d91e0e85eba4781181f6c945ddc3, type: 2}
+  - {fileID: 11400000, guid: d6c5964583e171f4896792718cc6abef, type: 2}
+  - {fileID: 11400000, guid: abbe2991d521d2e4394b477fd4fc4f2b, type: 2}
+  - {fileID: 11400000, guid: 59858d5fb2aa7a743ac7711c3db0e961, type: 2}
+  - {fileID: 11400000, guid: fabbd4dc2243cac4c84ee37d7814afbd, type: 2}
+  - {fileID: 11400000, guid: 2b425559044139444989e9e457a7dc2d, type: 2}
+  - {fileID: 11400000, guid: 2c773b3f9b1c80a47998e4830b3fd2dd, type: 2}

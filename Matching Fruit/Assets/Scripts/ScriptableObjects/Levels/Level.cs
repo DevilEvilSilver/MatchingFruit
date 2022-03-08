@@ -12,6 +12,8 @@ public class IngameObjectRate
 [CreateAssetMenu(menuName = "Level")]
 public class Level : ScriptableObject
 {
+    public bool isBossLevel = false;
+
     public Texture2D map;
 
     public int row, col;

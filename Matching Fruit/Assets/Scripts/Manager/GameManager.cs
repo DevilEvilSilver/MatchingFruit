@@ -174,10 +174,10 @@ public class GameManager : MonoBehaviour
     // Currently using static items (hard code)
     public void BuyHammer()
     {
-        if (m_Balance < 40 || Matrix.instance.IsBusy())
+        if (m_Balance < 30 || Matrix.instance.IsBusy())
             return;
 
-        m_Balance -= 40;
+        m_Balance -= 30;
         PlayScene.instance.m_Balance.SetText(m_Balance.ToString());
 
         PlayScene.instance.m_HammerHint.SetSelected(true);

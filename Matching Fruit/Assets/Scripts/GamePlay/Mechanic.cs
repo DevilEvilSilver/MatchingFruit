@@ -217,7 +217,10 @@ public class Mechanic : MonoBehaviour
         //Debug.Log(Matrix.instance.m_ObjectsState[objectClicked.m_MatrixIndex.x, objectClicked.m_MatrixIndex.y]);
 
         // Hammer
-        if (isHammering)
+        if (isHammering
+            && !Matrix.instance.IsBusy()
+            && !Matrix.instance.CheckFallingObjects()
+            && !GameManager.instance.m_IsEndGame)
         {
             isHammering = false;
             PlayScene.instance.m_HammerHint.SetSelected(false);
@@ -390,6 +393,19 @@ public class Mechanic : MonoBehaviour
         }
 
         int combo = 0;
+        // first loop here (avoid duplicate checkmatching)
+        if (!Matrix.instance.CheckFallingObjects())
+        {
+            combo++;
+            int[] columnQueue = new int[Matrix.instance.Column];
+            for (int i = 0; i < Matrix.instance.Column; i++)
+                columnQueue[i] = 0;
+
+            GameManager.instance.UpdateScores(UpdateMatrix(currMatrix, ref columnQueue), combo);
+            yield return UpdateSliding(currMatrix);
+        }
+        yield return null;
+
         while (CheckMatching(currMatrix))
         {
             if (!Matrix.instance.CheckFallingObjects())
@@ -457,7 +473,7 @@ public class Mechanic : MonoBehaviour
                             matrix[i, j].SetObjectProperties(matrix[r, j].Properties);
                             matrix[i, j].transform.position = matrix[r, j].transform.position;
                             Matrix.instance.ResetObjectState(i, j);
-                            Matrix.instance.SafeDestroyObject(r, j);
+                            Matrix.instance.SetEmptyObject(r, j);
                             break;
                         }
                         r++;
@@ -539,11 +555,12 @@ public class Mechanic : MonoBehaviour
     public void UseRareObject(Object rareObj, Object affectedObj)
     {
         Matrix.instance.SafeDestroyObject(rareObj.m_MatrixIndex.x, rareObj.m_MatrixIndex.y);
+        Matrix.instance.m_EffectQueue.Dequeue();
         switch (rareObj.Properties.type)
         {
             case IngameObject.ObjectType.Rainbow:
                 {
-                    UseRainbowEffect(affectedObj);
+                    UseRainbowEffect(affectedObj.Properties.type);
                     break;
                 }
             case IngameObject.ObjectType.Lightning:
@@ -566,49 +583,46 @@ public class Mechanic : MonoBehaviour
 
     public void ChainRareObject(Object[,] matrix)
     {
-        while (Matrix.instance.CheckInEffectObject())
+        while (Matrix.instance.m_EffectQueue.Count > 0)
         {
-            for (int i = 0; i < Matrix.instance.Row; i++)
+            Object rareObject = Matrix.instance.m_EffectQueue.Dequeue();
+            switch (rareObject.Properties.type)
             {
-                for (int j = 0; j < Matrix.instance.Column; j++)
-                {
-                    if (Matrix.instance.CheckDestroyObject(i, j))
+                case IngameObject.ObjectType.Rainbow:
                     {
-                        Matrix.instance.SafeDestroyObject(matrix[i, j].m_MatrixIndex.x, matrix[i, j].m_MatrixIndex.y);
-                        switch (matrix[i, j].Properties.type)
-                        {
-                            case IngameObject.ObjectType.Lightning:
-                                {
-                                    UseLightningEffect(matrix[i, j].m_MatrixIndex.x, matrix[i, j].m_MatrixIndex.y);
-                                    break;
-                                }
-                            case IngameObject.ObjectType.Bomb:
-                                {
-                                    UseBombEffect(matrix[i, j].m_MatrixIndex.x, matrix[i, j].m_MatrixIndex.y);
-                                    break;
-                                }
-                            case IngameObject.ObjectType.Clock:
-                                {
-                                    UseClockEffect();
-                                    break;
-                                }
-                        }
+                        UseRainbowEffect(DataManager.instance.GetRandomCommonObject().type);
+                        break;
                     }
-                }
+                case IngameObject.ObjectType.Lightning:
+                    {
+                        UseLightningEffect(rareObject.m_MatrixIndex.x, rareObject.m_MatrixIndex.y);
+                        break;
+                    }
+                case IngameObject.ObjectType.Bomb:
+                    {
+                        UseBombEffect(rareObject.m_MatrixIndex.x, rareObject.m_MatrixIndex.y);
+                        break;
+                    }
+                case IngameObject.ObjectType.Clock:
+                    {
+                        UseClockEffect();
+                        break;
+                    }
             }
+                
         }
     }
 
-    public void UseRainbowEffect(Object obj)
+    public void UseRainbowEffect(IngameObject.ObjectType type)
     {
         Object[,] matrix = Matrix.instance.GetMatrix();
 
-        if (obj.Properties.type != IngameObject.ObjectType.Rainbow)
+        if (type != IngameObject.ObjectType.Rainbow)
         {
             for (int i = 0; i < Matrix.instance.Row; i++)
                 for (int j = 0; j < Matrix.instance.Column; j++)
                 {
-                    if (matrix[i, j].Properties.type == obj.Properties.type)
+                    if (matrix[i, j].Properties.type == type)
                         Matrix.instance.SafeDestroyObject(i, j);
                 }
         }
@@ -633,7 +647,7 @@ public class Mechanic : MonoBehaviour
         {
             Matrix.instance.SafeDestroyObject(r, j);
         }
-        for (int c = 0; c < Matrix.instance.Row; c++)
+        for (int c = 0; c < Matrix.instance.Column; c++)
         {
             Matrix.instance.SafeDestroyObject(i, c);
         }

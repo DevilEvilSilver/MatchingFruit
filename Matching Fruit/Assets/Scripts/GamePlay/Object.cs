@@ -137,8 +137,8 @@ public class Object : MonoBehaviour
 
     public void SetStateFreeze()
     {
-        //stateRenderer.sprite = m_Freeze;
-        stateRenderer.color = new Color(0, 0.05f, 0.9f, 0.5f);
+        stateRenderer.sprite = m_Freeze;
+        stateRenderer.color = new Color(0.1f, 0.3f, 1f, 0.5f);
     }
 
     public IEnumerator MoveTo(Vector3 destiny, float time)

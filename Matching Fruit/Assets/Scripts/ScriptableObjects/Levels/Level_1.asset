@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5e1bcb1f0fa1764f944a6bc8f66dc93, type: 3}
   m_Name: Level_1
   m_EditorClassIdentifier: 
-  map: {fileID: 21300000, guid: 0dcfe7d361cd2d44fb2fa98557076c2a, type: 3}
+  map: {fileID: 2800000, guid: 0dcfe7d361cd2d44fb2fa98557076c2a, type: 3}
   row: 7
   col: 7
-  prefab: {fileID: 5771247743184845133, guid: 18c1e4cebedbabd45a7753fdb18d39b3, type: 3}
-  goal_1: 5000
-  goal_2: 7000
-  goal_3: 10000
+  prefab: {fileID: 9111700723339752604, guid: 18c1e4cebedbabd45a7753fdb18d39b3, type: 3}
+  goal_1: 3500
+  goal_2: 5000
+  goal_3: 7000
   limitedTime: 90
   turns: 25
   startBalance: 0

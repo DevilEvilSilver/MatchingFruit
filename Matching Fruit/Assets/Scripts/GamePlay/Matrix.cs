@@ -14,7 +14,7 @@ public class Matrix : MonoBehaviour
 
     public enum ObjectState
     {
-        Normal, Falling, Destroyed, UseEffect, DoneEffect, Empty
+        Normal, Falling, Destroyed, UseEffect, Empty
     }
 
     private int row;
@@ -26,7 +26,8 @@ public class Matrix : MonoBehaviour
 
     private Object[,] m_Matrix;
     private MatrixState[,] m_MatrixState;
-    public ObjectState[,] m_ObjectsState;
+    private ObjectState[,] m_ObjectsState;
+    internal Queue<Object> m_EffectQueue;
 
     private Vector3 m_ObjectSize;
     public Vector3 ObjectSize => m_ObjectSize;
@@ -46,6 +47,7 @@ public class Matrix : MonoBehaviour
         m_Matrix = new Object[row, column];
         m_MatrixState = new MatrixState[row, column];
         m_ObjectsState = new ObjectState[row, column];
+        m_EffectQueue = new Queue<Object>();
         InitMap();
     }
 
@@ -152,8 +154,7 @@ public class Matrix : MonoBehaviour
     {
         if ((i > -1 && i < row) && (j > -1 && j < column))
             if (m_ObjectsState[i, j] == ObjectState.Destroyed
-            || m_ObjectsState[i, j] == ObjectState.UseEffect
-            || m_ObjectsState[i, j] == ObjectState.DoneEffect)
+            || m_ObjectsState[i, j] == ObjectState.UseEffect)
             return true;
         return false;
     }
@@ -161,8 +162,9 @@ public class Matrix : MonoBehaviour
     // Check if an object is selectable
     public bool CheckSelectableObject(int i, int j)
     {
-        if (m_MatrixState[i, j] != MatrixState.None || m_ObjectsState[i, j] == ObjectState.Empty)
-            return false;
+        if ((i > -1 && i < row) && (j > -1 && j < column))
+            if (m_MatrixState[i, j] == MatrixState.Block || m_MatrixState[i, j] == MatrixState.Freeze || m_ObjectsState[i, j] == ObjectState.Empty)
+                return false;
         return true;
     }
 
@@ -189,6 +191,17 @@ public class Matrix : MonoBehaviour
         m_ObjectsState[i, j] = ObjectState.Empty;
     }
 
+    public void UnlockIfFreeze(int i, int j)
+    {
+        if ((i > -1 && i < row) && (j > -1 && j < column))
+            if (m_MatrixState[i, j] == MatrixState.Freeze)
+            {
+                m_Matrix[i, j].SetStateNormal();
+                m_MatrixState[i, j] = MatrixState.None;
+                ResetObjectState(i, j);
+            }
+    }
+
     // Set an object to be destroyed or use effect
     public void SafeDestroyObject(int i, int j)
     {
@@ -197,17 +210,39 @@ public class Matrix : MonoBehaviour
             if (m_ObjectsState[i, j] == ObjectState.Empty || m_MatrixState[i, j] == MatrixState.Block)
                 return;
 
-            m_Matrix[i, j].SetStateNormal();
-            m_MatrixState[i, j] = MatrixState.None;
-            
+            // unlock freeze
+            if (m_MatrixState[i, j] == MatrixState.Freeze)
+            {
+                UnlockIfFreeze(i, j);
+                return;
+            }
+
+            // unlock nearby freezing objects
+            if (m_Matrix[i, j].Properties.isRare == false)
+            { 
+                                    UnlockIfFreeze(i + 1, j);
+            UnlockIfFreeze(i, j - 1);                           ; UnlockIfFreeze(i, j + 1);
+                                    UnlockIfFreeze(i - 1, j);
+            }
+
+            // unlock chain
+            if (m_MatrixState[i, j] == MatrixState.Chained)
+            {
+                m_Matrix[i, j].SetStateNormal();
+                m_MatrixState[i, j] = MatrixState.None;
+                ResetObjectState(i, j);
+                return;
+            }
+
             if (m_Matrix[i, j].Properties.isRare == false)
                 m_ObjectsState[i, j] = ObjectState.Destroyed;
             else
             {
-                if (m_ObjectsState[i, j] == ObjectState.UseEffect)
-                    m_ObjectsState[i, j] = ObjectState.DoneEffect;
-                else if (m_ObjectsState[i, j] != ObjectState.DoneEffect)
+                if (m_ObjectsState[i, j] != ObjectState.UseEffect)
+                {
+                    m_EffectQueue.Enqueue(m_Matrix[i, j]);
                     m_ObjectsState[i, j] = ObjectState.UseEffect;
+                }
             }
         }
     }
@@ -217,21 +252,10 @@ public class Matrix : MonoBehaviour
     {
         if ((i > -1 && i < row) && (j > -1 && j < column))
         {
-            if (m_ObjectsState[i, j] == ObjectState.Empty)
-                return;
-
+            m_ObjectsState[i, j] = ObjectState.Empty;
             m_Matrix[i, j].SetStateNormal();
             m_MatrixState[i, j] = MatrixState.None;
-
-            if (m_Matrix[i, j].Properties.isRare == false)
-                m_ObjectsState[i, j] = ObjectState.Destroyed;
-            else
-            {
-                if (m_ObjectsState[i, j] == ObjectState.UseEffect)
-                    m_ObjectsState[i, j] = ObjectState.DoneEffect;
-                else if (m_ObjectsState[i, j] != ObjectState.DoneEffect)
-                    m_ObjectsState[i, j] = ObjectState.UseEffect;
-            }
+            m_Matrix[i, j].SetObjectProperties(DataManager.instance.GetEmptyObject());
         }
     }
 
@@ -307,4 +331,51 @@ public class Matrix : MonoBehaviour
         first.SetObjectProperties(second.Properties);
         second.SetObjectProperties(tmp);
     } 
+
+    public void SetStateBlock(int i, int j)
+    {
+        if ((i > -1 && i < row) && (j > -1 && j < column))
+        {
+            m_MatrixState[i, j] = Matrix.MatrixState.Block;
+            m_Matrix[i, j].SetStateBlock();
+        }
+    }
+
+    public void FreeStateBlock(int i, int j)
+    {
+        if ((i > -1 && i < row) && (j > -1 && j < column))
+            if (m_MatrixState[i, j] == Matrix.MatrixState.Block)
+            {
+                m_MatrixState[i, j] = Matrix.MatrixState.None;
+                m_Matrix[i, j].SetStateNormal();
+                m_Matrix[i, j].SetObjectProperties(DataManager.instance.GetEmptyObject());
+                m_ObjectsState[i, j] = ObjectState.Empty;
+            }
+    }
+
+    public void SetStateChained(int i, int j)
+    {
+        if ((i > -1 && i < row) && (j > -1 && j < column))
+            if (m_MatrixState[i, j] == Matrix.MatrixState.None && m_ObjectsState[i, j] != ObjectState.Empty)
+            {
+                m_MatrixState[i, j] = Matrix.MatrixState.Chained;
+                m_Matrix[i, j].SetStateChained();
+            }
+    }
+
+    public void SetStateFreeze(int i, int j)
+    {
+        if ((i > -1 && i < row) && (j > -1 && j < column))
+            if (m_MatrixState[i, j] == Matrix.MatrixState.None && m_ObjectsState[i, j] != ObjectState.Empty)
+            {
+                m_MatrixState[i, j] = Matrix.MatrixState.Freeze;
+                m_Matrix[i, j].SetStateFreeze();
+            }
+    }
+
+    public void SetWarnSafe(int i, int j)
+    {
+        if ((i > -1 && i < row) && (j > -1 && j < column))
+            StartCoroutine(m_Matrix[i, j].SetWarn());
+    }
 }
