@@ -177,7 +177,7 @@ public class DataManager : MonoBehaviour
 
         progresses[m_CurrLevelIndex].score = progresses[m_CurrLevelIndex].score < m_Score ? m_Score : progresses[m_CurrLevelIndex].score;
         progresses[m_CurrLevelIndex].star = progresses[m_CurrLevelIndex].star < m_Star ? m_Star : progresses[m_CurrLevelIndex].star;
-        if (m_CurrLevelIndex + 1 < progresses.Length)
+        if (m_CurrLevelIndex + 1 < progresses.Length && m_Star > 0)
             progresses[m_CurrLevelIndex + 1].isUnlock = true;
 
         jsonString = JsonHelper.ToJson(progresses, true);

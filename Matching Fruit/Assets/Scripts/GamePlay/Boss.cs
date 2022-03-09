@@ -7,13 +7,15 @@ public class Boss : MonoBehaviour
     [SerializeField] private float m_CoolDown = 30f;
     //[SerializeField] private int m_SkillsPerPos = 2;
     private Vector2Int m_MatrixIndex = Vector2Int.zero;
-    private float m_CurrCooldown = 10f;
-    private int m_CurrSkillsPerPos = 2;
+    private float m_CurrCooldown;
+    private int m_CurrSkillsPerPos;
     //private int m_CurrRing = 0;
 
     // Start is called before the first frame update
     void Start()
     {
+        m_CurrCooldown = m_CoolDown;
+        m_CurrSkillsPerPos = 2;
         m_MatrixIndex = new Vector2Int(Random.Range(0, Matrix.instance.Row - 1), Random.Range(0, Matrix.instance.Column - 1));
         StartCoroutine(SpawnBlock());
     }
@@ -35,7 +37,7 @@ public class Boss : MonoBehaviour
                 //StartCoroutine(FreeBlock(m_MatrixIndex.x, m_MatrixIndex.y));
                 m_MatrixIndex = new Vector2Int(Random.Range(0, Matrix.instance.Row - 1), Random.Range(0, Matrix.instance.Column - 1));
                 StartCoroutine(SpawnBlock());
-            }  
+            }
         }
     }
 
@@ -112,6 +114,8 @@ public class Boss : MonoBehaviour
         Matrix.instance.SetStateBlock(m_MatrixIndex.x - 1, m_MatrixIndex.y);
         Matrix.instance.SetStateBlock(m_MatrixIndex.x - 1, m_MatrixIndex.y + 1);
 
+        StartCoroutine(Mechanic.instance.StartMatchCombo(matrix));
+
         Matrix.instance.FreeMatrix(); // Free Matrix
     }
 
@@ -137,21 +141,21 @@ public class Boss : MonoBehaviour
         Matrix.instance.SetWarnSafe(m_MatrixIndex.x + 2, m_MatrixIndex.y + 2);
 
         Matrix.instance.SetWarnSafe(m_MatrixIndex.x + 1, m_MatrixIndex.y - 2);
-        Matrix.instance.SetWarnSafe(m_MatrixIndex.x + 1, m_MatrixIndex.y - 1);
-        Matrix.instance.SetWarnSafe(m_MatrixIndex.x + 1, m_MatrixIndex.y);
-        Matrix.instance.SetWarnSafe(m_MatrixIndex.x + 1, m_MatrixIndex.y + 1);
+        //Matrix.instance.SetWarnSafe(m_MatrixIndex.x + 1, m_MatrixIndex.y - 1);
+        //Matrix.instance.SetWarnSafe(m_MatrixIndex.x + 1, m_MatrixIndex.y);
+        //Matrix.instance.SetWarnSafe(m_MatrixIndex.x + 1, m_MatrixIndex.y + 1);
         Matrix.instance.SetWarnSafe(m_MatrixIndex.x + 1, m_MatrixIndex.y + 2);
 
         Matrix.instance.SetWarnSafe(m_MatrixIndex.x, m_MatrixIndex.y - 2);
-        Matrix.instance.SetWarnSafe(m_MatrixIndex.x, m_MatrixIndex.y - 1);
-        //Matrix.instance.SetWarnSafe(m_MatrixIndex.x, m_MatrixIndex.y);
-        Matrix.instance.SetWarnSafe(m_MatrixIndex.x, m_MatrixIndex.y + 1);
+        //Matrix.instance.SetWarnSafe(m_MatrixIndex.x, m_MatrixIndex.y - 1);
+        Matrix.instance.SetWarnSafe(m_MatrixIndex.x, m_MatrixIndex.y);
+        //Matrix.instance.SetWarnSafe(m_MatrixIndex.x, m_MatrixIndex.y + 1);
         Matrix.instance.SetWarnSafe(m_MatrixIndex.x, m_MatrixIndex.y + 2);
 
         Matrix.instance.SetWarnSafe(m_MatrixIndex.x - 1, m_MatrixIndex.y - 2);
-        Matrix.instance.SetWarnSafe(m_MatrixIndex.x - 1, m_MatrixIndex.y - 1);
-        Matrix.instance.SetWarnSafe(m_MatrixIndex.x - 1, m_MatrixIndex.y);
-        Matrix.instance.SetWarnSafe(m_MatrixIndex.x - 1, m_MatrixIndex.y + 1);
+        //Matrix.instance.SetWarnSafe(m_MatrixIndex.x - 1, m_MatrixIndex.y - 1);
+        //Matrix.instance.SetWarnSafe(m_MatrixIndex.x - 1, m_MatrixIndex.y);
+        //Matrix.instance.SetWarnSafe(m_MatrixIndex.x - 1, m_MatrixIndex.y + 1);
         Matrix.instance.SetWarnSafe(m_MatrixIndex.x - 1, m_MatrixIndex.y + 2);
 
         Matrix.instance.SetWarnSafe(m_MatrixIndex.x - 2, m_MatrixIndex.y - 2);
@@ -192,6 +196,8 @@ public class Boss : MonoBehaviour
         Matrix.instance.SetStateChained(m_MatrixIndex.x - 2, m_MatrixIndex.y + 1);
         Matrix.instance.SetStateChained(m_MatrixIndex.x - 2, m_MatrixIndex.y + 2);
 
+        StartCoroutine(Mechanic.instance.StartMatchCombo(matrix));
+
         Matrix.instance.FreeMatrix(); // Free Matrix
     }
 
@@ -231,6 +237,8 @@ public class Boss : MonoBehaviour
         {
             Matrix.instance.SetStateFreeze(m_MatrixIndex.x, c);
         }
+
+        StartCoroutine(Mechanic.instance.StartMatchCombo(matrix));
 
         Matrix.instance.FreeMatrix(); // Free Matrix
     }

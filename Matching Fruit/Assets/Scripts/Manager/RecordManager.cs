@@ -3,9 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LevelManager : MonoBehaviour
+public class RecordManager : MonoBehaviour
 {
-    public static LevelManager instance;
+    public static RecordManager instance;
 
     [SerializeField] private int levelCount = 9;
     private LevelProgress[] progresses;
@@ -33,6 +33,13 @@ public class LevelManager : MonoBehaviour
             jsonString = JsonHelper.ToJson(progresses, true);
             File.WriteAllText(Define.SAVE_FILE, jsonString);
         }
+    }
+
+    public void ResetData()
+    {
+        LoadDefaultSaveData();
+        string jsonString = JsonHelper.ToJson(progresses, true);
+        File.WriteAllText(Define.SAVE_FILE, jsonString);
     }
 
     private void LoadDefaultSaveData()

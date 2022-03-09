@@ -4,18 +4,19 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class LevelSelect : MonoBehaviour
+public class LevelButton : MonoBehaviour
 {
     [SerializeField] private int index;
     [SerializeField] private Button button;
-    public int m_Score = 0;
+    private int m_Score = 0;
     public ImageUI m_FirstStar;
     public ImageUI m_SecondStar;
     public ImageUI m_ThirdStar;
+    public CanvasGroup m_LevelPanel;
 
     void Start()
     {
-        LevelProgress currProgress = LevelManager.instance.Progresses[index];
+        LevelProgress currProgress = RecordManager.instance.Progresses[index];
         if(!currProgress.isUnlock)
             button.interactable = false;
 
@@ -36,7 +37,10 @@ public class LevelSelect : MonoBehaviour
 
     public void SelectLevel()
     {
-        PlayerPrefs.SetInt(Define.CURRENT_LEVEL_KEY, index);
-        SceneManager.LoadScene(Define.SCENE_PLAY);
+        PlayerPrefs.SetInt(Define.CURRENT_LEVEL_KEY, index  );
+        LevelPanel.instance.SetLevelPanel(index);
+        m_LevelPanel.alpha = 1;
+        m_LevelPanel.interactable = true;
+        m_LevelPanel.blocksRaycasts = true;
     }
 }

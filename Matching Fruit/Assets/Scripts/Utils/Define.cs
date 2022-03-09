@@ -8,5 +8,7 @@ public class Define
     public static string SCENE_SELECT_LEVEL = "SelectLevelScene";
     public static string SCENE_PLAY = "PlayScene";
 
+    public static string SCENE_FADER_KEY = "isStartFading";
+
     public static string SAVE_FILE = Application.persistentDataPath + "/save_file.json";
 }

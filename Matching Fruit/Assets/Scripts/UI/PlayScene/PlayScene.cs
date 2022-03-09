@@ -34,6 +34,8 @@ public class PlayScene : MonoBehaviour
 
     public GameObject m_ContinueButton;
 
+    public Animator m_Fader;
+
     void Awake()
     {
         if (instance == null)
@@ -52,6 +54,14 @@ public class PlayScene : MonoBehaviour
 
     public void Quit()
     {
+        StartCoroutine(QuitCoroutine());
+    }
+
+    private IEnumerator QuitCoroutine()
+    {
+        m_Fader.SetBool(Define.SCENE_FADER_KEY, true);
+        yield return new WaitForSeconds(0.5f);
+
         SceneManager.LoadScene(Define.SCENE_SELECT_LEVEL);
     }
 
@@ -74,9 +84,12 @@ public class PlayScene : MonoBehaviour
         {
             m_ContinueButton.SetActive(true);
             m_Reason.SetText("Congratulation !!!");
-        } 
+        }
         else
+        {
+            m_ContinueButton.SetActive(false);
             m_Reason.SetText(reason);
+        }
 
         DataManager.instance.SaveGame();
     }
@@ -93,6 +106,14 @@ public class PlayScene : MonoBehaviour
 
     public void NextLevel()
     {
+        StartCoroutine(NextLevelCoroutine());
+    }
+
+    private IEnumerator NextLevelCoroutine()
+    {
+        m_Fader.SetBool(Define.SCENE_FADER_KEY, true);
+        yield return new WaitForSeconds(0.5f);
+
         int nextLevel = DataManager.instance.GetNextLevel();
         if (nextLevel == -1)
             SceneManager.LoadScene(Define.SCENE_SELECT_LEVEL);

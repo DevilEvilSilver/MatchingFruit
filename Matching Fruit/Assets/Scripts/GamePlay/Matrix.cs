@@ -163,7 +163,7 @@ public class Matrix : MonoBehaviour
     public bool CheckSelectableObject(int i, int j)
     {
         if ((i > -1 && i < row) && (j > -1 && j < column))
-            if (m_MatrixState[i, j] == MatrixState.Block || m_MatrixState[i, j] == MatrixState.Freeze || m_ObjectsState[i, j] == ObjectState.Empty)
+            if (m_MatrixState[i, j] != MatrixState.None || m_ObjectsState[i, j] == ObjectState.Empty)
                 return false;
         return true;
     }

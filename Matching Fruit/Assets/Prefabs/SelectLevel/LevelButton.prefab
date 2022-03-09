@@ -340,10 +340,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   index: 0
-  m_Score: 0
+  button: {fileID: 2466267505521625809}
   m_FirstStar: {fileID: 8423928906145169385}
   m_SecondStar: {fileID: 2908535759078916536}
   m_ThirdStar: {fileID: 3040890060448025086}
+  m_LevelPanel: {fileID: 0}
 --- !u!1 &7512020249388414653
 GameObject:
   m_ObjectHideFlags: 0
