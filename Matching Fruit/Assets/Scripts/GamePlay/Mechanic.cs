@@ -41,10 +41,14 @@ public class Mechanic : MonoBehaviour
             {
                 if (matrix[i, j].Properties.isRare && Matrix.instance.CheckSelectableObject(i, j))
                 {
-                    if (j + 1 < Matrix.instance.Column && Matrix.instance.CheckSelectableObject(i, j + 1))
+                    if (Matrix.instance.CheckSelectableObject(i, j + 1))
                         return new KeyValuePair<Vector2Int, Vector2Int>(new Vector2Int(i, j), new Vector2Int(i, j + 1));
                     else if (Matrix.instance.CheckSelectableObject(i, j - 1))
                         return new KeyValuePair<Vector2Int, Vector2Int>(new Vector2Int(i, j), new Vector2Int(i, j - 1));
+                    else if (Matrix.instance.CheckSelectableObject(i - 1, j))
+                        return new KeyValuePair<Vector2Int, Vector2Int>(new Vector2Int(i, j), new Vector2Int(i - 1, j));
+                    else if (Matrix.instance.CheckSelectableObject(i + 1, j))
+                        return new KeyValuePair<Vector2Int, Vector2Int>(new Vector2Int(i, j), new Vector2Int(i + 1, j));
                 }
             }
         }
@@ -226,8 +230,12 @@ public class Mechanic : MonoBehaviour
             PlayScene.instance.m_HammerHint.SetSelected(false);
             int i = objectClicked.m_MatrixIndex.x, j = objectClicked.m_MatrixIndex.y;
             UseHammerEffect(i, j);
-            StartCoroutine(StartMatchCombo(Matrix.instance.LockMatrix()));
+
+            Object[,] matrix = Matrix.instance.LockMatrix();
+            CheckMatching(matrix);
+            StartCoroutine(StartMatchCombo(matrix));
             Matrix.instance.FreeMatrix();
+
             return;
         }
 
@@ -393,8 +401,10 @@ public class Mechanic : MonoBehaviour
         }
 
         int combo = 0;
+
         // first loop here (avoid duplicate checkmatching)
-        if (!Matrix.instance.CheckFallingObjects())
+        while (Matrix.instance.CheckFallingObjects())
+            yield return null;
         {
             combo++;
             int[] columnQueue = new int[Matrix.instance.Column];
@@ -404,8 +414,8 @@ public class Mechanic : MonoBehaviour
             GameManager.instance.UpdateScores(UpdateMatrix(currMatrix, ref columnQueue), combo);
             yield return UpdateSliding(currMatrix);
         }
-        yield return null;
 
+       
         while (CheckMatching(currMatrix))
         {
             if (!Matrix.instance.CheckFallingObjects())
@@ -500,7 +510,7 @@ public class Mechanic : MonoBehaviour
         }
 
         // Reset objects state
-        Matrix.instance.InitObjectsState(false);
+        //Matrix.instance.InitObjectsState(false);
 
         return matchedObjectcount;
     }
@@ -543,10 +553,12 @@ public class Mechanic : MonoBehaviour
                             matrix[i - 1, j + 1].m_SlideStartPos = matrix[i, j].m_MatrixPosition.y;
                             Matrix.instance.ResetObjectState(i - 1, j + 1);
                             Matrix.instance.SetEmptyObject(i, j);
-                        }
-
-                        UpdateMatrix(matrix, ref columnQueue);
+                        }          
                     }
+                    else if (Matrix.instance.CheckIfObjectCanFall(i, j) && (Matrix.instance.CheckDestroyObject(i - 1, j) || Matrix.instance.CheckEmptyObject(i - 1, j)))
+                        canContinueSliding = true;
+
+                    UpdateMatrix(matrix, ref columnQueue);
                 }
             }
         }

@@ -68,6 +68,7 @@ public class Boss : MonoBehaviour
         Matrix.instance.FreeStateBlock(i - 1, j);
         Matrix.instance.FreeStateBlock(i - 1, j + 1);
 
+        Mechanic.instance.CheckMatching(matrix);
         StartCoroutine(Mechanic.instance.StartMatchCombo(matrix));
 
         Matrix.instance.FreeMatrix(); // Free Matrix
@@ -114,6 +115,7 @@ public class Boss : MonoBehaviour
         Matrix.instance.SetStateBlock(m_MatrixIndex.x - 1, m_MatrixIndex.y);
         Matrix.instance.SetStateBlock(m_MatrixIndex.x - 1, m_MatrixIndex.y + 1);
 
+        Mechanic.instance.CheckMatching(matrix);
         StartCoroutine(Mechanic.instance.StartMatchCombo(matrix));
 
         Matrix.instance.FreeMatrix(); // Free Matrix
@@ -196,6 +198,7 @@ public class Boss : MonoBehaviour
         Matrix.instance.SetStateChained(m_MatrixIndex.x - 2, m_MatrixIndex.y + 1);
         Matrix.instance.SetStateChained(m_MatrixIndex.x - 2, m_MatrixIndex.y + 2);
 
+        Mechanic.instance.CheckMatching(matrix);
         StartCoroutine(Mechanic.instance.StartMatchCombo(matrix));
 
         Matrix.instance.FreeMatrix(); // Free Matrix
@@ -238,6 +241,7 @@ public class Boss : MonoBehaviour
             Matrix.instance.SetStateFreeze(m_MatrixIndex.x, c);
         }
 
+        Mechanic.instance.CheckMatching(matrix);
         StartCoroutine(Mechanic.instance.StartMatchCombo(matrix));
 
         Matrix.instance.FreeMatrix(); // Free Matrix

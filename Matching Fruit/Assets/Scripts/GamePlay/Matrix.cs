@@ -75,6 +75,7 @@ public class Matrix : MonoBehaviour
         DataManager.instance.SetMatrixState(ref m_MatrixState, ref m_Matrix);
         InitObjectsState(true);
 
+        Mechanic.instance.CheckMatching(m_Matrix);
         StartCoroutine(Mechanic.instance.StartMatchCombo(m_Matrix));
     }
 
@@ -137,6 +138,7 @@ public class Matrix : MonoBehaviour
         //init state
         InitObjectsState(true);
 
+        Mechanic.instance.CheckMatching(m_Matrix);
         StartCoroutine(Mechanic.instance.StartMatchCombo(m_Matrix));
     }
 
@@ -163,9 +165,12 @@ public class Matrix : MonoBehaviour
     public bool CheckSelectableObject(int i, int j)
     {
         if ((i > -1 && i < row) && (j > -1 && j < column))
+        {
             if (m_MatrixState[i, j] != MatrixState.None || m_ObjectsState[i, j] == ObjectState.Empty)
                 return false;
-        return true;
+            return true;
+        }
+        return false;
     }
 
     // Check if an object restricted movement
