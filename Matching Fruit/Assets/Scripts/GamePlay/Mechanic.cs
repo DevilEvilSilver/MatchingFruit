@@ -31,10 +31,7 @@ public class Mechanic : MonoBehaviour
     // Will return incorrect result while in combo (Only check when no more matching occure)
     public KeyValuePair<Vector2Int, Vector2Int>? CheckCanContinue(Object[,] matrix)
     {
-        // Need to return !null while in combo
-        //if (m_IsInCombo)
-        //    return null;
-
+        // Check for rare object
         for (int i = 0; i < Matrix.instance.Row; i++)
         {
             for (int j = 0; j < Matrix.instance.Column; j++)
@@ -418,18 +415,20 @@ public class Mechanic : MonoBehaviour
        
         while (CheckMatching(currMatrix))
         {
-            if (!Matrix.instance.CheckFallingObjects())
-            {
-                combo++;
-                int[] columnQueue = new int[Matrix.instance.Column];
-                for (int i = 0; i < Matrix.instance.Column; i++)
-                    columnQueue[i] = 0;
+            while (Matrix.instance.CheckFallingObjects())
+                yield return null;
 
-                GameManager.instance.UpdateScores(UpdateMatrix(currMatrix, ref columnQueue), combo);
-                yield return UpdateSliding(currMatrix);
-            }
-            yield return null;
+            combo++;
+            int[] columnQueue = new int[Matrix.instance.Column];
+            for (int i = 0; i < Matrix.instance.Column; i++)
+                columnQueue[i] = 0;
+
+            GameManager.instance.UpdateScores(UpdateMatrix(currMatrix, ref columnQueue), combo);
+            yield return UpdateSliding(currMatrix);
         }
+
+        while (Matrix.instance.CheckFallingObjects())
+            yield return null;
 
         if (CheckCanContinue(currMatrix) == null)
         {
@@ -555,8 +554,8 @@ public class Mechanic : MonoBehaviour
                             Matrix.instance.SetEmptyObject(i, j);
                         }          
                     }
-                    else if (Matrix.instance.CheckIfObjectCanFall(i, j) && (Matrix.instance.CheckDestroyObject(i - 1, j) || Matrix.instance.CheckEmptyObject(i - 1, j)))
-                        canContinueSliding = true;
+                    //else if (Matrix.instance.CheckIfObjectCanFall(i, j) && (Matrix.instance.CheckDestroyObject(i - 1, j) || Matrix.instance.CheckEmptyObject(i - 1, j)))
+                    //    canContinueSliding = true;
 
                     UpdateMatrix(matrix, ref columnQueue);
                 }
@@ -667,7 +666,7 @@ public class Mechanic : MonoBehaviour
 
     public void UseClockEffect()
     {
-        GameManager.instance.AddTime(15f);
+        GameManager.instance.AddTime(10f);
     }
 
     public void UseHammerEffect(int i, int j)

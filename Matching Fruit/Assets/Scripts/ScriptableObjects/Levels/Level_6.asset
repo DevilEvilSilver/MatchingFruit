@@ -17,13 +17,13 @@ MonoBehaviour:
   row: 9
   col: 9
   prefab: {fileID: 607296778941009426, guid: 0a45572a03e098142b596d75e64aaa5e, type: 3}
-  goal_1: 15000
-  goal_2: 20000
-  goal_3: 30000
+  goal_1: 7500
+  goal_2: 10000
+  goal_3: 15000
   limitedTime: 150
   turns: 30
   startBalance: 0
-  rareObjectsPercentage: 0.04
+  rareObjectsPercentage: 0.06
   commmonObjects:
   - {fileID: 11400000, guid: a224e43dbb9b3e14c92897568c782d2a, type: 2}
   - {fileID: 11400000, guid: 532e2d3f6c3472243bc19698dd381d2f, type: 2}

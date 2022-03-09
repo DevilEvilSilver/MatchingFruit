@@ -23,7 +23,7 @@ MonoBehaviour:
   limitedTime: 180
   turns: 40
   startBalance: 0
-  rareObjectsPercentage: 0.02
+  rareObjectsPercentage: 0.03
   commmonObjects:
   - {fileID: 11400000, guid: a224e43dbb9b3e14c92897568c782d2a, type: 2}
   - {fileID: 11400000, guid: 532e2d3f6c3472243bc19698dd381d2f, type: 2}

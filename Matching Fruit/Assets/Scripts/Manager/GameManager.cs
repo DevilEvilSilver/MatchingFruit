@@ -71,6 +71,9 @@ public class GameManager : MonoBehaviour
 
     public void UpdateScores(int matchedObjectCount, int combo)
     {
+        if (matchedObjectCount <= 0)
+            return;
+
         m_Score += matchedObjectCount * combo * 50;
         PlayScene.instance.m_Score.SetText(m_Score.ToString());
         DataManager.instance.CheckGoal(m_Score);
@@ -143,6 +146,9 @@ public class GameManager : MonoBehaviour
         {
             yield return null;
         }
+        if (m_IsEndGame)
+            yield break;
+
         Matrix.instance.LockMatrix();
 
         yield return PlayScene.instance.m_Message.SetActive(true);

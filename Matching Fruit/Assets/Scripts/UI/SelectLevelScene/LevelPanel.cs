@@ -35,6 +35,8 @@ public class LevelPanel : MonoBehaviour
         m_Level.SetText("Level " + (index + 1).ToString());
         if (m_Levels[index].isBossLevel)
             m_BossImage.SetActive(true);
+        else
+            m_BossImage.SetActive(false);
         m_Time.SetText(m_Levels[index].limitedTime.ToString());
         m_Turns.SetText(m_Levels[index].turns.ToString());
         m_Goal.SetText(m_Levels[index].goal_1.ToString());
@@ -43,14 +45,20 @@ public class LevelPanel : MonoBehaviour
         {
             m_FirstStar.SetUnlock(true);
         }
+        else
+            m_FirstStar.SetUnlock(false);
         if (RecordManager.instance.Progresses[index].star >= 2)
         {
             m_SecondStar.SetUnlock(true);
         }
+        else
+            m_SecondStar.SetUnlock(false);
         if (RecordManager.instance.Progresses[index].star >= 3)
         {
             m_ThirdStar.SetUnlock(true);
         }
+        else
+            m_ThirdStar.SetUnlock(false);
     }
 
     public void TurnOffPanel()

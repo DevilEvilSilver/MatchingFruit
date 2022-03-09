@@ -62,7 +62,7 @@ public class Matrix : MonoBehaviour
                 pos.x += j * (m_ObjectSize.x + 1);
                 pos.y += i * m_ObjectSize.y;
                 m_Matrix[i, j] = Instantiate(prefab, pos, Quaternion.identity).GetComponent<Object>();
-                m_Matrix[i, j].SetObjectProperties(DataManager.instance.GetRandomObject());
+                m_Matrix[i, j].SetObjectProperties(DataManager.instance.GetRandomCommonObject());
                 m_Matrix[i, j].m_MatrixPosition = pos;
                 m_Matrix[i, j].m_MatrixIndex = new Vector2Int(i, j);
                 // init falling
@@ -125,7 +125,7 @@ public class Matrix : MonoBehaviour
             for (int j = 0; j < column; j++)
             {
                 if (m_MatrixState[i, j] == MatrixState.None)
-                    m_Matrix[i, j].SetObjectProperties(DataManager.instance.GetRandomObject());
+                    m_Matrix[i, j].SetObjectProperties(DataManager.instance.GetRandomCommonObject());
 
                 m_Matrix[i, j].m_Velocity = Vector2.zero;
 
@@ -165,11 +165,8 @@ public class Matrix : MonoBehaviour
     public bool CheckSelectableObject(int i, int j)
     {
         if ((i > -1 && i < row) && (j > -1 && j < column))
-        {
-            if (m_MatrixState[i, j] != MatrixState.None || m_ObjectsState[i, j] == ObjectState.Empty)
-                return false;
-            return true;
-        }
+            if (m_MatrixState[i, j] == MatrixState.None && m_ObjectsState[i, j] != ObjectState.Empty)
+                return true;
         return false;
     }
 

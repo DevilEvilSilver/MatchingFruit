@@ -20,7 +20,7 @@ MonoBehaviour:
   goal_1: 15000
   goal_2: 20000
   goal_3: 30000
-  limitedTime: 210
+  limitedTime: 180
   turns: 50
   startBalance: 0
   rareObjectsPercentage: 0.05

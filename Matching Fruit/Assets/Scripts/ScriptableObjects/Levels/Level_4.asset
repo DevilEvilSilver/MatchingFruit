@@ -12,17 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5e1bcb1f0fa1764f944a6bc8f66dc93, type: 3}
   m_Name: Level_4
   m_EditorClassIdentifier: 
+  isBossLevel: 0
   map: {fileID: 2800000, guid: ec155e88b6a9f2b4394446ca31409d01, type: 3}
   row: 8
   col: 8
   prefab: {fileID: 3365763998696802593, guid: afcd3cc97f7608e42bc0634f66ed1511, type: 3}
-  goal_1: 12500
-  goal_2: 17500
-  goal_3: 25000
+  goal_1: 10000
+  goal_2: 15000
+  goal_3: 20000
   limitedTime: 120
   turns: 20
   startBalance: 0
-  rareObjectsPercentage: 0.03
+  rareObjectsPercentage: 0.04
   commmonObjects:
   - {fileID: 11400000, guid: a224e43dbb9b3e14c92897568c782d2a, type: 2}
   - {fileID: 11400000, guid: 532e2d3f6c3472243bc19698dd381d2f, type: 2}

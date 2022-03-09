@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class Define
+public static class Define
 {
     public static string CURRENT_LEVEL_KEY = "current_level";
     public static int LEVEL_DEFAULT = 0;
