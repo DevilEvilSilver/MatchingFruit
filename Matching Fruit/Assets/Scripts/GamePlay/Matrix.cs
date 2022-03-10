@@ -20,6 +20,7 @@ public class Matrix : MonoBehaviour
     private int row;
     private int column;
     private GameObject prefab;
+    [SerializeField] private GameObject vfx;
 
     public int Row => row;
     public int Column => column;
@@ -27,6 +28,8 @@ public class Matrix : MonoBehaviour
     private Object[,] m_Matrix;
     private MatrixState[,] m_MatrixState;
     private ObjectState[,] m_ObjectsState;
+
+    internal ObjectVFX[,] m_MatrixVFX;
     internal Queue<Object> m_EffectQueue;
 
     private Vector3 m_ObjectSize;
@@ -47,11 +50,12 @@ public class Matrix : MonoBehaviour
         m_Matrix = new Object[row, column];
         m_MatrixState = new MatrixState[row, column];
         m_ObjectsState = new ObjectState[row, column];
+        m_MatrixVFX = new ObjectVFX[row, column];
         m_EffectQueue = new Queue<Object>();
-        InitMap();
+        StartCoroutine(InitMap());
     }
 
-    private void InitMap()
+    private IEnumerator InitMap()
     {
         for (int i = 0; i < row; i++)
         {
@@ -59,9 +63,10 @@ public class Matrix : MonoBehaviour
             {
                 // init object
                 Vector3 pos = transform.position;
-                pos.x += j * (m_ObjectSize.x + 1);
-                pos.y += i * m_ObjectSize.y;
+                pos.x += j * m_ObjectSize.x - (m_ObjectSize.x * column - 1) / 2;
+                pos.y += i * m_ObjectSize.y - (m_ObjectSize.y * row - 1) / 2;
                 m_Matrix[i, j] = Instantiate(prefab, pos, Quaternion.identity).GetComponent<Object>();
+                m_Matrix[i, j].transform.parent = transform;
                 m_Matrix[i, j].SetObjectProperties(DataManager.instance.GetRandomCommonObject());
                 m_Matrix[i, j].m_MatrixPosition = pos;
                 m_Matrix[i, j].m_MatrixIndex = new Vector2Int(i, j);
@@ -71,9 +76,25 @@ public class Matrix : MonoBehaviour
             }
         }
 
+        // init object vfx
+        for (int i = 0; i < row; i++)
+        {
+            for (int j = 0; j < column; j++)
+            {
+                Vector3 pos = transform.position;
+                pos.x += j * m_ObjectSize.x  - (m_ObjectSize.x * column - 1) / 2;
+                pos.y += i * m_ObjectSize.y - (m_ObjectSize.y * row - 1) / 2;
+                m_MatrixVFX[i, j] = Instantiate(vfx, pos, Quaternion.identity).GetComponent<ObjectVFX>();
+                m_MatrixVFX[i, j].transform.parent = transform;
+            }
+        }
+
         //init state
         DataManager.instance.SetMatrixState(ref m_MatrixState, ref m_Matrix);
         InitObjectsState(true);
+
+        while (CheckFallingObjects())
+            yield return null;
 
         Mechanic.instance.CheckMatching(m_Matrix);
         StartCoroutine(Mechanic.instance.StartMatchCombo(m_Matrix));
@@ -119,13 +140,13 @@ public class Matrix : MonoBehaviour
     }
 
     // for gamemanager and item
-    public void ResetMatrix()
+    public IEnumerator ResetMatrix()
     {
         for (int i = 0; i < row; i++)
             for (int j = 0; j < column; j++)
             {
                 if (m_MatrixState[i, j] == MatrixState.None)
-                    m_Matrix[i, j].SetObjectProperties(DataManager.instance.GetRandomObject());
+                    m_Matrix[i, j].SetObjectProperties(DataManager.instance.GetRandomCommonObject());
 
                 m_Matrix[i, j].m_Velocity = Vector2.zero;
 
@@ -138,6 +159,8 @@ public class Matrix : MonoBehaviour
         //init state
         InitObjectsState(true);
 
+        while (CheckFallingObjects())
+            yield return null;
         Mechanic.instance.CheckMatching(m_Matrix);
         StartCoroutine(Mechanic.instance.StartMatchCombo(m_Matrix));
     }
@@ -203,6 +226,24 @@ public class Matrix : MonoBehaviour
                 m_MatrixState[i, j] = MatrixState.None;
                 ResetObjectState(i, j);
             }
+    }
+
+    public void SafeDestroyVFX(int i, int j)
+    {
+        if ((i > -1 && i < row) && (j > -1 && j < column))
+            m_MatrixVFX[i, j].ActiveDestroy();
+    }
+
+    public void SafeBombVFX(int i, int j)
+    {
+        if ((i > -1 && i < row) && (j > -1 && j < column))
+            m_MatrixVFX[i, j].ActiveBomb();
+    }
+
+    public void SafeLightningVFX(int i, int j)
+    {
+        if ((i > -1 && i < row) && (j > -1 && j < column))
+            m_MatrixVFX[i, j].ActiveLightning();
     }
 
     // Set an object to be destroyed or use effect

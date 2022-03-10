@@ -67,6 +67,14 @@ public class PlayScene : MonoBehaviour
 
     public void Retry()
     {
+        StartCoroutine(RetryCoroutine());
+    }
+
+    private IEnumerator RetryCoroutine()
+    {
+        m_Fader.SetBool(Define.SCENE_FADER_KEY, true);
+        yield return new WaitForSeconds(0.5f);
+
         m_ResultCanvasGroup.alpha = 0f;
         m_ResultCanvasGroup.interactable = false;
         m_ResultCanvasGroup.blocksRaycasts = false;

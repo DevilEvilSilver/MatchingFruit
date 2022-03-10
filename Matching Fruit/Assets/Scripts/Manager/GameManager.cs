@@ -31,7 +31,7 @@ public class GameManager : MonoBehaviour
         PlayScene.instance.m_MissionCounter.SetText(m_CurrMission.counter.ToString());
         PlayScene.instance.m_Mission.SetSprite((m_CurrMission as ClearMission).ingameObject.sprite);
 
-        Matrix.instance.ResetMatrix();
+        StartCoroutine(Matrix.instance.ResetMatrix());
         m_IsEndGame = false;
     }
 
@@ -155,7 +155,7 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(2.0f);
         yield return PlayScene.instance.m_Message.SetActive(false);
 
-        Matrix.instance.ResetMatrix();
+        yield return Matrix.instance.ResetMatrix();
 
         Matrix.instance.FreeMatrix();
     }
