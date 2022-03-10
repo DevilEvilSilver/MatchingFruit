@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class Object : MonoBehaviour
 {
+    public enum VelocityXDirection
+    {
+        None, Left, Right
+    }
+
     [SerializeField] private float m_Gravity = -250f;
     [SerializeField] private AnimationCurve m_SwapCurve;
 
@@ -16,6 +21,7 @@ public class Object : MonoBehaviour
     internal Vector3 m_MatrixPosition;
     internal Vector2Int m_MatrixIndex;
     internal float m_SlideStartPos = 1080f;
+    internal VelocityXDirection m_IsVelocityXSetRight = VelocityXDirection.None;
 
     private SpriteRenderer spriteRenderer;
     private ParticleSystem particleEffect;
@@ -36,6 +42,19 @@ public class Object : MonoBehaviour
     }
 
     private Rigidbody2D rb2D;
+    internal Vector3 Position
+    {
+        get
+        {
+            return this.transform.position;
+        }
+        set
+        {
+            Vector3 pos = value;
+            pos.z = -2;
+            transform.position = pos;
+        }
+    }
 
     void Start()
     {
@@ -51,16 +70,40 @@ public class Object : MonoBehaviour
         {
             m_Velocity.y = m_Velocity.y + m_Gravity * Time.deltaTime;
             if (transform.position.x > m_MatrixPosition.x && transform.position.y < m_SlideStartPos)
-                m_Velocity.x = m_Velocity.y;
+            {
+                if (m_IsVelocityXSetRight != VelocityXDirection.Right)
+                {
+                    m_Velocity.x = m_Velocity.y;
+                    m_IsVelocityXSetRight = VelocityXDirection.Left;
+                }
+                else
+                {
+                    m_Velocity.x = 0f;
+                    Vector3 pos = transform.position;
+                    pos.x = m_MatrixPosition.x;
+                    transform.position = pos;
+                } 
+            }
             else if (transform.position.x < m_MatrixPosition.x && transform.position.y < m_SlideStartPos)
-                m_Velocity.x = -m_Velocity.y;
+            {
+                if (m_IsVelocityXSetRight != VelocityXDirection.Left)
+                {
+                    m_Velocity.x = -m_Velocity.y;
+                    m_IsVelocityXSetRight = VelocityXDirection.Right;
+                }
+                else
+                {
+                    m_Velocity.x = 0f;
+                    Vector3 pos = transform.position;
+                    pos.x = m_MatrixPosition.x;
+                    transform.position = pos;
+                }
+            }
             Matrix.instance.UpdateFallingObject(m_MatrixIndex, true);
         }
         else
         {
-            m_Velocity = Vector2.zero;
-            transform.position = m_MatrixPosition;
-            m_SlideStartPos = 1080f;
+            ResetState();
             Matrix.instance.UpdateFallingObject(m_MatrixIndex, false);
         }
         rb2D.velocity = m_Velocity;
@@ -69,6 +112,14 @@ public class Object : MonoBehaviour
     void OnMouseDown()
     {
         Mechanic.instance.ObjectClicked(this);
+    }
+
+    public void ResetState()
+    {
+        m_Velocity = Vector2.zero;
+        transform.position = m_MatrixPosition;
+        m_SlideStartPos = 1080f;
+        m_IsVelocityXSetRight = VelocityXDirection.None;
     }
 
     public void SetSelected(bool isSelected)

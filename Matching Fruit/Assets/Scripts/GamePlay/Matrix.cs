@@ -67,7 +67,7 @@ public class Matrix : MonoBehaviour
                 m_Matrix[i, j].m_MatrixIndex = new Vector2Int(i, j);
                 // init falling
                 pos.y += row * m_ObjectSize.y;
-                m_Matrix[i, j].transform.position = pos;
+                m_Matrix[i, j].Position = pos;
             }
         }
 
@@ -125,14 +125,14 @@ public class Matrix : MonoBehaviour
             for (int j = 0; j < column; j++)
             {
                 if (m_MatrixState[i, j] == MatrixState.None)
-                    m_Matrix[i, j].SetObjectProperties(DataManager.instance.GetRandomCommonObject());
+                    m_Matrix[i, j].SetObjectProperties(DataManager.instance.GetRandomObject());
 
                 m_Matrix[i, j].m_Velocity = Vector2.zero;
 
                 // init falling
                 Vector3 pos = m_Matrix[i, j].m_MatrixPosition;
                 pos.y += row * m_ObjectSize.y;
-                m_Matrix[i, j].transform.position = pos;
+                m_Matrix[i, j].Position = pos;
             }
 
         //init state
@@ -190,6 +190,7 @@ public class Matrix : MonoBehaviour
     public void SetEmptyObject(int i, int j)
     {
         m_Matrix[i, j].SetObjectProperties(DataManager.instance.GetEmptyObject());
+        m_Matrix[i, j].ResetState();
         m_ObjectsState[i, j] = ObjectState.Empty;
     }
 
@@ -327,8 +328,8 @@ public class Matrix : MonoBehaviour
         StartCoroutine(first.MoveTo(second.m_MatrixPosition, 0.5f));
         yield return second.MoveTo(first.m_MatrixPosition, 0.5f);
 
-        first.transform.position = first.m_MatrixPosition;
-        second.transform.position = second.m_MatrixPosition;
+        first.Position = first.m_MatrixPosition;
+        second.Position = second.m_MatrixPosition;
         IngameObject tmp = first.Properties;
         first.SetObjectProperties(second.Properties);
         second.SetObjectProperties(tmp);

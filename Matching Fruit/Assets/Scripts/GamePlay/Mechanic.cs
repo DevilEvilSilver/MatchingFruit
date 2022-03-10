@@ -404,11 +404,7 @@ public class Mechanic : MonoBehaviour
             yield return null;
         {
             combo++;
-            int[] columnQueue = new int[Matrix.instance.Column];
-            for (int i = 0; i < Matrix.instance.Column; i++)
-                columnQueue[i] = 0;
-
-            GameManager.instance.UpdateScores(UpdateMatrix(currMatrix, ref columnQueue), combo);
+            GameManager.instance.UpdateScores(UpdateMatrix(currMatrix), combo);
             yield return UpdateSliding(currMatrix);
         }
 
@@ -419,11 +415,7 @@ public class Mechanic : MonoBehaviour
                 yield return null;
 
             combo++;
-            int[] columnQueue = new int[Matrix.instance.Column];
-            for (int i = 0; i < Matrix.instance.Column; i++)
-                columnQueue[i] = 0;
-
-            GameManager.instance.UpdateScores(UpdateMatrix(currMatrix, ref columnQueue), combo);
+            GameManager.instance.UpdateScores(UpdateMatrix(currMatrix), combo);
             yield return UpdateSliding(currMatrix);
         }
 
@@ -439,7 +431,7 @@ public class Mechanic : MonoBehaviour
             Matrix.instance.FreeMatrix();
     }
 
-    private int UpdateMatrix(Object[,] matrix, ref int[] columnQueue)
+    private int UpdateMatrix(Object[,] matrix)
     {
         int matchedObjectcount = 0;
 
@@ -460,52 +452,13 @@ public class Mechanic : MonoBehaviour
         // Use effect if rare
         ChainRareObject(matrix);
 
-        // Update Properties
-        for (int i = 0; i < Matrix.instance.Row; i++)
+        // Update Falling Column
+        int[] columnQueue = new int[Matrix.instance.Column];
+        for (int i = 0; i < Matrix.instance.Column; i++)
+            columnQueue[i] = 0;
+        for (int j = 0; j < Matrix.instance.Column; j++)
         {
-            for (int j = 0; j < Matrix.instance.Column; j++)
-            {
-                if (Matrix.instance.CheckDestroyObject(i, j) || Matrix.instance.CheckEmptyObject(i, j))
-                {
-                    bool isBlocked = false;
-                    int r = i + 1;
-                    while (r < Matrix.instance.Row)
-                    {
-                        if (!Matrix.instance.CheckIfObjectCanFall(r, j))
-                        {
-                            isBlocked = true;
-                            break;
-                        }
-
-                        if (!Matrix.instance.CheckDestroyObject(r, j) && !Matrix.instance.CheckEmptyObject(r, j))
-                        {
-                            matrix[i, j].SetObjectProperties(matrix[r, j].Properties);
-                            matrix[i, j].transform.position = matrix[r, j].transform.position;
-                            Matrix.instance.ResetObjectState(i, j);
-                            Matrix.instance.SetEmptyObject(r, j);
-                            break;
-                        }
-                        r++;
-                    }
-                    if (Matrix.instance.CheckDestroyObject(i, j) || Matrix.instance.CheckEmptyObject(i, j))
-                    {
-                        if (!isBlocked)
-                        {
-                            matrix[i, j].SetObjectProperties(DataManager.instance.GetRandomObject());
-                            Vector3 pos = Matrix.instance.transform.position;
-                            pos.x += j * (Matrix.instance.ObjectSize.x + 1);
-                            pos.y += (Matrix.instance.Row + columnQueue[j] + 1) * Matrix.instance.ObjectSize.y;
-                            matrix[i, j].transform.position = pos;
-                            Matrix.instance.ResetObjectState(i, j);
-                            columnQueue[j]++;
-                        }
-                        else
-                        {
-                            Matrix.instance.SetEmptyObject(i, j);
-                        }
-                    }
-                }
-            }
+            UpdateFallingColumn(matrix, j, ref columnQueue[j]);
         }
 
         // Reset objects state
@@ -516,18 +469,16 @@ public class Mechanic : MonoBehaviour
 
     private IEnumerator UpdateSliding(Object[,] matrix)
     {
-        int[] columnQueue = new int[Matrix.instance.Column];
-
         bool canContinueSliding = true;
         while (canContinueSliding)
         {
             while (Matrix.instance.CheckFallingObjects())
                 yield return null;
-
-            canContinueSliding = false;
+            int[] columnQueue = new int[Matrix.instance.Column];
             for (int i = 0; i < Matrix.instance.Column; i++)
                 columnQueue[i] = 0;
 
+            canContinueSliding = false;
             for (int i = 1; i < Matrix.instance.Row; i++)
             {
                 for (int j = 0; j < Matrix.instance.Column; j++)
@@ -539,28 +490,80 @@ public class Mechanic : MonoBehaviour
                         {
                             canContinueSliding = true;
                             matrix[i - 1, j - 1].SetObjectProperties(matrix[i, j].Properties);
-                            matrix[i - 1, j - 1].transform.position = matrix[i, j].transform.position;
+                            matrix[i - 1, j - 1].Position = matrix[i, j].transform.position;
                             matrix[i - 1, j - 1].m_SlideStartPos = matrix[i, j].m_MatrixPosition.y;
                             Matrix.instance.ResetObjectState(i - 1, j - 1);
                             Matrix.instance.SetEmptyObject(i, j);
+
+                            UpdateFallingColumn(matrix, j - 1, ref columnQueue[j - 1]);
                         }
                         else if (Matrix.instance.CheckEmptyObject(i - 1, j + 1))
                         {
                             canContinueSliding = true;
                             matrix[i - 1, j + 1].SetObjectProperties(matrix[i, j].Properties);
-                            matrix[i - 1, j + 1].transform.position = matrix[i, j].transform.position;
+                            matrix[i - 1, j + 1].Position = matrix[i, j].transform.position;
                             matrix[i - 1, j + 1].m_SlideStartPos = matrix[i, j].m_MatrixPosition.y;
                             Matrix.instance.ResetObjectState(i - 1, j + 1);
                             Matrix.instance.SetEmptyObject(i, j);
-                        }          
+
+                            UpdateFallingColumn(matrix, j + 1, ref columnQueue[j + 1]);
+                        }
+
+                        UpdateFallingColumn(matrix, j, ref columnQueue[j]);
+                        continue;
                     }
                     //else if (Matrix.instance.CheckIfObjectCanFall(i, j) && (Matrix.instance.CheckDestroyObject(i - 1, j) || Matrix.instance.CheckEmptyObject(i - 1, j)))
                     //    canContinueSliding = true;
+                }
+            }  
+        }
+    }
 
-                    UpdateMatrix(matrix, ref columnQueue);
+    private void UpdateFallingColumn(Object[,] matrix, int j, ref int columnQueue)
+    {
+        for (int i = 0; i < Matrix.instance.Row; i++)
+        {
+            if (Matrix.instance.CheckDestroyObject(i, j) || Matrix.instance.CheckEmptyObject(i, j))
+            {
+                bool isBlocked = false;
+                int r = i + 1;
+                while (r < Matrix.instance.Row)
+                {
+                    if (!Matrix.instance.CheckIfObjectCanFall(r, j))
+                    {
+                        isBlocked = true;
+                        break;
+                    }
+
+                    if (!Matrix.instance.CheckDestroyObject(r, j) && !Matrix.instance.CheckEmptyObject(r, j))
+                    {
+                        matrix[i, j].SetObjectProperties(matrix[r, j].Properties);
+                        matrix[i, j].Position = matrix[r, j].transform.position;
+                        Matrix.instance.ResetObjectState(i, j);
+                        Matrix.instance.SetEmptyObject(r, j);
+                        break;
+                    }
+                    r++;
+                }
+                if (Matrix.instance.CheckDestroyObject(i, j) || Matrix.instance.CheckEmptyObject(i, j))
+                {
+                    if (!isBlocked)
+                    {
+                        matrix[i, j].SetObjectProperties(DataManager.instance.GetRandomObject());
+                        Vector3 pos = Matrix.instance.transform.position;
+                        pos.x += j * (Matrix.instance.ObjectSize.x + 1);
+                        pos.y += (Matrix.instance.Row + columnQueue + 1) * Matrix.instance.ObjectSize.y;
+                        matrix[i, j].Position = pos;
+                        Matrix.instance.ResetObjectState(i, j);
+                        columnQueue++;
+                    }
+                    else
+                    {
+                        Matrix.instance.SetEmptyObject(i, j);
+                    }
                 }
             }
-        }
+        }    
     }
 
     public void UseRareObject(Object rareObj, Object affectedObj)
