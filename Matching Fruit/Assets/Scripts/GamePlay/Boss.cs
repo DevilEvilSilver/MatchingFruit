@@ -67,8 +67,8 @@ public class Boss : MonoBehaviour
             m_MatrixIndex = new Vector2Int(Random.Range(0, Matrix.instance.Row - 1), Random.Range(0, Matrix.instance.Column - 1));
 
         Vector3 pos = Matrix.instance.transform.position;
-        pos.x += m_MatrixIndex.y * (Matrix.instance.ObjectSize.x + 1);
-        pos.y += m_MatrixIndex.x * Matrix.instance.ObjectSize.y;
+        pos.x += m_MatrixIndex.y * Matrix.instance.ObjectSize.x - Matrix.instance.ObjectSize.x * (Matrix.instance.Column - 1) / 2;
+        pos.y += m_MatrixIndex.x * Matrix.instance.ObjectSize.y - Matrix.instance.ObjectSize.y * (Matrix.instance.Row - 1) / 2;
         yield return MoveTo(pos, 1.0f);
 
         yield return SpawnBlock();

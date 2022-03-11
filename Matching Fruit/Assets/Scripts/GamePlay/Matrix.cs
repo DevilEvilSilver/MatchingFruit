@@ -27,14 +27,14 @@ public class Matrix : MonoBehaviour
 
     private Object[,] m_Matrix;
     private MatrixState[,] m_MatrixState;
-    private ObjectState[,] m_ObjectsState;
+    public ObjectState[,] m_ObjectsState;
 
     internal ObjectVFX[,] m_MatrixVFX;
     internal Queue<Object> m_EffectQueue;
 
     private Vector3 m_ObjectSize;
     public Vector3 ObjectSize => m_ObjectSize;
-    private bool m_IsBusy = false;
+    public bool m_IsBusy = false;
     //private int m_Combo = 0;
 
     void Awake()
@@ -63,8 +63,8 @@ public class Matrix : MonoBehaviour
             {
                 // init object
                 Vector3 pos = transform.position;
-                pos.x += j * m_ObjectSize.x - (m_ObjectSize.x * column - 1) / 2;
-                pos.y += i * m_ObjectSize.y - (m_ObjectSize.y * row - 1) / 2;
+                pos.x += j * m_ObjectSize.x - m_ObjectSize.x * (column - 1) / 2;
+                pos.y += i * m_ObjectSize.y - m_ObjectSize.y * (row - 1) / 2;
                 m_Matrix[i, j] = Instantiate(prefab, pos, Quaternion.identity).GetComponent<Object>();
                 m_Matrix[i, j].transform.parent = transform;
                 m_Matrix[i, j].SetObjectProperties(DataManager.instance.GetRandomCommonObject());
@@ -82,8 +82,8 @@ public class Matrix : MonoBehaviour
             for (int j = 0; j < column; j++)
             {
                 Vector3 pos = transform.position;
-                pos.x += j * m_ObjectSize.x  - (m_ObjectSize.x * column - 1) / 2;
-                pos.y += i * m_ObjectSize.y - (m_ObjectSize.y * row - 1) / 2;
+                pos.x += j * m_ObjectSize.x  - m_ObjectSize.x * (column - 1) / 2;
+                pos.y += i * m_ObjectSize.y - m_ObjectSize.y * (row - 1) / 2;
                 m_MatrixVFX[i, j] = Instantiate(vfx, pos, Quaternion.identity).GetComponent<ObjectVFX>();
                 m_MatrixVFX[i, j].transform.parent = transform;
             }
@@ -279,7 +279,10 @@ public class Matrix : MonoBehaviour
             }
 
             if (m_Matrix[i, j].Properties.isRare == false)
+            {
+                m_MatrixVFX[i, j].ActiveDestroy();
                 m_ObjectsState[i, j] = ObjectState.Destroyed;
+            }
             else
             {
                 if (m_ObjectsState[i, j] != ObjectState.UseEffect)

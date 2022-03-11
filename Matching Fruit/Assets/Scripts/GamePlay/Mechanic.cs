@@ -215,7 +215,7 @@ public class Mechanic : MonoBehaviour
 
     public void ObjectClicked(Object objectClicked)
     {
-        //Debug.Log(Matrix.instance.m_ObjectsState[objectClicked.m_MatrixIndex.x, objectClicked.m_MatrixIndex.y]);
+        Debug.Log(Matrix.instance.m_ObjectsState[objectClicked.m_MatrixIndex.x, objectClicked.m_MatrixIndex.y]);
 
         // Hammer
         if (isHammering
@@ -293,13 +293,13 @@ public class Mechanic : MonoBehaviour
             {
                 if (count > 0)
                 {
-                    Matrix.instance.SafeDestroyVFX(i, j);
+                    //Matrix.instance.SafeDestroyVFX(i, j);
                     Matrix.instance.SafeDestroyObject(i, j);
                     count--;
                 }
                 else if (checkList[j] >= 3)
                 {
-                    Matrix.instance.SafeDestroyVFX(i, j);
+                    //Matrix.instance.SafeDestroyVFX(i, j);
                     Matrix.instance.SafeDestroyObject(i, j);
                     count = checkList[j] - 1;
                 }
@@ -325,13 +325,13 @@ public class Mechanic : MonoBehaviour
             {
                 if (count > 0)
                 {
-                    Matrix.instance.SafeDestroyVFX(i, j);
+                    //Matrix.instance.SafeDestroyVFX(i, j);
                     Matrix.instance.SafeDestroyObject(i, j);
                     count--;
                 }
                 else if (checkList[i] >= 3)
                 {
-                    Matrix.instance.SafeDestroyVFX(i, j);
+                    //Matrix.instance.SafeDestroyVFX(i, j);
                     Matrix.instance.SafeDestroyObject(i, j);
                     count = checkList[i] - 1;
                 }
@@ -555,8 +555,8 @@ public class Mechanic : MonoBehaviour
                     {
                         matrix[i, j].SetObjectProperties(DataManager.instance.GetRandomObject());
                         Vector3 pos = Matrix.instance.transform.position;
-                        pos.x += j * Matrix.instance.ObjectSize.x - (Matrix.instance.ObjectSize.x * Matrix.instance.Column - 1) / 2;
-                        pos.y += (Matrix.instance.Row + columnQueue + 1) * Matrix.instance.ObjectSize.y - (Matrix.instance.ObjectSize.y * Matrix.instance.Row - 1) / 2;
+                        pos.x += j * Matrix.instance.ObjectSize.x - Matrix.instance.ObjectSize.x * (Matrix.instance.Column - 1) / 2;
+                        pos.y += (Matrix.instance.Row + columnQueue + 1) * Matrix.instance.ObjectSize.y - Matrix.instance.ObjectSize.y * (Matrix.instance.Row - 1) / 2;
                         matrix[i, j].Position = pos;
                         Matrix.instance.ResetObjectState(i, j);
                         columnQueue++;
@@ -642,7 +642,7 @@ public class Mechanic : MonoBehaviour
                 {
                     if (matrix[i, j].Properties.type == type)
                     {
-                        Matrix.instance.SafeDestroyVFX(i, j);
+                        //Matrix.instance.SafeDestroyVFX(i, j);
                         Matrix.instance.SafeDestroyObject(i, j);
                     }
                 }
@@ -652,7 +652,7 @@ public class Mechanic : MonoBehaviour
             for (int i = 0; i < Matrix.instance.Row; i++)
                 for (int j = 0; j < Matrix.instance.Column; j++)
                 {
-                    Matrix.instance.SafeDestroyVFX(i, j);
+                    //Matrix.instance.SafeDestroyVFX(i, j);
                     Matrix.instance.SafeDestroyObject(i, j);
                 }
         }
@@ -660,12 +660,13 @@ public class Mechanic : MonoBehaviour
 
     public void UseBombEffect(int i, int j)
     {
-        Matrix.instance.SafeDestroyVFX(i + 1, j - 1); Matrix.instance.SafeDestroyVFX(i + 1, j); Matrix.instance.SafeDestroyVFX(i + 1, j + 1);
-        Matrix.instance.SafeDestroyVFX(i, j - 1); Matrix.instance.SafeBombVFX(i, j); Matrix.instance.SafeDestroyVFX(i, j + 1);
-        Matrix.instance.SafeDestroyVFX(i - 1, j - 1); Matrix.instance.SafeDestroyVFX(i - 1, j); Matrix.instance.SafeDestroyVFX(i - 1, j + 1);
+        //Matrix.instance.SafeDestroyVFX(i + 1, j - 1); Matrix.instance.SafeDestroyVFX(i + 1, j); Matrix.instance.SafeDestroyVFX(i + 1, j + 1);
+        //Matrix.instance.SafeDestroyVFX(i, j - 1); Matrix.instance.SafeBombVFX(i, j); Matrix.instance.SafeDestroyVFX(i, j + 1);
+        //Matrix.instance.SafeDestroyVFX(i - 1, j - 1); Matrix.instance.SafeDestroyVFX(i - 1, j); Matrix.instance.SafeDestroyVFX(i - 1, j + 1);
 
+        Matrix.instance.SafeBombVFX(i, j);
         Matrix.instance.SafeDestroyObject(i + 1, j - 1); Matrix.instance.SafeDestroyObject(i + 1, j); Matrix.instance.SafeDestroyObject(i + 1, j + 1);
-        Matrix.instance.SafeDestroyObject(i, j - 1); Matrix.instance.SafeDestroyObject(i, j); Matrix.instance.SafeDestroyObject(i, j + 1);
+        Matrix.instance.SafeDestroyObject(i, j - 1); /*Matrix.instance.SafeDestroyObject(i, j);*/ Matrix.instance.SafeDestroyObject(i, j + 1);
         Matrix.instance.SafeDestroyObject(i - 1, j - 1); Matrix.instance.SafeDestroyObject(i - 1, j); Matrix.instance.SafeDestroyObject(i - 1, j + 1);
     }
 
@@ -674,12 +675,12 @@ public class Mechanic : MonoBehaviour
         Matrix.instance.SafeLightningVFX(i, j);
         for (int r = 0; r < Matrix.instance.Row; r++)
         {
-            Matrix.instance.SafeDestroyVFX(r, j);
+            //Matrix.instance.SafeDestroyVFX(r, j);
             Matrix.instance.SafeDestroyObject(r, j);
         }
         for (int c = 0; c < Matrix.instance.Column; c++)
         {
-            Matrix.instance.SafeDestroyVFX(i, c);
+            //Matrix.instance.SafeDestroyVFX(i, c);
             Matrix.instance.SafeDestroyObject(i, c);
         }
     }

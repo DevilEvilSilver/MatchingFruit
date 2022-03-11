@@ -8,6 +8,8 @@ public class PlayScene : MonoBehaviour
 {
     public static PlayScene instance;
 
+    public TextUI m_LevelText;
+
     public FadingGroup m_Message;
     public FadingText m_Combo;
     public TextUI m_Score;
@@ -17,6 +19,8 @@ public class PlayScene : MonoBehaviour
     public TextUI m_MissionCounter;
     public ImageUI m_Mission;
 
+    public Slider m_ScoreSlider;
+    public float m_ScoreSliderHeight;
     public ImageUI m_FirstStar;
     public ImageUI m_SecondStar;
     public ImageUI m_ThirdStar;
@@ -115,6 +119,21 @@ public class PlayScene : MonoBehaviour
     public void NextLevel()
     {
         StartCoroutine(NextLevelCoroutine());
+    }
+
+    public void SetStarPos(int goal1, int goal2, int goal3)
+    {
+        Vector3 pos1 = m_FirstStar.transform.position;
+        pos1.y += (float)goal1 / goal3 * m_ScoreSliderHeight;
+        m_FirstStar.transform.position = pos1;
+
+        Vector3 pos2 = m_SecondStar.transform.position;
+        pos2.y += (float)goal2 / goal3 * m_ScoreSliderHeight;
+        m_SecondStar.transform.position = pos2;
+
+        Vector3 pos3 = m_ThirdStar.transform.position;
+        pos3.y += m_ScoreSliderHeight;
+        m_ThirdStar.transform.position = pos3;
     }
 
     private IEnumerator NextLevelCoroutine()

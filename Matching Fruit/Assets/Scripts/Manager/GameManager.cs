@@ -74,7 +74,17 @@ public class GameManager : MonoBehaviour
         if (matchedObjectCount <= 0)
             return;
 
-        m_Score += matchedObjectCount * combo * 50;
+        int count = 3;
+        int score = 0;
+        while (count > 0)
+        {
+            score += 50;
+            count--;
+        }
+        if (matchedObjectCount > 3)
+            score += (matchedObjectCount - 3) * 100;
+
+        m_Score += score * combo;
         PlayScene.instance.m_Score.SetText(m_Score.ToString());
         DataManager.instance.CheckGoal(m_Score);
 

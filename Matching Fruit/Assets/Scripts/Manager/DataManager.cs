@@ -33,6 +33,12 @@ public class DataManager : MonoBehaviour
     private void SetCurrentLevel(int level)
     {
         m_CurrLevelIndex = level;
+
+        // Set level text
+        PlayScene.instance.m_LevelText.SetText("Level " + (m_CurrLevelIndex + 1).ToString());
+
+        // Set star position on slider
+        PlayScene.instance.SetStarPos(m_Levels[m_CurrLevelIndex].goal_1, m_Levels[m_CurrLevelIndex].goal_2, m_Levels[m_CurrLevelIndex].goal_3);
     }
 
     public int GetNextLevel()
@@ -95,6 +101,7 @@ public class DataManager : MonoBehaviour
     public int CheckGoal(int score)
     {
         m_Score = score;
+        PlayScene.instance.m_ScoreSlider.value = (float)score / m_Levels[m_CurrLevelIndex].goal_3;
         if (score >= m_Levels[m_CurrLevelIndex].goal_1 && m_CurrGoal < 1)
         {
             m_Star = 1;
