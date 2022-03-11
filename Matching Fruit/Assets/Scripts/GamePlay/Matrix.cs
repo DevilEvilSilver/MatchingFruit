@@ -246,6 +246,12 @@ public class Matrix : MonoBehaviour
             m_MatrixVFX[i, j].ActiveLightning();
     }
 
+    public void SafeHammerVFX(int i, int j)
+    {
+        if ((i > -1 && i < row) && (j > -1 && j < column))
+            m_MatrixVFX[i, j].ActiveHammer();
+    }
+
     // Set an object to be destroyed or use effect
     public void SafeDestroyObject(int i, int j)
     {
@@ -278,9 +284,9 @@ public class Matrix : MonoBehaviour
                 return;
             }
 
+            m_MatrixVFX[i, j].ActiveDestroy();
             if (m_Matrix[i, j].Properties.isRare == false)
             {
-                m_MatrixVFX[i, j].ActiveDestroy();
                 m_ObjectsState[i, j] = ObjectState.Destroyed;
             }
             else

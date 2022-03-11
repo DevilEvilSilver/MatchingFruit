@@ -9,6 +9,7 @@ public class Mechanic : MonoBehaviour
     private Object firstSelected = null;
     private bool isHammering = false;
     private KeyValuePair<Vector2Int, Vector2Int>? currHintedPair = null;
+    internal bool IsHammering => isHammering;
 
     public void Unselect()
     {
@@ -224,7 +225,7 @@ public class Mechanic : MonoBehaviour
             && !GameManager.instance.m_IsEndGame)
         {
             isHammering = false;
-            PlayScene.instance.m_HammerHint.SetSelected(false);
+            PlayScene.instance.m_HammerHint.SetBool("isHint", false);
             int i = objectClicked.m_MatrixIndex.x, j = objectClicked.m_MatrixIndex.y;
             UseHammerEffect(i, j);
 
@@ -293,13 +294,11 @@ public class Mechanic : MonoBehaviour
             {
                 if (count > 0)
                 {
-                    //Matrix.instance.SafeDestroyVFX(i, j);
                     Matrix.instance.SafeDestroyObject(i, j);
                     count--;
                 }
                 else if (checkList[j] >= 3)
                 {
-                    //Matrix.instance.SafeDestroyVFX(i, j);
                     Matrix.instance.SafeDestroyObject(i, j);
                     count = checkList[j] - 1;
                 }
@@ -325,13 +324,11 @@ public class Mechanic : MonoBehaviour
             {
                 if (count > 0)
                 {
-                    //Matrix.instance.SafeDestroyVFX(i, j);
                     Matrix.instance.SafeDestroyObject(i, j);
                     count--;
                 }
                 else if (checkList[i] >= 3)
                 {
-                    //Matrix.instance.SafeDestroyVFX(i, j);
                     Matrix.instance.SafeDestroyObject(i, j);
                     count = checkList[i] - 1;
                 }
@@ -660,10 +657,6 @@ public class Mechanic : MonoBehaviour
 
     public void UseBombEffect(int i, int j)
     {
-        //Matrix.instance.SafeDestroyVFX(i + 1, j - 1); Matrix.instance.SafeDestroyVFX(i + 1, j); Matrix.instance.SafeDestroyVFX(i + 1, j + 1);
-        //Matrix.instance.SafeDestroyVFX(i, j - 1); Matrix.instance.SafeBombVFX(i, j); Matrix.instance.SafeDestroyVFX(i, j + 1);
-        //Matrix.instance.SafeDestroyVFX(i - 1, j - 1); Matrix.instance.SafeDestroyVFX(i - 1, j); Matrix.instance.SafeDestroyVFX(i - 1, j + 1);
-
         Matrix.instance.SafeBombVFX(i, j);
         Matrix.instance.SafeDestroyObject(i + 1, j - 1); Matrix.instance.SafeDestroyObject(i + 1, j); Matrix.instance.SafeDestroyObject(i + 1, j + 1);
         Matrix.instance.SafeDestroyObject(i, j - 1); /*Matrix.instance.SafeDestroyObject(i, j);*/ Matrix.instance.SafeDestroyObject(i, j + 1);
@@ -675,12 +668,10 @@ public class Mechanic : MonoBehaviour
         Matrix.instance.SafeLightningVFX(i, j);
         for (int r = 0; r < Matrix.instance.Row; r++)
         {
-            //Matrix.instance.SafeDestroyVFX(r, j);
             Matrix.instance.SafeDestroyObject(r, j);
         }
         for (int c = 0; c < Matrix.instance.Column; c++)
         {
-            //Matrix.instance.SafeDestroyVFX(i, c);
             Matrix.instance.SafeDestroyObject(i, c);
         }
     }
@@ -692,6 +683,7 @@ public class Mechanic : MonoBehaviour
 
     public void UseHammerEffect(int i, int j)
     {
+        Matrix.instance.SafeHammerVFX(i, j);
         Matrix.instance.SafeCompleteDestroyObject(i + 1, j - 1); Matrix.instance.SafeCompleteDestroyObject(i + 1, j); Matrix.instance.SafeCompleteDestroyObject(i + 1, j + 1);
         Matrix.instance.SafeCompleteDestroyObject(i, j - 1); Matrix.instance.SafeCompleteDestroyObject(i, j); Matrix.instance.SafeCompleteDestroyObject(i, j + 1);
         Matrix.instance.SafeCompleteDestroyObject(i - 1, j - 1); Matrix.instance.SafeCompleteDestroyObject(i - 1, j); Matrix.instance.SafeCompleteDestroyObject(i - 1, j + 1);

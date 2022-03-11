@@ -174,7 +174,7 @@ public class GameManager : MonoBehaviour
     {
         if (m_Balance >= 5)
         {
-            PlayScene.instance.m_AddTurnHint.SetSelected(true);
+            PlayScene.instance.m_AddTurnHint.SetBool("isHint", true);
             yield break;
         }
         while (Matrix.instance.IsBusy() || Matrix.instance.CheckFallingObjects())
@@ -190,13 +190,13 @@ public class GameManager : MonoBehaviour
     // Currently using static items (hard code)
     public void BuyHammer()
     {
-        if (m_Balance < 30 || Matrix.instance.IsBusy())
+        if (m_Balance < 30 || Matrix.instance.IsBusy() || Mechanic.instance.IsHammering)
             return;
 
         m_Balance -= 30;
         PlayScene.instance.m_Balance.SetText(m_Balance.ToString());
 
-        PlayScene.instance.m_HammerHint.SetSelected(true);
+        PlayScene.instance.m_HammerHint.SetBool("isHint", true);
         Mechanic.instance.Unselect();
         Mechanic.instance.BuyHammer();
     }
@@ -209,7 +209,7 @@ public class GameManager : MonoBehaviour
         m_Balance -= 10;
         PlayScene.instance.m_Balance.SetText(m_Balance.ToString());
 
-        PlayScene.instance.m_AddTurnHint.SetSelected(false);
+        PlayScene.instance.m_AddTurnHint.SetBool("isHint", false);
         AddTurns(10);
     }
 

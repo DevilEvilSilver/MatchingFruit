@@ -9,6 +9,7 @@ public class ObjectVFX : MonoBehaviour
     [SerializeField] private Animator m_Destroyed;
     [SerializeField] private Animator m_BombEffect;
     [SerializeField] private Animator m_LightningEffect;
+    [SerializeField] private Animator m_HammerEffect;
 
     // Start is called before the first frame update
     void Start()
@@ -35,5 +36,10 @@ public class ObjectVFX : MonoBehaviour
     public void ActiveLightning()
     {
         m_LightningEffect.SetTrigger(ACTIVE_EFFECT_PARAM);
+    }
+
+    public void ActiveHammer()
+    {
+        m_HammerEffect.SetTrigger(ACTIVE_EFFECT_PARAM);
     }
 }

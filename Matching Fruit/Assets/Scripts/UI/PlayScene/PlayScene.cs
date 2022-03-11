@@ -25,8 +25,8 @@ public class PlayScene : MonoBehaviour
     public ImageUI m_SecondStar;
     public ImageUI m_ThirdStar;
 
-    public HintEffect m_HammerHint;
-    public HintEffect m_AddTurnHint;
+    public Animator m_HammerHint;
+    public Animator m_AddTurnHint;
 
     public GameObject m_Info;
     public CanvasGroup m_ResultCanvasGroup;
