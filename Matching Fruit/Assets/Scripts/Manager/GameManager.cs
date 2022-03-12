@@ -89,19 +89,19 @@ public class GameManager : MonoBehaviour
         DataManager.instance.CheckGoal(m_Score);
 
         if (combo > 1)
-            PlayScene.instance.m_Combo.SetText("x" + combo.ToString());
+            StartCoroutine(PlayScene.instance.m_Combo.SetFadingText("x" + combo.ToString()));
     }
 
     public void DecreaseTurn()
     {
         m_Turns--;
-        PlayScene.instance.m_Turns.SetText(m_Turns.ToString());
+        PlayScene.instance.m_Turns.SetNumber(m_Turns);
     }
 
     public void AddTurns(int value)
     {
         m_Turns += value;
-        PlayScene.instance.m_Turns.SetText(m_Turns.ToString());
+        PlayScene.instance.m_Turns.SetNumber(m_Turns);
     }
     
     public bool CheckTurns()
@@ -147,7 +147,7 @@ public class GameManager : MonoBehaviour
             PlayScene.instance.Result(m_Score, "OUT OF TIME !!!");
         }
 
-        PlayScene.instance.m_Time.SetText(Mathf.Floor(m_Time).ToString());
+        PlayScene.instance.m_Time.SetNumber((int)Mathf.Floor(m_Time));
     }
 
     public IEnumerator OutOfMove()

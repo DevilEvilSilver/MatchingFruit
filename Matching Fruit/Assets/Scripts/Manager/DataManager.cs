@@ -39,6 +39,9 @@ public class DataManager : MonoBehaviour
 
         // Set star position on slider
         PlayScene.instance.SetStarPos(m_Levels[m_CurrLevelIndex].goal_1, m_Levels[m_CurrLevelIndex].goal_2, m_Levels[m_CurrLevelIndex].goal_3);
+
+        // Set BGM
+        AudioManager.instance.PlayBGM(AudioManager.BGM_TITLE);
     }
 
     public int GetNextLevel()

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5e1bcb1f0fa1764f944a6bc8f66dc93, type: 3}
   m_Name: Level_1
   m_EditorClassIdentifier: 
+  isBossLevel: 0
   map: {fileID: 2800000, guid: 0dcfe7d361cd2d44fb2fa98557076c2a, type: 3}
   row: 7
   col: 7

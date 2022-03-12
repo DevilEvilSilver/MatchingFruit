@@ -409,7 +409,8 @@ public class Mechanic : MonoBehaviour
             yield return UpdateSliding(currMatrix);
         }
 
-       
+        while (Matrix.instance.CheckFallingObjects())
+            yield return null;
         while (CheckMatching(currMatrix))
         {
             while (Matrix.instance.CheckFallingObjects())
@@ -418,6 +419,9 @@ public class Mechanic : MonoBehaviour
             combo++;
             GameManager.instance.UpdateScores(UpdateMatrix(currMatrix), combo);
             yield return UpdateSliding(currMatrix);
+
+            while (Matrix.instance.CheckFallingObjects())
+                yield return null;
         }
 
         while (Matrix.instance.CheckFallingObjects())
@@ -470,18 +474,20 @@ public class Mechanic : MonoBehaviour
 
     private IEnumerator UpdateSliding(Object[,] matrix)
     {
+        while (Matrix.instance.CheckFallingObjects())
+            yield return null;
+        int[] columnQueue = new int[Matrix.instance.Column];
+        for (int i = 0; i < Matrix.instance.Column; i++)
+            columnQueue[i] = 0;
         bool canContinueSliding = true;
         while (canContinueSliding)
         {
-            while (Matrix.instance.CheckFallingObjects())
-                yield return null;
-            int[] columnQueue = new int[Matrix.instance.Column];
-            for (int i = 0; i < Matrix.instance.Column; i++)
-                columnQueue[i] = 0;
-
             canContinueSliding = false;
+            bool skip = false;
             for (int i = 1; i < Matrix.instance.Row; i++)
             {
+                if (skip)
+                    break;
                 for (int j = 0; j < Matrix.instance.Column; j++)
                 {
                     if (Matrix.instance.CheckIfObjectCanFall(i, j) && !Matrix.instance.CheckDestroyObject(i, j) && !Matrix.instance.CheckEmptyObject(i, j)
@@ -491,30 +497,31 @@ public class Mechanic : MonoBehaviour
                         {
                             canContinueSliding = true;
                             matrix[i - 1, j - 1].SetObjectProperties(matrix[i, j].Properties);
+                            matrix[i - 1, j - 1].InheritDestinies(matrix[i, j].m_Destinies);
+                            matrix[i - 1, j - 1].m_Destinies.Enqueue(matrix[i - 1, j - 1].m_MatrixPosition);
                             matrix[i - 1, j - 1].Position = matrix[i, j].transform.position;
-                            matrix[i - 1, j - 1].m_SlideStartPos = matrix[i, j].m_MatrixPosition.y;
                             Matrix.instance.ResetObjectState(i - 1, j - 1);
                             Matrix.instance.SetEmptyObject(i, j);
 
                             UpdateFallingColumn(matrix, j - 1, ref columnQueue[j - 1]);
+                            UpdateFallingColumn(matrix, j, ref columnQueue[j]);
+                            skip = true;
                         }
                         else if (Matrix.instance.CheckEmptyObject(i - 1, j + 1))
                         {
                             canContinueSliding = true;
                             matrix[i - 1, j + 1].SetObjectProperties(matrix[i, j].Properties);
+                            matrix[i - 1, j + 1].InheritDestinies(matrix[i, j].m_Destinies);
+                            matrix[i - 1, j + 1].m_Destinies.Enqueue(matrix[i - 1, j + 1].m_MatrixPosition);
                             matrix[i - 1, j + 1].Position = matrix[i, j].transform.position;
-                            matrix[i - 1, j + 1].m_SlideStartPos = matrix[i, j].m_MatrixPosition.y;
                             Matrix.instance.ResetObjectState(i - 1, j + 1);
                             Matrix.instance.SetEmptyObject(i, j);
 
                             UpdateFallingColumn(matrix, j + 1, ref columnQueue[j + 1]);
-                        }
-
-                        UpdateFallingColumn(matrix, j, ref columnQueue[j]);
-                        continue;
+                            UpdateFallingColumn(matrix, j, ref columnQueue[j]);
+                            skip = true;
+                        } 
                     }
-                    //else if (Matrix.instance.CheckIfObjectCanFall(i, j) && (Matrix.instance.CheckDestroyObject(i - 1, j) || Matrix.instance.CheckEmptyObject(i - 1, j)))
-                    //    canContinueSliding = true;
                 }
             }  
         }
@@ -539,6 +546,7 @@ public class Mechanic : MonoBehaviour
                     if (!Matrix.instance.CheckDestroyObject(r, j) && !Matrix.instance.CheckEmptyObject(r, j))
                     {
                         matrix[i, j].SetObjectProperties(matrix[r, j].Properties);
+                        matrix[i, j].m_Destinies.Enqueue(matrix[i, j].m_MatrixPosition);
                         matrix[i, j].Position = matrix[r, j].transform.position;
                         Matrix.instance.ResetObjectState(i, j);
                         Matrix.instance.SetEmptyObject(r, j);
@@ -551,6 +559,7 @@ public class Mechanic : MonoBehaviour
                     if (!isBlocked)
                     {
                         matrix[i, j].SetObjectProperties(DataManager.instance.GetRandomObject());
+                        matrix[i, j].m_Destinies.Enqueue(matrix[i, j].m_MatrixPosition);
                         Vector3 pos = Matrix.instance.transform.position;
                         pos.x += j * Matrix.instance.ObjectSize.x - Matrix.instance.ObjectSize.x * (Matrix.instance.Column - 1) / 2;
                         pos.y += (Matrix.instance.Row + columnQueue + 1) * Matrix.instance.ObjectSize.y - Matrix.instance.ObjectSize.y * (Matrix.instance.Row - 1) / 2;
@@ -590,7 +599,7 @@ public class Mechanic : MonoBehaviour
                 }
             case IngameObject.ObjectType.Clock:
                 {
-                    UseClockEffect();
+                    UseClockEffect(rareObj.m_MatrixIndex.x, rareObj.m_MatrixIndex.y);
                     break;
                 }
         }
@@ -620,7 +629,7 @@ public class Mechanic : MonoBehaviour
                     }
                 case IngameObject.ObjectType.Clock:
                     {
-                        UseClockEffect();
+                        UseClockEffect(rareObject.m_MatrixIndex.x, rareObject.m_MatrixIndex.y);
                         break;
                     }
             }
@@ -657,6 +666,7 @@ public class Mechanic : MonoBehaviour
 
     public void UseBombEffect(int i, int j)
     {
+        AudioManager.instance.PlaySFX(AudioManager.SFX_BOMB);
         Matrix.instance.SafeBombVFX(i, j);
         Matrix.instance.SafeDestroyObject(i + 1, j - 1); Matrix.instance.SafeDestroyObject(i + 1, j); Matrix.instance.SafeDestroyObject(i + 1, j + 1);
         Matrix.instance.SafeDestroyObject(i, j - 1); /*Matrix.instance.SafeDestroyObject(i, j);*/ Matrix.instance.SafeDestroyObject(i, j + 1);
@@ -665,6 +675,7 @@ public class Mechanic : MonoBehaviour
 
     public void UseLightningEffect(int i, int j)
     {
+        AudioManager.instance.PlaySFX(AudioManager.SFX_LIGHTNING);
         Matrix.instance.SafeLightningVFX(i, j);
         for (int r = 0; r < Matrix.instance.Row; r++)
         {
@@ -676,13 +687,16 @@ public class Mechanic : MonoBehaviour
         }
     }
 
-    public void UseClockEffect()
+    public void UseClockEffect(int i, int j)
     {
+        AudioManager.instance.PlaySFX(AudioManager.SFX_CLOCK);
+        Matrix.instance.SafeClockVFX(i, j, "+10s");
         GameManager.instance.AddTime(10f);
     }
 
     public void UseHammerEffect(int i, int j)
     {
+        AudioManager.instance.PlaySFX(AudioManager.SFX_HAMMER);
         Matrix.instance.SafeHammerVFX(i, j);
         Matrix.instance.SafeCompleteDestroyObject(i + 1, j - 1); Matrix.instance.SafeCompleteDestroyObject(i + 1, j); Matrix.instance.SafeCompleteDestroyObject(i + 1, j + 1);
         Matrix.instance.SafeCompleteDestroyObject(i, j - 1); Matrix.instance.SafeCompleteDestroyObject(i, j); Matrix.instance.SafeCompleteDestroyObject(i, j + 1);

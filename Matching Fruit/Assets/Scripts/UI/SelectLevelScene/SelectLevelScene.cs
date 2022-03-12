@@ -7,6 +7,11 @@ public class SelectLevelScene : MonoBehaviour
 {
     public Animator m_Fader;
 
+    void Start()
+    {
+        AudioManager.instance.PlayBGM(AudioManager.BGM_TITLE);
+    }
+
     public void ResetData()
     {
         StartCoroutine(ResetDataCoroutine());

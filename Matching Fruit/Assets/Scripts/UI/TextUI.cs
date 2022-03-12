@@ -5,7 +5,11 @@ using UnityEngine.UI;
 
 public class TextUI : MonoBehaviour
 {
-    protected Text m_Text;
+    private static string WARNING_PARAM = "isWarning";
+
+    [SerializeField] private int WarnThreshold = -1;
+    [SerializeField] private Animator animator;
+    private Text m_Text;
 
     // Start is called before the first frame update
     void Start()
@@ -13,12 +17,24 @@ public class TextUI : MonoBehaviour
         m_Text = GetComponent<Text>();
     }
 
-    public virtual void SetText(string text)
+    public void SetText(string text)
     {
         m_Text.text = text;
     }
 
-    public virtual void SetColor(Color color)
+    public void SetNumber(int numb)
+    {
+        if (m_Text.text == numb.ToString())
+            return;
+
+        if (numb <= WarnThreshold)
+        {
+            animator.SetTrigger(WARNING_PARAM);
+        }
+        m_Text.text = numb.ToString();
+    }
+
+    public void SetColor(Color color)
     {
         m_Text.color = color;
     }

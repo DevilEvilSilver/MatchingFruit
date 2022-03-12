@@ -20,7 +20,7 @@ public class Object : MonoBehaviour
     internal Vector2 m_Velocity = Vector2.zero;
     internal Vector3 m_MatrixPosition;
     internal Vector2Int m_MatrixIndex;
-    internal float m_SlideStartPos = 1080f;
+    internal Queue<Vector3> m_Destinies = new Queue<Vector3>();
     internal VelocityXDirection m_IsVelocityXSetRight = VelocityXDirection.None;
 
     private SpriteRenderer spriteRenderer;
@@ -69,34 +69,42 @@ public class Object : MonoBehaviour
         if (transform.position.y > m_MatrixPosition.y)
         {
             m_Velocity.y = m_Velocity.y + m_Gravity * Time.deltaTime;
-            if (transform.position.x > m_MatrixPosition.x && transform.position.y < m_SlideStartPos)
+            if (m_Velocity.y < -1500f)
+                m_Velocity.y = -1500f;
+            if (m_Destinies.Count > 0)
             {
-                if (m_IsVelocityXSetRight != VelocityXDirection.Right)
+                if (transform.position.y < m_Destinies.Peek().y)
+                    m_Destinies.Dequeue();
+
+                if (m_Destinies.Count > 0 && transform.position.x > m_Destinies.Peek().x)
                 {
-                    m_Velocity.x = m_Velocity.y;
-                    m_IsVelocityXSetRight = VelocityXDirection.Left;
+                    if (m_IsVelocityXSetRight != VelocityXDirection.Right)
+                    {
+                        m_Velocity.x = m_Velocity.y;
+                        m_IsVelocityXSetRight = VelocityXDirection.Left;
+                    }
+                    else
+                    {
+                        m_Velocity.x = 0f;
+                        Vector3 pos = transform.position;
+                        pos.x = m_MatrixPosition.x;
+                        transform.position = pos;
+                    }
                 }
-                else
+                else if (m_Destinies.Count > 0 && transform.position.x < m_Destinies.Peek().x)
                 {
-                    m_Velocity.x = 0f;
-                    Vector3 pos = transform.position;
-                    pos.x = m_MatrixPosition.x;
-                    transform.position = pos;
-                } 
-            }
-            else if (transform.position.x < m_MatrixPosition.x && transform.position.y < m_SlideStartPos)
-            {
-                if (m_IsVelocityXSetRight != VelocityXDirection.Left)
-                {
-                    m_Velocity.x = -m_Velocity.y;
-                    m_IsVelocityXSetRight = VelocityXDirection.Right;
-                }
-                else
-                {
-                    m_Velocity.x = 0f;
-                    Vector3 pos = transform.position;
-                    pos.x = m_MatrixPosition.x;
-                    transform.position = pos;
+                    if (m_IsVelocityXSetRight != VelocityXDirection.Left)
+                    {
+                        m_Velocity.x = -m_Velocity.y;
+                        m_IsVelocityXSetRight = VelocityXDirection.Right;
+                    }
+                    else
+                    {
+                        m_Velocity.x = 0f;
+                        Vector3 pos = transform.position;
+                        pos.x = m_MatrixPosition.x;
+                        transform.position = pos;
+                    }
                 }
             }
             Matrix.instance.UpdateFallingObject(m_MatrixIndex, true);
@@ -118,8 +126,16 @@ public class Object : MonoBehaviour
     {
         m_Velocity = Vector2.zero;
         transform.position = m_MatrixPosition;
-        m_SlideStartPos = 1080f;
+        m_Destinies.Clear();
         m_IsVelocityXSetRight = VelocityXDirection.None;
+    }
+
+    public void InheritDestinies(Queue<Vector3> destinies)
+    {
+        while (destinies.Count > 0)
+        {
+            m_Destinies.Enqueue(destinies.Dequeue());
+        }
     }
 
     public void SetSelected(bool isSelected)

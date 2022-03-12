@@ -10,6 +10,7 @@ public class ObjectVFX : MonoBehaviour
     [SerializeField] private Animator m_BombEffect;
     [SerializeField] private Animator m_LightningEffect;
     [SerializeField] private Animator m_HammerEffect;
+    [SerializeField] private FadingText m_ClockEffect;
 
     // Start is called before the first frame update
     void Start()
@@ -36,6 +37,10 @@ public class ObjectVFX : MonoBehaviour
     public void ActiveLightning()
     {
         m_LightningEffect.SetTrigger(ACTIVE_EFFECT_PARAM);
+    }
+    public void ActiveClock(string text)
+    {
+        StartCoroutine(m_ClockEffect.SetFadingText(text));
     }
 
     public void ActiveHammer()

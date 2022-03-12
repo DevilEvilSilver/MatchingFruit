@@ -246,6 +246,12 @@ public class Matrix : MonoBehaviour
             m_MatrixVFX[i, j].ActiveLightning();
     }
 
+    public void SafeClockVFX(int i, int j, string text)
+    {
+        if ((i > -1 && i < row) && (j > -1 && j < column))
+            m_MatrixVFX[i, j].ActiveClock(text);
+    }
+
     public void SafeHammerVFX(int i, int j)
     {
         if ((i > -1 && i < row) && (j > -1 && j < column))
@@ -287,6 +293,8 @@ public class Matrix : MonoBehaviour
             m_MatrixVFX[i, j].ActiveDestroy();
             if (m_Matrix[i, j].Properties.isRare == false)
             {
+                // audio
+                AudioManager.instance.PlaySFX(AudioManager.SFX_DESTROY);
                 m_ObjectsState[i, j] = ObjectState.Destroyed;
             }
             else
