@@ -216,7 +216,7 @@ public class Mechanic : MonoBehaviour
 
     public void ObjectClicked(Object objectClicked)
     {
-        Debug.Log(Matrix.instance.m_ObjectsState[objectClicked.m_MatrixIndex.x, objectClicked.m_MatrixIndex.y]);
+        //Debug.Log(Matrix.instance.m_ObjectsState[objectClicked.m_MatrixIndex.x, objectClicked.m_MatrixIndex.y]);
 
         // Hammer
         if (isHammering

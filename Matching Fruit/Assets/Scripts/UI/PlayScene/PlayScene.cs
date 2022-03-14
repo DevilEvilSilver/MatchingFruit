@@ -20,7 +20,6 @@ public class PlayScene : MonoBehaviour
     public ImageUI m_Mission;
 
     public Slider m_ScoreSlider;
-    public float m_ScoreSliderHeight;
     public ImageUI m_FirstStar;
     public ImageUI m_SecondStar;
     public ImageUI m_ThirdStar;
@@ -125,17 +124,19 @@ public class PlayScene : MonoBehaviour
 
     public void SetStarPos(int goal1, int goal2, int goal3)
     {
-        Vector3 pos1 = m_FirstStar.transform.position;
-        pos1.y += (float)goal1 / goal3 * m_ScoreSliderHeight;
-        m_FirstStar.transform.position = pos1;
+        float scoreSliderHeight = m_ScoreSlider.GetComponent<RectTransform>().rect.height;
 
-        Vector3 pos2 = m_SecondStar.transform.position;
-        pos2.y += (float)goal2 / goal3 * m_ScoreSliderHeight;
-        m_SecondStar.transform.position = pos2;
+        Vector3 pos1 = m_FirstStar.transform.localPosition;
+        pos1.y += (float)goal1 / goal3 * scoreSliderHeight;
+        m_FirstStar.transform.localPosition = pos1;
 
-        Vector3 pos3 = m_ThirdStar.transform.position;
-        pos3.y += m_ScoreSliderHeight;
-        m_ThirdStar.transform.position = pos3;
+        Vector3 pos2 = m_SecondStar.transform.localPosition;
+        pos2.y += (float)goal2 / goal3 * scoreSliderHeight;
+        m_SecondStar.transform.localPosition = pos2;
+
+        Vector3 pos3 = m_ThirdStar.transform.localPosition;
+        pos3.y += scoreSliderHeight;
+        m_ThirdStar.transform.localPosition = pos3;
     }
 
     private IEnumerator NextLevelCoroutine()
