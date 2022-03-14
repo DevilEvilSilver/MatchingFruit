@@ -171,7 +171,10 @@ public class Matrix : MonoBehaviour
         if (isFalling)
             m_ObjectsState[pos.x, pos.y] = ObjectState.Falling;
         else if (m_ObjectsState[pos.x, pos.y] == ObjectState.Falling)
+        {
+            AudioManager.instance.PlaySFX(AudioManager.SFX_FALLING_OBJECT);
             m_ObjectsState[pos.x, pos.y] = ObjectState.Normal;
+        }
     }
 
     // Check if an object is destroyed or use effect
@@ -397,6 +400,7 @@ public class Matrix : MonoBehaviour
     {
         if ((i > -1 && i < row) && (j > -1 && j < column))
         {
+            AudioManager.instance.PlaySFX(AudioManager.SFX_BLOCK);
             m_MatrixState[i, j] = Matrix.MatrixState.Block;
             m_Matrix[i, j].SetStateBlock();
         }
@@ -419,6 +423,7 @@ public class Matrix : MonoBehaviour
         if ((i > -1 && i < row) && (j > -1 && j < column))
             if (m_MatrixState[i, j] == Matrix.MatrixState.None && m_ObjectsState[i, j] != ObjectState.Empty)
             {
+                AudioManager.instance.PlaySFX(AudioManager.SFX_CHAIN);
                 m_MatrixState[i, j] = Matrix.MatrixState.Chained;
                 m_Matrix[i, j].SetStateChained();
             }
@@ -429,6 +434,7 @@ public class Matrix : MonoBehaviour
         if ((i > -1 && i < row) && (j > -1 && j < column))
             if (m_MatrixState[i, j] == Matrix.MatrixState.None && m_ObjectsState[i, j] != ObjectState.Empty)
             {
+                AudioManager.instance.PlaySFX(AudioManager.SFX_ICE);
                 m_MatrixState[i, j] = Matrix.MatrixState.Freeze;
                 m_Matrix[i, j].SetStateFreeze();
             }

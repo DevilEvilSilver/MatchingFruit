@@ -17,6 +17,11 @@ public class SelectLevelScene : MonoBehaviour
         StartCoroutine(ResetDataCoroutine());
     }
 
+    public void CheatLevel()
+    {
+        StartCoroutine(CheatCoroutine());
+    }
+
     private IEnumerator ResetDataCoroutine()
     {
         m_Fader.SetBool(Define.SCENE_FADER_KEY, true);
@@ -26,8 +31,19 @@ public class SelectLevelScene : MonoBehaviour
         SceneManager.LoadScene(Define.SCENE_SELECT_LEVEL);
     }
 
+    private IEnumerator CheatCoroutine()
+    {
+        m_Fader.SetBool(Define.SCENE_FADER_KEY, true);
+        yield return new WaitForSeconds(0.5f);
+
+        RecordManager.instance.CheatLevel();
+        SceneManager.LoadScene(Define.SCENE_SELECT_LEVEL);
+    }
+
     public void QuitGame()
     {
+        RecordManager.instance.SaveData();
+        ConfigManager.instance.SaveConfig();
         Application.Quit();
     }
 }

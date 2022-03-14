@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ButtonToggle : MonoBehaviour
+public class AudioToggle : MonoBehaviour
 { 
     [SerializeField] private Image m_Image;
     [SerializeField] private Sprite m_ActiveSprite;
@@ -13,7 +13,11 @@ public class ButtonToggle : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        if (ConfigManager.instance.config.isMute)
+            m_IsActive = true;
+        else
+            m_IsActive = false;
+        Toggle();
     }
 
     // Update is called once per frame
@@ -34,5 +38,9 @@ public class ButtonToggle : MonoBehaviour
             m_IsActive = true;
             m_Image.sprite = m_ActiveSprite;
         }
+
+        AudioManager.instance.ToggleBGMVolume(m_IsActive);
+        AudioManager.instance.ToggleSFXVolume(m_IsActive);
+        ConfigManager.instance.config.isMute = !m_IsActive;
     }
 }

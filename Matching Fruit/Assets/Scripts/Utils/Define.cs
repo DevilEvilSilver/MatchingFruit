@@ -11,4 +11,5 @@ public static class Define
     public static string SCENE_FADER_KEY = "isStartFading";
 
     public static string SAVE_FILE = Application.persistentDataPath + "/save_file.json";
+    public static string CONFIG_FILE = Application.persistentDataPath + "/config_file.json";
 }

@@ -94,11 +94,13 @@ public class PlayScene : MonoBehaviour
         m_Result.SetText(result.ToString());
         if (DataManager.instance.CheckGoal(result) > 0)
         {
+            AudioManager.instance.PlaySFX(AudioManager.SFX_WIN);
             m_ContinueButton.SetActive(true);
             m_Reason.SetText("Congratulation !!!");
         }
         else
         {
+            AudioManager.instance.PlaySFX(AudioManager.SFX_LOSE);
             m_ContinueButton.SetActive(false);
             m_Reason.SetText(reason);
         }

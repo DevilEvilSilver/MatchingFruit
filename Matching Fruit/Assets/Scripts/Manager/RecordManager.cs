@@ -15,11 +15,7 @@ public class RecordManager : MonoBehaviour
     {
         if (instance == null)
             instance = this;
-    }
 
-    // Start is called before the first frame update
-    void Start()
-    {
         string jsonString;
         if (File.Exists(Define.SAVE_FILE))
         {
@@ -28,7 +24,7 @@ public class RecordManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("file does not exist !");
+            Debug.Log("save file does not exist !");
             LoadDefaultSaveData();
             jsonString = JsonHelper.ToJson(progresses, true);
             File.WriteAllText(Define.SAVE_FILE, jsonString);
@@ -38,6 +34,22 @@ public class RecordManager : MonoBehaviour
     public void ResetData()
     {
         LoadDefaultSaveData();
+        string jsonString = JsonHelper.ToJson(progresses, true);
+        File.WriteAllText(Define.SAVE_FILE, jsonString);
+    }
+
+    public void CheatLevel()
+    {
+        for (int i = 0; i < levelCount; i++)
+        {
+            progresses[i].isUnlock = true;
+        }
+        string jsonString = JsonHelper.ToJson(progresses, true);
+        File.WriteAllText(Define.SAVE_FILE, jsonString);
+    }
+
+    public void SaveData()
+    {
         string jsonString = JsonHelper.ToJson(progresses, true);
         File.WriteAllText(Define.SAVE_FILE, jsonString);
     }

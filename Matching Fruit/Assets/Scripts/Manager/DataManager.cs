@@ -41,7 +41,10 @@ public class DataManager : MonoBehaviour
         PlayScene.instance.SetStarPos(m_Levels[m_CurrLevelIndex].goal_1, m_Levels[m_CurrLevelIndex].goal_2, m_Levels[m_CurrLevelIndex].goal_3);
 
         // Set BGM
-        AudioManager.instance.PlayBGM(AudioManager.BGM_TITLE);
+        if (m_Levels[m_CurrLevelIndex].isBossLevel)
+            AudioManager.instance.PlayBGM(AudioManager.BGM_BOSS);
+        else
+            AudioManager.instance.PlayBGM(AudioManager.BGM_TITLE);
     }
 
     public int GetNextLevel()

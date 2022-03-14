@@ -129,6 +129,7 @@ public class GameManager : MonoBehaviour
             yield return null;
         }
         m_IsEndGame = true;
+        AudioManager.instance.StopBGM(0.5f);
         PlayScene.instance.Result(m_Score, "EHHH ?!!!!");
     }
 
@@ -143,7 +144,9 @@ public class GameManager : MonoBehaviour
             {
                 yield return null;
             }
-            yield return new WaitForSeconds(0.5f);
+            AudioManager.instance.StopBGM(1.5f);
+            AudioManager.instance.PlaySFX(AudioManager.SFX_ENDGAME);
+            yield return new WaitForSeconds(1.5f);
             PlayScene.instance.Result(m_Score, "OUT OF TIME !!!");
         }
 
@@ -181,7 +184,9 @@ public class GameManager : MonoBehaviour
         {
             yield return null;
         }
-        yield return new WaitForSeconds(0.5f);
+        AudioManager.instance.StopBGM(1.5f);
+        AudioManager.instance.PlaySFX(AudioManager.SFX_ENDGAME);
+        yield return new WaitForSeconds(1.5f);
         m_IsEndGame = true;
 
         PlayScene.instance.Result(m_Score, "OUT OF TURNS !!!");

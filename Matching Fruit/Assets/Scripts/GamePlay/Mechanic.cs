@@ -378,6 +378,7 @@ public class Mechanic : MonoBehaviour
             }
             else
             {
+                AudioManager.instance.PlaySFX(AudioManager.SFX_WRONG_MOVE);
                 StartCoroutine(matrix[first.x, first.y].SetWarn());
                 yield return matrix[second.x, second.y].SetWarn();
 
@@ -639,6 +640,7 @@ public class Mechanic : MonoBehaviour
 
     public void UseRainbowEffect(IngameObject.ObjectType type)
     {
+        AudioManager.instance.PlaySFX(AudioManager.SFX_RAINBOW);
         Object[,] matrix = Matrix.instance.GetMatrix();
 
         if (type != IngameObject.ObjectType.Rainbow)

@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2ed23aebac465324aae5c5cf4ad8c85c, type: 3}
-  m_Name: SFX_win
+  m_Name: SFX_wrong_move
   m_EditorClassIdentifier: 
-  clipName: SFX_win
-  clip: {fileID: 8300000, guid: 3fecd05e315978440a1775e4ae4420da, type: 3}
+  clipName: SFX_wrong_move
+  clip: {fileID: 8300000, guid: 358b8aeae9fca8547907cfaf049014ed, type: 3}
   audioType: 1
   isLoop: 0
-  volume: 0.7
+  volume: 0.5
   pitch: 1
