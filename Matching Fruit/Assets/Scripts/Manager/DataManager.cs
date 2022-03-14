@@ -8,6 +8,9 @@ public class DataManager : MonoBehaviour
     public static DataManager instance;
 
     [SerializeField] private GameObject m_Boss;
+    [SerializeField] private IngameObject m_BombObject;
+    [SerializeField] private IngameObject m_LightningObject;
+    [SerializeField] private IngameObject m_RainbowObject;
     [SerializeField] private IngameObject m_EmptyObject;
     [SerializeField] private List<Level> m_Levels = new List<Level>();
 
@@ -131,6 +134,21 @@ public class DataManager : MonoBehaviour
         }
 
         return m_CurrGoal;
+    }
+
+    public IngameObject GetBombObject()
+    {
+        return m_BombObject;
+    }
+
+    public IngameObject GetLightningObject()
+    {
+        return m_LightningObject;
+    }
+
+    public IngameObject GetRainbowObject()
+    {
+        return m_RainbowObject;
     }
 
     public IngameObject GetEmptyObject()

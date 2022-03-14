@@ -17,9 +17,9 @@ MonoBehaviour:
   row: 8
   col: 8
   prefab: {fileID: 3365763998696802593, guid: afcd3cc97f7608e42bc0634f66ed1511, type: 3}
-  goal_1: 5000
-  goal_2: 7000
-  goal_3: 10000
+  goal_1: 10000
+  goal_2: 15000
+  goal_3: 20000
   limitedTime: 120
   turns: 20
   startBalance: 0

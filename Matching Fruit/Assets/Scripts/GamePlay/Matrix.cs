@@ -14,7 +14,7 @@ public class Matrix : MonoBehaviour
 
     public enum ObjectState
     {
-        Normal, Falling, Destroyed, UseEffect, Empty
+        Normal, Falling, Destroyed, UseEffect, Empty, ToBomb, ToLightning, ToRainbow
     }
 
     private int row;
@@ -182,7 +182,10 @@ public class Matrix : MonoBehaviour
     {
         if ((i > -1 && i < row) && (j > -1 && j < column))
             if (m_ObjectsState[i, j] == ObjectState.Destroyed
-            || m_ObjectsState[i, j] == ObjectState.UseEffect)
+            || m_ObjectsState[i, j] == ObjectState.UseEffect
+            || m_ObjectsState[i, j] == ObjectState.ToBomb
+            || m_ObjectsState[i, j] == ObjectState.ToLightning
+            || m_ObjectsState[i, j] == ObjectState.ToRainbow)
             return true;
         return false;
     }
@@ -265,6 +268,53 @@ public class Matrix : MonoBehaviour
     {
         if ((i > -1 && i < row) && (j > -1 && j < column))
             m_MatrixVFX[i, j].ActiveHammer();
+    }
+
+    public void TransfromObject()
+    {
+        for (int i = 0; i < row; i++)
+            for (int j = 0; j < column; j++)
+            {
+                switch (m_ObjectsState[i, j])
+                {
+                    case ObjectState.ToBomb:
+                        {
+                            m_Matrix[i, j].SetObjectProperties(DataManager.instance.GetBombObject());
+                            ResetObjectState(i, j);
+                            break;
+                        }
+                    case ObjectState.ToLightning:
+                        {
+                            m_Matrix[i, j].SetObjectProperties(DataManager.instance.GetLightningObject());
+                            ResetObjectState(i, j);
+                            break;
+                        }
+                    case ObjectState.ToRainbow:
+                        {
+                            m_Matrix[i, j].SetObjectProperties(DataManager.instance.GetRainbowObject());
+                            ResetObjectState(i, j);
+                            break;
+                        }
+                }
+            }
+    }
+
+    public void SafeToBomb(int i, int j)
+    {
+        if ((i > -1 && i < row) && (j > -1 && j < column))
+            m_ObjectsState[i, j] = ObjectState.ToBomb;
+    }
+
+    public void SafeToLightning(int i, int j)
+    {
+        if ((i > -1 && i < row) && (j > -1 && j < column))
+            m_ObjectsState[i, j] = ObjectState.ToLightning;
+    }
+
+    public void SafeToRainbow(int i, int j)
+    {
+        if ((i > -1 && i < row) && (j > -1 && j < column))
+            m_ObjectsState[i, j] = ObjectState.ToRainbow;
     }
 
     // Set an object to be destroyed or use effect

@@ -297,9 +297,14 @@ public class Mechanic : MonoBehaviour
                     Matrix.instance.SafeDestroyObject(i, j);
                     count--;
                 }
-                else if (checkList[j] >= 3)
+                else if (checkList[j] >= 3 && matrix[i, j].Properties.isRare != true)
                 {
-                    Matrix.instance.SafeDestroyObject(i, j);
+                    if (checkList[j] >= 5)
+                        Matrix.instance.SafeToRainbow(i, j);
+                    else if (checkList[j] >= 4)
+                        Matrix.instance.SafeToLightning(i, j);
+                    else
+                        Matrix.instance.SafeDestroyObject(i, j);
                     count = checkList[j] - 1;
                 }
             }
@@ -324,12 +329,22 @@ public class Mechanic : MonoBehaviour
             {
                 if (count > 0)
                 {
-                    Matrix.instance.SafeDestroyObject(i, j);
+                    if (Matrix.instance.CheckDestroyObject(i, j) && matrix[i, j].Properties.isRare != true)
+                        Matrix.instance.SafeToBomb(i, j);
+                    else
+                        Matrix.instance.SafeDestroyObject(i, j);
                     count--;
                 }
-                else if (checkList[i] >= 3)
+                else if (checkList[i] >= 3 && matrix[i, j].Properties.isRare != true)
                 {
-                    Matrix.instance.SafeDestroyObject(i, j);
+                    if (checkList[j] >= 5)
+                        Matrix.instance.SafeToRainbow(i, j);
+                    else if (checkList[j] >= 4)
+                        Matrix.instance.SafeToLightning(i, j);
+                    else if (Matrix.instance.CheckDestroyObject(i, j) && matrix[i, j].Properties.isRare != true)
+                        Matrix.instance.SafeToBomb(i, j);
+                    else
+                        Matrix.instance.SafeDestroyObject(i, j);
                     count = checkList[i] - 1;
                 }
             }
@@ -457,6 +472,9 @@ public class Mechanic : MonoBehaviour
 
         // Use effect if rare
         ChainRareObject(matrix);
+
+        // Transform to rare object
+        Matrix.instance.TransfromObject();
 
         // Update Falling Column
         int[] columnQueue = new int[Matrix.instance.Column];

@@ -2497,6 +2497,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Boss: {fileID: 1706454009}
+  m_BombObject: {fileID: 11400000, guid: 140e8378782b22e45aa2db69caf41da8, type: 2}
+  m_LightningObject: {fileID: 11400000, guid: e3014fab9eebc3840a544e3c861bce55, type: 2}
+  m_RainbowObject: {fileID: 11400000, guid: 51320765e4ab2c74db4c57cbe0a2ab8b, type: 2}
   m_EmptyObject: {fileID: 11400000, guid: 102da7ff4c46f8143949330b6779d051, type: 2}
   m_Levels:
   - {fileID: 11400000, guid: f39b498526a17e0489d862ad6fabf3bd, type: 2}
@@ -2762,10 +2765,10 @@ RectTransform:
   m_Father: {fileID: 1225073195}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0}
-  m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -336, y: 49}
-  m_SizeDelta: {x: 982, y: -98}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
+  m_AnchoredPosition: {x: 624, y: 49}
+  m_SizeDelta: {x: -938, y: 981}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &652759417
 MonoBehaviour:
@@ -6884,10 +6887,10 @@ RectTransform:
   m_Father: {fileID: 1225073195}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -50}
-  m_SizeDelta: {x: 0, y: 50}
+  m_AnchoredPosition: {x: 0, y: 1030}
+  m_SizeDelta: {x: 0, y: -1030}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &1924041016
 MonoBehaviour:
