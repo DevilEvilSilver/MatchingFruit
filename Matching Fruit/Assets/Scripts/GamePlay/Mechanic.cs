@@ -585,7 +585,7 @@ public class Mechanic : MonoBehaviour
         {
             case IngameObject.ObjectType.Rainbow:
                 {
-                    UseRainbowEffect(affectedObj.Properties.type);
+                    UseRainbowEffect(rareObj, affectedObj.Properties.type);
                     break;
                 }
             case IngameObject.ObjectType.Lightning:
@@ -615,7 +615,7 @@ public class Mechanic : MonoBehaviour
             {
                 case IngameObject.ObjectType.Rainbow:
                     {
-                        UseRainbowEffect(DataManager.instance.GetRandomCommonObject().type);
+                        UseRainbowEffect(rareObject, DataManager.instance.GetRandomCommonObject().type);
                         break;
                     }
                 case IngameObject.ObjectType.Lightning:
@@ -638,7 +638,7 @@ public class Mechanic : MonoBehaviour
         }
     }
 
-    public void UseRainbowEffect(IngameObject.ObjectType type)
+    public void UseRainbowEffect(Object rainbow, IngameObject.ObjectType type)
     {
         AudioManager.instance.PlaySFX(AudioManager.SFX_RAINBOW);
         Object[,] matrix = Matrix.instance.GetMatrix();
@@ -650,7 +650,7 @@ public class Mechanic : MonoBehaviour
                 {
                     if (matrix[i, j].Properties.type == type)
                     {
-                        //Matrix.instance.SafeDestroyVFX(i, j);
+                        Matrix.instance.SafeRainbowVFX(rainbow.m_MatrixIndex.x, rainbow.m_MatrixIndex.y, i, j);
                         Matrix.instance.SafeDestroyObject(i, j);
                     }
                 }
@@ -660,7 +660,7 @@ public class Mechanic : MonoBehaviour
             for (int i = 0; i < Matrix.instance.Row; i++)
                 for (int j = 0; j < Matrix.instance.Column; j++)
                 {
-                    //Matrix.instance.SafeDestroyVFX(i, j);
+                    Matrix.instance.SafeRainbowVFX(rainbow.m_MatrixIndex.x, rainbow.m_MatrixIndex.y, i, j);
                     Matrix.instance.SafeDestroyObject(i, j);
                 }
         }

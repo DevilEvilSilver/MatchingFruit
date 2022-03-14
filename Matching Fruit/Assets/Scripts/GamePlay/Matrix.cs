@@ -255,6 +255,12 @@ public class Matrix : MonoBehaviour
             m_MatrixVFX[i, j].ActiveClock(text);
     }
 
+    public void SafeRainbowVFX(int i, int j, int targetX, int targetY)
+    {
+        if ((i > -1 && i < row) && (j > -1 && j < column))
+            m_MatrixVFX[i, j].ActiveRainbow(targetX, targetY);
+    }
+
     public void SafeHammerVFX(int i, int j)
     {
         if ((i > -1 && i < row) && (j > -1 && j < column))
