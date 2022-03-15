@@ -283,7 +283,7 @@ public class Mechanic : MonoBehaviour
 
             for (int j = 1; j < Matrix.instance.Column; j++)
             {
-                if (Matrix.instance.CheckMatch(i, j - 1, matrix[i, j].Properties.type))
+                if (Matrix.instance.CheckMatch(i, j - 1, matrix[i, j].Properties.type) && Matrix.instance.CheckMatchable(i, j))
                     checkList[j] = checkList[j - 1] + 1;
                 else
                     checkList[j] = 1;
@@ -318,7 +318,7 @@ public class Mechanic : MonoBehaviour
 
             for (int i = 1; i < Matrix.instance.Row; i++)
             {
-                if (Matrix.instance.CheckMatch(i - 1, j, matrix[i, j].Properties.type))
+                if (Matrix.instance.CheckMatch(i - 1, j, matrix[i, j].Properties.type) && Matrix.instance.CheckMatchable(i, j))
                     checkList[i] = checkList[i - 1] + 1;
                 else
                     checkList[i] = 1;

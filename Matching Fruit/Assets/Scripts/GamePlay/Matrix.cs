@@ -449,6 +449,16 @@ public class Matrix : MonoBehaviour
         return false;
     }
 
+    public bool CheckMatchable(int i, int j)
+    {
+        if ((i > -1 && i < row) && (j > -1 && j < column))
+        {
+            if (m_MatrixState[i, j] == MatrixState.None || m_MatrixState[i, j] == MatrixState.Chained)
+                return true;
+        }
+        return false;
+    }
+
     // for Mechanic
     public IEnumerator Swap(Object first, Object second)
     {
