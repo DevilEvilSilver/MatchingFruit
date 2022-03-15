@@ -23,7 +23,7 @@ MonoBehaviour:
   limitedTime: 180
   turns: 40
   startBalance: 0
-  rareObjectsPercentage: 0.03
+  rareObjectsPercentage: 0.01
   commmonObjects:
   - {fileID: 11400000, guid: a224e43dbb9b3e14c92897568c782d2a, type: 2}
   - {fileID: 11400000, guid: 532e2d3f6c3472243bc19698dd381d2f, type: 2}
@@ -33,14 +33,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 55673196562d47e4c849a8fa7e53fd2c, type: 2}
   - {fileID: 11400000, guid: 890716b9ce09055409881795ad67d16a, type: 2}
   rareObjects:
-  - ingameObject: {fileID: 11400000, guid: 140e8378782b22e45aa2db69caf41da8, type: 2}
-    percentage: 0.2
-  - ingameObject: {fileID: 11400000, guid: e3014fab9eebc3840a544e3c861bce55, type: 2}
-    percentage: 0.2
   - ingameObject: {fileID: 11400000, guid: 51320765e4ab2c74db4c57cbe0a2ab8b, type: 2}
-    percentage: 0.4
+    percentage: 0.5
   - ingameObject: {fileID: 11400000, guid: 81a945c1ebee6954ebaecb88ca795798, type: 2}
-    percentage: 0.2
+    percentage: 0.5
   clearMissions:
   - {fileID: 11400000, guid: cff4d91e0e85eba4781181f6c945ddc3, type: 2}
   - {fileID: 11400000, guid: d6c5964583e171f4896792718cc6abef, type: 2}

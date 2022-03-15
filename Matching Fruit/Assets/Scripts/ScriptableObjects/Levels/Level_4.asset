@@ -13,15 +13,15 @@ MonoBehaviour:
   m_Name: Level_4
   m_EditorClassIdentifier: 
   isBossLevel: 0
-  map: {fileID: 2800000, guid: ec155e88b6a9f2b4394446ca31409d01, type: 3}
+  map: {fileID: 2800000, guid: 05a7edb68aa8836409d1fde45326e93d, type: 3}
   row: 8
   col: 8
   prefab: {fileID: 3365763998696802593, guid: afcd3cc97f7608e42bc0634f66ed1511, type: 3}
-  goal_1: 15000
-  goal_2: 20000
-  goal_3: 30000
-  limitedTime: 120
-  turns: 20
+  goal_1: 10000
+  goal_2: 15000
+  goal_3: 20000
+  limitedTime: 150
+  turns: 25
   startBalance: 0
   rareObjectsPercentage: 0.04
   commmonObjects:

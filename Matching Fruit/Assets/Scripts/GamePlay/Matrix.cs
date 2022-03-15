@@ -177,8 +177,18 @@ public class Matrix : MonoBehaviour
         }
     }
 
-    // Check if an object is destroyed or use effect
+    // Check if an object is destroyed or use effect or being transform
     public bool CheckDestroyObject(int i, int j)
+    {
+        if ((i > -1 && i < row) && (j > -1 && j < column))
+            if (m_ObjectsState[i, j] == ObjectState.Destroyed
+            || m_ObjectsState[i, j] == ObjectState.UseEffect)
+            return true;
+        return false;
+    }
+
+    // Check if an object is destroyed 
+    public bool CheckObjectForPoints(int i, int j)
     {
         if ((i > -1 && i < row) && (j > -1 && j < column))
             if (m_ObjectsState[i, j] == ObjectState.Destroyed
@@ -186,7 +196,7 @@ public class Matrix : MonoBehaviour
             || m_ObjectsState[i, j] == ObjectState.ToBomb
             || m_ObjectsState[i, j] == ObjectState.ToLightning
             || m_ObjectsState[i, j] == ObjectState.ToRainbow)
-            return true;
+                return true;
         return false;
     }
 
@@ -301,7 +311,7 @@ public class Matrix : MonoBehaviour
 
     public void SafeToBomb(int i, int j)
     {
-        if ((i > -1 && i < row) && (j > -1 && j < column))
+        if ((i > -1 && i < row) && (j > -1 && j < column) && m_ObjectsState[i, j] != ObjectState.ToLightning && m_ObjectsState[i, j] != ObjectState.ToRainbow)
             m_ObjectsState[i, j] = ObjectState.ToBomb;
     }
 

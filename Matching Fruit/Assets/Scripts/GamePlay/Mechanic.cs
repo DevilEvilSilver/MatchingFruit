@@ -337,9 +337,9 @@ public class Mechanic : MonoBehaviour
                 }
                 else if (checkList[i] >= 3 && matrix[i, j].Properties.isRare != true)
                 {
-                    if (checkList[j] >= 5)
+                    if (checkList[i] >= 5)
                         Matrix.instance.SafeToRainbow(i, j);
-                    else if (checkList[j] >= 4)
+                    else if (checkList[i] >= 4)
                         Matrix.instance.SafeToLightning(i, j);
                     else if (Matrix.instance.CheckDestroyObject(i, j) && matrix[i, j].Properties.isRare != true)
                         Matrix.instance.SafeToBomb(i, j);
@@ -462,7 +462,7 @@ public class Mechanic : MonoBehaviour
         {
             for (int j = 0; j < Matrix.instance.Column; j++)
             {
-                if (Matrix.instance.CheckDestroyObject(i ,j))
+                if (Matrix.instance.CheckObjectForPoints(i ,j))
                 {
                     GameManager.instance.UpdateClearMission(matrix[i, j].Properties);
                     matchedObjectcount++;

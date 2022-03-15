@@ -74,7 +74,13 @@ public class Object : MonoBehaviour
             if (m_Destinies.Count > 0)
             {
                 if (transform.position.y < m_Destinies.Peek().y)
+                {
+                    Vector3 pos = transform.position;
+                    pos.x = m_Destinies.Peek().x;
+                    transform.position = pos;
+                    m_IsVelocityXSetRight = VelocityXDirection.None;
                     m_Destinies.Dequeue();
+                }      
 
                 if (m_Destinies.Count > 0 && transform.position.x > m_Destinies.Peek().x)
                 {
@@ -86,9 +92,6 @@ public class Object : MonoBehaviour
                     else
                     {
                         m_Velocity.x = 0f;
-                        Vector3 pos = transform.position;
-                        pos.x = m_MatrixPosition.x;
-                        transform.position = pos;
                     }
                 }
                 else if (m_Destinies.Count > 0 && transform.position.x < m_Destinies.Peek().x)
@@ -100,10 +103,7 @@ public class Object : MonoBehaviour
                     }
                     else
                     {
-                        m_Velocity.x = 0f;
-                        Vector3 pos = transform.position;
-                        pos.x = m_MatrixPosition.x;
-                        transform.position = pos;
+                        m_Velocity.x = 0f;          
                     }
                 }
             }

@@ -13,15 +13,15 @@ MonoBehaviour:
   m_Name: Level_3
   m_EditorClassIdentifier: 
   isBossLevel: 0
-  map: {fileID: 2800000, guid: ec155e88b6a9f2b4394446ca31409d01, type: 3}
+  map: {fileID: 2800000, guid: 64b7b207c60bff247b204c5133d764bb, type: 3}
   row: 8
   col: 8
   prefab: {fileID: 3365763998696802593, guid: afcd3cc97f7608e42bc0634f66ed1511, type: 3}
-  goal_1: 12500
-  goal_2: 17500
-  goal_3: 25000
-  limitedTime: 120
-  turns: 20
+  goal_1: 10000
+  goal_2: 15000
+  goal_3: 20000
+  limitedTime: 150
+  turns: 25
   startBalance: 0
   rareObjectsPercentage: 0.04
   commmonObjects:
@@ -33,9 +33,11 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 55673196562d47e4c849a8fa7e53fd2c, type: 2}
   rareObjects:
   - ingameObject: {fileID: 11400000, guid: 140e8378782b22e45aa2db69caf41da8, type: 2}
-    percentage: 0.5
+    percentage: 0.4
   - ingameObject: {fileID: 11400000, guid: e3014fab9eebc3840a544e3c861bce55, type: 2}
-    percentage: 0.5
+    percentage: 0.4
+  - ingameObject: {fileID: 11400000, guid: 51320765e4ab2c74db4c57cbe0a2ab8b, type: 2}
+    percentage: 0.2
   clearMissions:
   - {fileID: 11400000, guid: 2b425559044139444989e9e457a7dc2d, type: 2}
   - {fileID: 11400000, guid: fabbd4dc2243cac4c84ee37d7814afbd, type: 2}
