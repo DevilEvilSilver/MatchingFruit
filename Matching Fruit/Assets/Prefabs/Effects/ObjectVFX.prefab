@@ -374,7 +374,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: ???
+  m_Text: 
 --- !u!114 &297166312202883467
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -390,6 +390,52 @@ MonoBehaviour:
   duration: 1
   textColor: {r: 0.1855835, g: 1, b: 0.07075471, a: 1}
   speed: {x: 0, y: 200}
+--- !u!1 &7320164518781947034
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6516313068673915600}
+  - component: {fileID: 7892740064970106134}
+  m_Layer: 0
+  m_Name: RainbowEffect
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6516313068673915600
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7320164518781947034}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -6}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 7344956366343670082}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7892740064970106134
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7320164518781947034}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c22dc3260a7474812827f34d40d789ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lineRendererPrefab: {fileID: 143006, guid: 26b8eab211e7b4ca3ad11638477deae4, type: 3}
+  lightRendererPrefab: {fileID: 143006, guid: c1d23d62ae9d74fd0b5db2f0c3f0bb73, type: 3}
+  offsetSize: 40
 --- !u!1 &7762400500694141418
 GameObject:
   m_ObjectHideFlags: 0
@@ -423,6 +469,7 @@ Transform:
   - {fileID: 5589171326717137916}
   - {fileID: 1811792188907597983}
   - {fileID: 4792820682977964173}
+  - {fileID: 6516313068673915600}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -443,8 +490,7 @@ MonoBehaviour:
   m_LightningEffect: {fileID: 6079936295687480666}
   m_HammerEffect: {fileID: 8747018183285559242}
   m_ClockEffect: {fileID: 297166312202883467}
-  m_RainbowEffectPrefab: {fileID: 4624352182704983990, guid: 6deb8711941ab6746a38959069c028b9,
-    type: 3}
+  m_RainbowEffect: {fileID: 7892740064970106134}
 --- !u!1 &8065428495835090055
 GameObject:
   m_ObjectHideFlags: 0

@@ -28,7 +28,7 @@ public class Boss : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!m_isCharging)
+        if (!m_isCharging && !GameManager.instance.m_IsEndGame)
             m_CurrCooldown -= Time.deltaTime;
 
         if (m_CurrCooldown < Mathf.Epsilon)

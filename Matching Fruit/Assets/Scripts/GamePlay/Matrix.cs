@@ -270,7 +270,7 @@ public class Matrix : MonoBehaviour
 
     public void SafeRainbowVFX(int i, int j, int targetX, int targetY)
     {
-        if ((i > -1 && i < row) && (j > -1 && j < column))
+        if ((i > -1 && i < row) && (j > -1 && j < column) && m_MatrixState[targetX, targetY] != MatrixState.Block)
             m_MatrixVFX[i, j].ActiveRainbow(targetX, targetY);
     }
 

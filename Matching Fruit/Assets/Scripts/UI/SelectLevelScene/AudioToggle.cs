@@ -42,5 +42,6 @@ public class AudioToggle : MonoBehaviour
         AudioManager.instance.ToggleBGMVolume(m_IsActive);
         AudioManager.instance.ToggleSFXVolume(m_IsActive);
         ConfigManager.instance.config.isMute = !m_IsActive;
+        ConfigManager.instance.SaveConfig();
     }
 }
