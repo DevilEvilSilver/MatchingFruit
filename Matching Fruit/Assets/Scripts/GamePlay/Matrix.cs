@@ -332,7 +332,10 @@ public class Matrix : MonoBehaviour
     {
         if ((i > -1 && i < row) && (j > -1 && j < column))
         {
-            if (m_ObjectsState[i, j] == ObjectState.Empty || m_MatrixState[i, j] == MatrixState.Block)
+            if (m_ObjectsState[i, j] == ObjectState.Empty || m_MatrixState[i, j] == MatrixState.Block
+                || m_ObjectsState[i, j] == ObjectState.ToBomb
+                || m_ObjectsState[i, j] == ObjectState.ToLightning
+                || m_ObjectsState[i, j] == ObjectState.ToRainbow)
                 return;
 
             // unlock freeze

@@ -26,16 +26,16 @@ public class ChainLightning : MonoBehaviour{
         LightningBolt tmpLightningBolt;
         for (int i = 0; i < Matrix.instance.Row; i++)
             for (int j = 0; j < Matrix.instance.Column; j++)
-        { 
-            tmpLightningBolt = new LightningBolt(segmentLength, i * j + j);
-            tmpLightningBolt.Init(lightnings, offsetSize, lineRendererPrefab, lightRendererPrefab, transform);
-            LightningBolts[i, j] = tmpLightningBolt;
+            { 
+                tmpLightningBolt = new LightningBolt(segmentLength, i * j + j);
+                tmpLightningBolt.Init(lightnings, offsetSize, lineRendererPrefab, lightRendererPrefab, transform);
+                LightningBolts[i, j] = tmpLightningBolt;
 
-            Vector3 pos = Matrix.instance.transform.position;
-            pos.x += j * Matrix.instance.ObjectSize.x - Matrix.instance.ObjectSize.x * (Matrix.instance.Column - 1) / 2;
-            pos.y += i * Matrix.instance.ObjectSize.y - Matrix.instance.ObjectSize.y * (Matrix.instance.Row - 1) / 2;
-            Targets[i, j] = new Vector2(pos.x, pos.y);
-        }
+                Vector3 pos = Matrix.instance.transform.position;
+                pos.x += j * Matrix.instance.ObjectSize.x - Matrix.instance.ObjectSize.x * (Matrix.instance.Column - 1) / 2;
+                pos.y += i * Matrix.instance.ObjectSize.y - Matrix.instance.ObjectSize.y * (Matrix.instance.Row - 1) / 2;
+                Targets[i, j] = new Vector2(pos.x, pos.y);
+            }
     }
     
     public IEnumerator ChainEffect(int i, int j)

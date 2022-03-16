@@ -271,7 +271,7 @@ public class Mechanic : MonoBehaviour
     }
 
     // return false when matrix is busy
-    public bool CheckMatching(Object[,] matrix)
+    public bool CheckMatching(Object[,] matrix, Vector2Int? first = null, Vector2Int? second = null)
     {
         bool isMatch = false;
 
@@ -300,11 +300,36 @@ public class Mechanic : MonoBehaviour
                 else if (checkList[j] >= 3 && matrix[i, j].Properties.isRare != true)
                 {
                     if (checkList[j] >= 5)
-                        Matrix.instance.SafeToRainbow(i, j);
+                    {
+                        if (first != null && second != null)
+                        {
+                            if (i == first.Value.x && j > first.Value.y && j - 5 < first.Value.y)
+                                Matrix.instance.SafeToRainbow(first.Value.x, first.Value.y);
+                            else if (i == second.Value.x && j > second.Value.y && j - 5 < second.Value.y)
+                                Matrix.instance.SafeToRainbow(second.Value.x, second.Value.y);
+                            else
+                                Matrix.instance.SafeToRainbow(i, j);
+                        }
+                        else
+                            Matrix.instance.SafeToRainbow(i, j);
+                    }
                     else if (checkList[j] >= 4)
-                        Matrix.instance.SafeToLightning(i, j);
-                    else
-                        Matrix.instance.SafeDestroyObject(i, j);
+                    {
+                        if (first != null && second != null)
+                        {
+                            if (i == first.Value.x && j > first.Value.y && j - 4 < first.Value.y)
+                                Matrix.instance.SafeToLightning(first.Value.x, first.Value.y);
+                            else if (i == second.Value.x && j > second.Value.y && j - 4 < second.Value.y)
+                                Matrix.instance.SafeToLightning(second.Value.x, second.Value.y);
+                            else
+                                Matrix.instance.SafeToLightning(i, j);
+                        }
+                        else
+                            Matrix.instance.SafeToLightning(i, j);
+                    }
+                    
+
+                    Matrix.instance.SafeDestroyObject(i, j);
                     count = checkList[j] - 1;
                 }
             }
@@ -338,13 +363,37 @@ public class Mechanic : MonoBehaviour
                 else if (checkList[i] >= 3 && matrix[i, j].Properties.isRare != true)
                 {
                     if (checkList[i] >= 5)
-                        Matrix.instance.SafeToRainbow(i, j);
+                    {
+                        if (first != null && second != null)
+                        {
+                            if (j == first.Value.y && i > first.Value.x && i - 5 < first.Value.x)
+                                Matrix.instance.SafeToRainbow(first.Value.x, first.Value.y);
+                            else if (j == second.Value.y && i > second.Value.x && i - 5 < second.Value.x)
+                                Matrix.instance.SafeToRainbow(second.Value.x, second.Value.y);
+                            else
+                                Matrix.instance.SafeToRainbow(i, j);
+                        }
+                        else
+                            Matrix.instance.SafeToRainbow(i, j);
+                    }
                     else if (checkList[i] >= 4)
-                        Matrix.instance.SafeToLightning(i, j);
+                    {
+                        if (first != null && second != null)
+                        {
+                            if (j == first.Value.y && i > first.Value.x && i - 4 < first.Value.x)
+                                Matrix.instance.SafeToLightning(first.Value.x, first.Value.y);
+                            else if (j == second.Value.y && i > second.Value.x && i - 4 < second.Value.x)
+                                Matrix.instance.SafeToLightning(second.Value.x, second.Value.y);
+                            else
+                                Matrix.instance.SafeToLightning(i, j);
+                        }
+                        else
+                            Matrix.instance.SafeToLightning(i, j);
+                    }
                     else if (Matrix.instance.CheckDestroyObject(i, j) && matrix[i, j].Properties.isRare != true)
                         Matrix.instance.SafeToBomb(i, j);
-                    else
-                        Matrix.instance.SafeDestroyObject(i, j);
+
+                    Matrix.instance.SafeDestroyObject(i, j);
                     count = checkList[i] - 1;
                 }
             }
@@ -377,7 +426,7 @@ public class Mechanic : MonoBehaviour
         {
             yield return Matrix.instance.Swap(matrix[first.x, first.y], matrix[second.x, second.y]);
 
-            if (CheckMatching(matrix) || matrix[first.x, first.y].Properties.isRare || matrix[second.x, second.y].Properties.isRare)
+            if (CheckMatching(matrix, first, second) || matrix[first.x, first.y].Properties.isRare || matrix[second.x, second.y].Properties.isRare)
             {
                 // start rare effect
                 if (matrix[first.x, first.y].Properties.isRare)
