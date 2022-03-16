@@ -214,6 +214,35 @@ public class Mechanic : MonoBehaviour
         return null;
     }
 
+    public void ObjectSwipe(Object objectSwiped)
+    {
+        // Cant swipe when matrix is updating or end game or isFalling or out of turns
+        if (!Matrix.instance.CheckSelectableObject(objectSwiped.m_MatrixIndex.x, objectSwiped.m_MatrixIndex.y)
+            || Matrix.instance.IsBusy()
+            || Matrix.instance.CheckFallingObjects()
+            || GameManager.instance.m_IsEndGame
+            || !GameManager.instance.CheckTurns())
+            return;
+
+        if (firstSelected == null)
+        {
+            return;
+        }
+        // Swap
+        else
+        {
+            if (firstSelected.m_MatrixIndex.x == objectSwiped.m_MatrixIndex.x && Mathf.Abs(firstSelected.m_MatrixIndex.y - objectSwiped.m_MatrixIndex.y) == 1 ||
+                firstSelected.m_MatrixIndex.y == objectSwiped.m_MatrixIndex.y && Mathf.Abs(firstSelected.m_MatrixIndex.x - objectSwiped.m_MatrixIndex.x) == 1)
+            {
+                StartCoroutine(CheckSwap(firstSelected.m_MatrixIndex, objectSwiped.m_MatrixIndex));
+            }
+
+            firstSelected.SetSelected(false);
+            firstSelected = null;
+            return;
+        }
+    }
+
     public void ObjectClicked(Object objectClicked)
     {
         //Debug.Log(Matrix.instance.m_ObjectsState[objectClicked.m_MatrixIndex.x, objectClicked.m_MatrixIndex.y]);
@@ -263,9 +292,23 @@ public class Mechanic : MonoBehaviour
             // Swap
             else
             {
-                StartCoroutine(CheckSwap(firstSelected.m_MatrixIndex, objectClicked.m_MatrixIndex));
-                firstSelected.SetSelected(false);
-                firstSelected = null;
+                if (firstSelected.m_MatrixIndex.x == objectClicked.m_MatrixIndex.x && Mathf.Abs(firstSelected.m_MatrixIndex.y - objectClicked.m_MatrixIndex.y) == 1 ||
+                    firstSelected.m_MatrixIndex.y == objectClicked.m_MatrixIndex.y && Mathf.Abs(firstSelected.m_MatrixIndex.x - objectClicked.m_MatrixIndex.x) == 1)
+                {
+                    StartCoroutine(CheckSwap(firstSelected.m_MatrixIndex, objectClicked.m_MatrixIndex));
+                    firstSelected.SetSelected(false);
+                    firstSelected = null;
+                    return;
+
+                }
+                else
+                { // Reselect
+                    firstSelected.SetSelected(false);
+                    firstSelected = objectClicked;
+                    firstSelected.SetSelected(true);
+                    return;
+
+                }
             }
         }
     }
@@ -420,34 +463,29 @@ public class Mechanic : MonoBehaviour
             yield return null;
         }
 
-        // Check if is swapable
-        if (first.x == second.x && Mathf.Abs(first.y - second.y) == 1 ||
-            first.y == second.y && Mathf.Abs(first.x - second.x) == 1)
+        yield return Matrix.instance.Swap(matrix[first.x, first.y], matrix[second.x, second.y]);
+
+        if (CheckMatching(matrix, first, second) || matrix[first.x, first.y].Properties.isRare || matrix[second.x, second.y].Properties.isRare)
         {
+            // start rare effect
+            if (matrix[first.x, first.y].Properties.isRare)
+                UseRareObject(matrix[first.x, first.y], matrix[second.x, second.y]);
+            if (matrix[second.x, second.y].Properties.isRare)
+                UseRareObject(matrix[second.x, second.y], matrix[first.x, first.y]);
+
+            // start match chain
+            yield return StartMatchCombo(matrix);
+
+            // minus 1 turn
+            GameManager.instance.DecreaseTurn();
+        }
+        else
+        {
+            AudioManager.instance.PlaySFX(AudioManager.SFX_WRONG_MOVE);
+            StartCoroutine(matrix[first.x, first.y].SetWarn());
+            yield return matrix[second.x, second.y].SetWarn();
+
             yield return Matrix.instance.Swap(matrix[first.x, first.y], matrix[second.x, second.y]);
-
-            if (CheckMatching(matrix, first, second) || matrix[first.x, first.y].Properties.isRare || matrix[second.x, second.y].Properties.isRare)
-            {
-                // start rare effect
-                if (matrix[first.x, first.y].Properties.isRare)
-                    UseRareObject(matrix[first.x, first.y], matrix[second.x, second.y]);
-                if (matrix[second.x, second.y].Properties.isRare)
-                    UseRareObject(matrix[second.x, second.y], matrix[first.x, first.y]);
-
-                // start match chain
-                yield return StartMatchCombo(matrix);
-
-                // minus 1 turn
-                GameManager.instance.DecreaseTurn();
-            }
-            else
-            {
-                AudioManager.instance.PlaySFX(AudioManager.SFX_WRONG_MOVE);
-                StartCoroutine(matrix[first.x, first.y].SetWarn());
-                yield return matrix[second.x, second.y].SetWarn();
-
-                yield return Matrix.instance.Swap(matrix[first.x, first.y], matrix[second.x, second.y]);
-            }
         }
 
         Matrix.instance.FreeMatrix(); // Free Matrix

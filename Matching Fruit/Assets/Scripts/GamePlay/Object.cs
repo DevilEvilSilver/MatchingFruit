@@ -122,6 +122,14 @@ public class Object : MonoBehaviour
         Mechanic.instance.ObjectClicked(this);
     }
 
+    void OnMouseEnter()
+    {
+        if (Input.GetMouseButton(0))
+        {
+            Mechanic.instance.ObjectSwipe(this);
+        }
+    }
+
     public void ResetState()
     {
         m_Velocity = Vector2.zero;
